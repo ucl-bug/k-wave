@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>waterNonlinearity :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>waterNonlinearity</h1>
+<p class="purpose">Calculate B/A of water with temperature.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+BonA = waterNonlinearity(T)
+</pre>
+
+<h2>Description</h2>
+<p><code>waterNonlinearity</code> calculates the parameter of nonlinearity B/A at a given temperature using a fourth-order polynomial fitted to the data given by Beyer (1960, Parameter of nonlinearity in fluids, J. Acoust. Soc. Am., 32(6), 719-721). A plot of the original data and the polynomial fit is given below.</p>
+
+<img vspace="5" hspace="5" src="images/waterNonlinearity_01.png" style="width:560px;height:420px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>T</code></td>
+        <td>water temperature in the range 0 to 100 [degC]</td>        
+    </tr>         
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>BonA</code></td>
+        <td>parameter of nonlinearity</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="waterAbsorption.html">waterAbsorption</a></code>, <code><a href="waterDensity.html">waterDensity</a></code>, <code><a href="waterSoundSpeed.html">waterSoundSpeed</a></code>
+
+</div></body></html>

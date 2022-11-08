@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Saving Movie Files Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Saving Movie Files Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Saving Movie Files Example</h1>
+
+<p>This example demonstrates how to save the simulation animations as a movie. It builds on the <a href="example_ivp_heterogeneous_medium.html">Heterogeneous Propagation Medium Example</a>.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_ivp_saving_movie_files.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_ivp_saving_movie_files']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Setting the 'RecordMovie' flag</a></li>
+		<li><a href="#heading3">Controlling the movie settings</a></li>
+		<li><a href="#heading4">Changing additional display settings</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Setting the 'RecordMovie' flag</h2>
+
+<p>In the preceding example, the optional inputs <code>'PlotLayout'</code> and <code>'PlotPML'</code> were used to change the default behaviour of <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>. Here several other optional inputs are used to save the simulation animation to a movie file. By setting <code>'RecordMovie'</code> to <code>true</code>, the displayed image frames are saved and exported as a movie with a date and time stamped filename. A user defined filename can also be given by setting the <code>'MovieName'</code> input to a string. The movie frames are captured using <code><a href="matlab: doc getframe">getframe</a></code> and converted to a video file using <code><a href="matlab: doc VideoWriter">VideoWriter</a></code>.  Note, when using <code><a href="matlab: doc getframe">getframe</a></code>, if other windows are moved in front of the simulation window, these may also be captured.</p>
+
+<pre class="codeinput">
+<span class="comment">% set the input arguments</span>
+input_args = {'RecordMovie', true, 'MovieName', 'example_movie'};
+
+<span class="comment">% run the simulation</span>
+sensor_data = kspaceFirstOrder2D(kgrid, medium, source, sensor, input_args{:});
+</pre>
+
+<a name="heading3"></a>
+<h2>Controlling the movie settings</h2>
+
+<p>As the movie frames mimic the frames used for the simulation animation, the properties of the movie can be controlled by changing the animation settings. For example, the image scaling can be set using <code>'PlotScale'</code>, and the number of iterations which must pass before the simulation plot is updated can be controlled via <code>'PlotFreq'</code>. Note, the default color map used for the animation has zero set to white (see <code><a href="getColorMap.html">getColorMap</a></code>), thus using a plot scaling parameter set to <code>[-a, a]</code> will give the best visual results. </p>
+    
+<pre class="codeinput">
+<span class="comment">% set the input arguments</span>
+input_args = {..., 'PlotScale', [-2, 2], 'PlotFreq', 5, ...};
+</pre>
+
+<p>The profile and properties of <code><a href="matlab: doc VideoWriter">VideoWriter</a></code> can also be modified via the optional inputs <code>'MovieProfile'</code> and <code>'MovieArgs'</code>. An example of changing the default frame rate, and saving the movie as an MP4 is given below. </p>
+
+<pre class="codeinput">
+<span class="comment">% set the input arguments</span>
+input_args = {..., 'MovieProfile', 'MPEG-4', 'MovieArgs', {'FrameRate', 10}, ...};
+</pre>
+
+<p>The movies are saved in the same directory as the example m-file.</p> 
+
+<p>Note, by default, k-Wave sets <code>'MovieProfile'</code> to <code>'Uncompressed AVI'</code>, which means the generated movie files can become very large. If using a recent version of MATLAB, it's recommended to use the optional input <code>'MovieProfile', 'MPEG-4'</code>. Alternatively, to reduce the size after the movie is created, the open source package <a href="http://handbrake.fr/">Hand Brake</a> can be used to compress and covert the files.</p>
+
+<a name="heading4"></a>
+<h2>Changing additional display settings</h2>
+
+<p>A wide range of different visualisations can be produced by modifying additional input parameters. 
+For example, a mesh plot can be produced instead of an image plot by setting <code>'MeshPlot'</code> to <code>true</code> (supported in 2D only), the display mask can be customised or switched off using <code>'DisplayMask'</code>, and the visibility of the PML can be controlled using <code>'PlotPML'</code>. 
+If no sensor output is required, the sensor input can also be left blank using an empty array.</p> 
+
+<pre class="codeinput">
+<span class="comment">% set the input arguments</span>
+input_args = {..., 'MeshPlot', true, 'DisplayMask', 'off', 'PlotPML', false, ...};
+
+<span class="comment">% run the simulation without a sensor input</span>
+kspaceFirstOrder2D(kgrid, medium, source, [], input_args{:});
+</pre>
+
+<p>Note, if you see a blank movie when using the option <code>'MeshPlot'</code> set to  <code>true</code>, this can sometimes be solved by running the command <code>opengl('software')</code>. This forces MATLAB to use software OpenGL rendering instead of hardware OpenGL.</p>
+
+</div></body></html>

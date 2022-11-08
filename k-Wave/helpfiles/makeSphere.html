@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>makeSphere :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>makeSphere</h1>
+<p class="purpose">Create a binary map of a sphere within a 3D grid.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+sphere = makeSphere(Nx, Ny, Nz, radius)
+sphere = makeSphere(Nx, Ny, Nz, radius, plot_sphere)
+sphere = makeSphere(Nx, Ny, Nz, radius, plot_sphere, binary)
+sphere = makeSphere(Nx, Ny, Nz, radius, [], binary)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>makeSphere</code> creates a binary map of a spherical shell (using an extension of the midpoint circle algorithm) within a three-dimensional grid. The sphere position is denoted by 1's in the matrix with 0's elsewhere. If the Boolean input parameter <code>binary</code> is set to <code>false</code> (the default), the sphere map is returned as a double precision matrix. If it is set to <code>true</code>, the map is returned as a logical matrix. A visualisation of the 3D grid returned by calling <code>makeSphere(64, 64, 64, 20, true);</code> and a cut away showing the singel grid point thickness (for illustrative purposes only) are given below.</p>
+
+<img vspace="5" hspace="5" src="images/makeSphere_01.png" style="width:560px;height:420px;" alt="">
+<img vspace="5" hspace="5" src="images/makeSphere_02.png" style="width:560px;height:420px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>Nx, Ny, Nz</code></td>
+        <td>size of the 3D grid [grid points]</td>
+    </tr>     
+    
+    <tr valign="top">
+        <td width = "150"><code>radius</code></td>
+        <td>sphere radius [grid points]</td>
+    </tr>     
+</table>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">
+
+    <tr valign="top">
+        <td width = "150"><code>plot_sphere</code></td>
+        <td>Boolean controlling whether the sphere is plotted using <code><a href="voxelPlot.html">voxelPlot</a></code> (default = <code>false</code>)</td>
+    </tr>   
+    
+    <tr valign="top">
+        <td width = "150"><code>binary</code></td>
+        <td>Boolean controlling whether the sphere map is returned as a double precision matrix (<code>false</code>) or a logical matrix (<code>true</code>) (default = <code>false</code>)</td>
+    </tr>  
+    
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>sphere</code></td>
+        <td>3D binary map of a sphere</td>
+    </tr>
+</table>
+
+<h2>Examples</h2>
+<ul>
+<li><a href="example_sd_focussed_detector_3D.html">Focussed Detector in 3D</a></li>
+<li><a href="example_pr_3D_tr_spherical_sensor.html">3D Time Reversal For A Spherical Sensor</a></li>
+</ul>
+
+<h2>See Also</h2>
+
+<code><a href="makeBall.html">makeBall</a></code>, <code><a href="makeCartSphere.html">makeCartSphere</a></code>, <code><a href="makeCircle.html">makeCircle</a></code>, <code><a href="makeSphericalSection.html">makeSphericalSection</a></code> 
+
+</div></body></html>

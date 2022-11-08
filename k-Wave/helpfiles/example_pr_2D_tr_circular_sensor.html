@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>2D Time Reversal Reconstruction For A Circular Sensor Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="2D Time Reversal Reconstruction For A Circular Sensor Example.">
+</head>
+
+<body><div class="content">
+
+<h1>2D Time Reversal Reconstruction For A Circular Sensor Example</h1>
+
+<p>This example demonstrates the use of k-Wave for the time-reversal reconstruction of a two-dimensional photoacoustic wave-field recorded over a circular array of sensor elements. The sensor data is simulated and then time-reversed using <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>. It builds on the <a href="example_pr_2D_tr_line_sensor.html">2D Time Reversal Reconstruction For A Line Sensor Example</a>.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_pr_2D_TR_circular_sensor.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_pr_2D_TR_circular_sensor']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Simulating the sensor data</a></li>
+		<li><a href="#heading3">Avoiding the inverse crime</a></li>
+		<li><a href="#heading4">Interpolating incomplete sensor data</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Simulating the sensor data</h2>
+
+<p>The sensor data is simulated using <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code> with an external image map for the initial pressure distribution in the same way as the <a href="example_ivp_loading_external_image.html">Loading External Image Maps Example</a> (this time the image is representative of vasculature). A plot of the initial pressure distribution (scaled to 256 by 256 grid points) and the Cartesian sensor mask used to record the pressure field (70 sensor points over a 270 degree measurement angle) is shown below.</p>
+
+<img vspace="5" hspace="5" src="images/example_pr_2D_tr_circular_sensor_01.png" style="width:560px;height:420px;" alt="">
+
+<a name="heading3"></a>
+<h2>Avoiding the inverse crime</h2>
+
+<p>To avoid the inverse crime (in which computations are run forwards and backwards using the same parameters and discretisation thereby possibly disguising any underlying errors), in this example the time-reversal reconstruction is computed using measurement data with added noise (using <code><a href="addNoise.html">addNoise</a></code>) and a different computational grid. The use of a different reconstruction grid size is straightforward for a Cartesian sensor mask; in the forward simulation the pressure time-series at the Cartesian points are computed using interpolation and can thus be transposed to a grid of any size. The time-reversal reconstruction using a computational grid with 300 by 300 grid points is shown below.</p>
+
+<img vspace="5" hspace="5" src="images/example_pr_2D_tr_circular_sensor_02.png" style="width:560px;height:420px;" alt=""> 
+    
+<a name="heading4"></a>
+<h2>Interpolating incomplete sensor data</h2>
+    
+<p>In the reconstruction shown above, the edges of original image have been significantly blurred. This is due to outgoing waves from each discrete detector position on the measurement surface interacting with other positions at which a pressure value is also being enforced during the time reversal. This interaction can be avoided by interpolating the recorded data onto a continuous (rather than discrete) measurement surface within the k-space grid used for the reconstruction. This can be achieved using <code><a href="interpCartData.html">interpCartData</a></code> and a binary sensor mask of a continuous arc that is spatially equivalent to the original Cartesian measurement surface. This function calculates the equivalent time-series at the sensor positions on the binary sensor mask from those on the Cartesian sensor mask via interpolation (nearest neighbour is used by default).</p>
+
+<pre class="codeinput">
+<span class="comment">% create a binary sensor mask of an equivalent continuous circle</span>
+sensor_radius_grid_points = round(sensor_radius / kgrid_recon.dx);
+binary_sensor_mask = makeCircle(kgrid_recon.Nx, kgrid_recon.Ny, kgrid_recon.Nx/2 + 1, kgrid_recon.Ny/2 + 1, sensor_radius_grid_points, sensor_angle);
+
+<span class="comment">% assign to sensor structure</span>
+sensor.mask = binary_sensor_mask;
+
+<span class="comment">% interpolate data to remove the gaps and assign to sensor structure</span>
+sensor.time_reversal_boundary_data = interpCartData(kgrid_recon, sensor_data, cart_sensor_mask, binary_sensor_mask);
+</pre>
+
+<p>Details of the interpolation are printed to the command line.</p>
+
+<pre class="codeinput">
+Interpolating Cartesian sensor data...
+  interpolation mode: nearest
+  number of Cartesian sensor points: 70
+  number of binary sensor points: 574
+  computation completed in 0.013681s
+</pre>
+
+<p>The reconstructed image and a profile through x = -0.5 are shown below. The interpolation has considerably sharpened the edges of the reconstruction and the magnitude has also been improved through partial correction for the discontinuous aperture.</p>
+
+<img vspace="5" hspace="5" src="images/example_pr_2D_tr_circular_sensor_03.png" style="width:560px;height:420px;" alt="">
+<img vspace="5" hspace="5" src="images/example_pr_2D_tr_circular_sensor_04.png" style="width:560px;height:420px;" alt="">
+
+</div></body></html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Simulations In Three Dimensions Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Simulations In Three Dimensions Example.">
+</head>
+
+<body>
+
+<a name="top_of_page"></a>
+<div class="content">
+
+<h1>Simulations In Three Dimensions Example</h1>
+
+<p>This example provides a simple demonstration of using k-Wave to model elastic waves in a three-dimensional heterogeneous propagation medium. It builds on the <a href="example_ewp_layered_medium.html">Explosive Source In A Layered Medium</a> and <a href="example_tvsp_3D_simulation.html">Simulations In Three-Dimensions</a> examples.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_ewp_3D_simulation.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_ewp_3D_simulation']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Running the simulation</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Running the simulation</h2>
+
+<p>Simulations in three-dimensions are performed in an analogous fashion to those in two dimensions. In this example, a focused velocity source from a rectangular piston is incident on a layered medium. The sensor mask is defined as a set of cuboid corners that covers the central x-y plane.</p>
+
+<pre class="codeinput">
+<span class="comment">% define sensor mask in x-y plane using cuboid corners, where a rectangular
+% mask is defined using the xyz coordinates of two opposing corners in the
+% form [x1, y1, z1, x2, y2, z2].'</span>
+sensor.mask = [1 + PML_size, 1 + PML_size, Nz/2, Nx - PML_size, Ny - PML_size, Nz/2].';
+</pre>
+
+<p>To allow visualisation of the source elements within the grid, the source mask is assigned to the optional input parameter <code>'DisplayMask'</code>. This mask is overlaid onto the plot during the simulation. The optional input <code>'DataCast'</code> is set to <code>'single'</code> to reduce the computation time, and the <code>'PlotScale'</code> input is used to define suitable plot limits for the display of the normal and shear stress.</p>
+
+<pre class="codeinput">
+<span class="comment">% define input arguments</span>
+input_args = {'PlotScale', [-2, 2, -0.1, 0.1], 'DataCast', 'single',...
+    'PMLSize', PML_size, 'DisplayMask', source.u_mask};
+
+<span class="comment">% run the simulation with PML inside</span>
+sensor_data = pstdElastic3D(kgrid, medium, source, sensor, input_args{:});
+</pre>
+
+<p>A snapshot of the wavefield during the simulation is given below.</p>
+
+<img vspace="5" hspace="5" src="images/example_ewp_3D_simulation_01.png" style="width:797px;height:420px;" alt="">
+
+</div></body></html>

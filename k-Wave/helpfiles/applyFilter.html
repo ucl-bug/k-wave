@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>applyFilter :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>applyFilter</h1>
+<p class="purpose">Filter input with high or low pass filter.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+filtered_signal = applyFilter(signal, Fs, cutoff_f, filter_type)
+filtered_signal = applyFilter(signal, Fs, cutoff_f, filter_type, ...)
+</pre>
+
+<h2>Description</h2>
+<p><code>applyFilter</code> filters an input signal using <code><a href="matlab: doc filter">filter</a></code>. The FIR filter coefficients are based on a Kaiser window with the specified cut-off frequency and filter type (<code>'HighPass'</code>,  <code>'LowPass'</code> or <code>'BandPass'</code>). Both causal and zero phase filters can be applied. An example of using <code>applyFilter</code> is given below.</p>
+    
+<pre class="codeinput">
+<span class="comment">% create a time series with a single monopolar pulse</span>
+N = 100;
+dt = 1e-3;
+t = 0:dt:dt * (N-1);
+pulse = zeros(length(t), 1);
+pulse(25) = 1;
+    
+<span class="comment">% filter using applyFilter</span>
+pulse_filtered_lp = applyFilter(pulse, 1/dt, 100, 'LowPass', 'Plot', true, 'ZeroPhase', true);
+pulse_filtered_hp = applyFilter(pulse, 1/dt, 100, 'HighPass', 'Plot', true);
+pulse_filtered_bp = applyFilter(pulse, 1/dt, [50, 250], 'BandPass', 'Plot', true, 'ZeroPhase', true);
+
+<span class="comment">% plot the filtered time series</span>
+figure;
+[~, scale, prefix] = scaleSI(max(t));
+plot(t * scale, pulse, 'k-', ...
+     t * scale, pulse_filtered_lp, 'r-', ...
+     t * scale, pulse_filtered_hp, 'b-', ...
+     t * scale, pulse_filtered_bp, 'g-');
+xlabel(['Time [' prefix 's]']);
+ylabel('Signal Amplitude [au]');
+legend('Original Signal', 'Zero Phase Low Pass Filter', 'Causal High Pass Filter', 'Zero Phase Band Pass Filter', 'Location', 'best');
+</pre>
+
+<img vspace="5" hspace="5" src="images/applyFilter_01.png" style="width:560px;height:420px;" alt="">
+<img vspace="5" hspace="5" src="images/applyFilter_02.png" style="width:560px;height:420px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>func</code></td>
+        <td>signal to filter</td>
+    </tr>     
+    
+    <tr valign="top">
+        <td><code>Fs</code></td>
+        <td>sampling frequency [Hz]</td>
+    </tr>  
+
+    <tr valign="top">
+        <td><code>cutoff_f</code></td>
+        <td>filter cutoff frequency/s [Hz]</td>
+    </tr>  
+          
+    <tr valign="top">
+        <td><code>filter_type</code></td>
+        <td><code>'HighPass'</code>, <code>'LowPass'</code> or <code>'BandPass'</code></td>
+    </tr> 
+
+</table>
+
+<h2>Optional Inputs</h2>
+
+<p>Optional 'string', value pairs that may be used to modify the default computational settings.</p>
+
+<table class="body">
+    <colgroup>
+        <col width="18%"><col width="18%"><col width="18%"><col width="46%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Input</th>
+            <th bgcolor="#B2B2B2">Valid Settings</th>
+            <th bgcolor="#B2B2B2">Default</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Plot'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the amplitude spectrum is displayed before and after filtering.</td>
+        </tr>     
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'StopBandAtten'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>60</code></td>            
+            <td bgcolor="#F2F2F2">Attenuation in decibels in the stop band.</td>
+        </tr>   
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'TransitionWidth'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>0.1</code></td>            
+            <td bgcolor="#F2F2F2">Size of the transition based on the temporal sampling frequency.</td>
+        </tr>   
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'ZeroPhase'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether a zero phase filter is used.</td>
+        </tr>            
+    </tbody>
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>filtered_signal</code></td>
+        <td>the filtered signal</td>
+    </tr>      
+</table>
+
+<h2>Examples</h2>
+<ul>
+<li><a href="example_pr_2D_tr_bandlimited_sensors.html">Image Reconstruction With Bandlimited Sensors</a></li>      
+</ul>
+
+<h2>See Also</h2>
+
+<code><a href="matlab: doc filter">filter</a></code>, <code><a href="filterTimeSeries.html">filterTimeSeries</a></code>
+
+</div></body></html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>filterTimeSeries :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>filterTimeSeries</h1>
+<p class="purpose">Filter signal using the Kaiser windowing method.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+filtered_signal = filterTimeSeries(kgrid, medium, signal)
+filtered_signal = filterTimeSeries(kgrid, medium, signal, ...)
+</pre>
+
+<h2>Description</h2>
+<p><code>filterTimeSeries</code> filters an input time domain signal using a low pass filter applied by <code><a href="applyFilter.html">applyFilter</a></code> with a specified cut-off frequency, stop-band attenuation, and transition bandwidth. It uses the Kaiser Windowing method to design the FIR filter, which can be implemented as either a zero phase or linear phase filter. The cutoff frequency is defined by a minimum number of points per wavelength. A smoothing ramp can also be applied to the beginning of the signal to reduce high frequency transients.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>kgrid</code></td>
+        <td>k-Wave grid object returned by kWaveGrid</td>
+    </tr>     
+    
+    <tr valign="top">
+        <td><code>medium</code></td>
+        <td>k-Wave medium structure</td>
+    </tr>
+
+    <tr valign="top">
+        <td><code>signal</code></td>
+        <td>the time domain signal to filter</td>
+    </tr>    
+</table>
+
+<h2>Optional Inputs</h2>
+
+<p>Optional 'string', value pairs that may be used to modify the default computational settings.</p>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="18%"><col width="18%"><col width="18%"><col width="46%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Input</th>
+            <th bgcolor="#B2B2B2">Valid Settings</th>
+            <th bgcolor="#B2B2B2">Default</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'PlotSignals'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the time signal is displayed before and after filtering.</td>
+        </tr>
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'PlotSpectrums'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the amplitude spectrum is displayed before and after filtering.</td>
+        </tr>        
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'PPW'</code></td>
+            <td bgcolor="#F2F2F2"><em>(integer numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>3</code></td>            
+            <td bgcolor="#F2F2F2">The number of points per wavelength used to compute the filter cutoff frequency (setting to 0 turns off the filtering).</td>
+        </tr>     
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'RampPPW'</code></td>
+            <td bgcolor="#F2F2F2"><em>(integer numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>0</code></td>            
+            <td bgcolor="#F2F2F2">The number of points per wavelength used to compute the length of the cosine start-up ramp (setting to 0 turns off the start-up ramp).</td>
+        </tr>        
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'StopBandAtten'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>60</code></td>            
+            <td bgcolor="#F2F2F2">Attenuation in decibels in the filter stop band.</td>
+        </tr>         
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'TransitionWidth'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>0.1</code></td>            
+            <td bgcolor="#F2F2F2">Size of the transition relative to the temporal sampling frequency.</td>
+        </tr>         
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'ZeroPhase'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether a causal or zero phase filter is applied.</td>
+        </tr>          
+        
+    </tbody>
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>filtered_signal</code></td>
+        <td>the filtered time signal</td>
+    </tr>
+</table>
+
+<h2>Examples</h2>
+<ul>
+<li><a href="example_tvsp_homogeneous_medium_monopole.html">Monopole Point Source In A Homogeneous Propagation Medium</a></li>   
+<li><a href="example_tvsp_homogeneous_medium_dipole.html">Dipole Point Source In A Homogeneous Propagation Medium</a></li>  
+<li><a href="example_tvsp_transducer_field_patterns.html">Simulating Transducer Field Patterns</a></li> 
+<li><a href="example_tvsp_doppler_effect.html">The Doppler Effect</a></li> 
+<li><a href="example_tvsp_slit_diffraction.html">Diffraction Through A Slit</a></li>  
+<li><a href="example_tvsp_3D_simulation.html">Simulations In Three-Dimensions</a></li>
+<li><a href="example_sd_focussed_detector_3D.html">Focussed Detector in 3D</a></li>
+<li><a href="example_sd_directivity_modelling_2D.html">Modelling Sensor Directivity in 2D</a></li>  
+<li><a href="example_sd_directivity_modelling_3D.html">Modelling Sensor Directivity in 3D</a></li> 
+<li><a href="example_sd_directional_array_elements.html">Focussed 2D Array with Directional Elements</a></li> 
+<li><a href="example_na_filtering.html">Filtering A Delta Function Input Signal</a></li> 
+</ul>
+<h2>See Also</h2>
+
+<code><a href="applyFilter.html">applyFilter</a></code>, <code><a href="smooth.html">smooth</a></code>, <code><a href="spect.html">spectrum</a></code>
+
+</div></body></html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>3D FFT Reconstruction For A Planar Sensor Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="3D FFT Reconstruction For A Planar Sensor Example.">
+</head>
+
+<body><div class="content">
+
+<h1>3D FFT Reconstruction For A Planar Sensor Example </h1>
+
+<p>This example demonstrates the use of k-Wave for the reconstruction of a three-dimensional photoacoustic wave-field recorded over a planar array of sensor elements. The sensor data is simulated using <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> and reconstructed using <code><a href="kspacePlaneRecon.html">kspacePlaneRecon</a></code>. It builds on the <a href="example_ivp_3D_simulation.html">Simulations In Three Dimensions</a> and <a href="example_pr_2D_fft_line_sensor.html">2D FFT Reconstruction For A Line Sensor</a> examples.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_pr_3D_FFT_planar_sensor.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_pr_3D_FFT_planar_sensor']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Simulating the sensor data</a></li>
+		<li><a href="#heading3">Performing the reconstruction</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Simulating the sensor data</h2>
+
+<p>The sensor data is simulated using <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> in the same way as in the preceding simulation examples. The initial pressure is created using <code><a href="makeBall.html">makeBall</a></code> and is again smoothed prior to invoking the simulation. The sensor mask is defined to be a planar sensor array (over a plane x = const). A visualisation of the initial pressure distribution and the sensor mask using <code><a href="voxelPlot.html">voxelPlot</a></code> is given below.</p>
+
+<pre class="codeinput">
+<span class="comment">% smooth the initial pressure distribution and restore the magnitude</span>
+source.p0 = smooth(p0, true);
+
+<span class="comment">% define a binary planar sensor</span>
+sensor.mask = zeros(kgrid.Nx, kgrid.Ny, kgrid.Nz);
+sensor.mask(1, :, :) = 1;
+</pre>
+
+<img vspace="5" hspace="5" src="images/example_pr_3D_fft_planar_sensor_01.png" style="width:560px;height:420px;" alt="">
+
+<a name="heading3"></a>
+<h2>Performing the reconstruction</h2>
+
+<p>The reconstruction is invoked by calling <code><a href="kspacePlaneRecon.html">kspacePlaneRecon</a></code> with the sensor data (recorded over a planar sensor array), as well as the properties of the acoustic medium and the sampling parameters. By default, the sensor data input must be indexed as <code>p_tyz(time, sensor_y_position, sensor_z_position)</code>. Alternatively, the optional input parameter <code>'DataOrder'</code> can be set to <code>'yzt'</code> (the default setting is <code>'tyz'</code>). In both cases, the simulated <code>sensor_data</code> returned by <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> must first be reshaped.</p>
+
+<pre class="codeinput">
+<span class="comment">% reshape sensor data to y, z, t</span>
+sensor_data_rs = reshape(sensor_data, Ny, Nz, kgrid.Nt);
+
+<span class="comment">% reconstruct the initial pressure</span>
+p_xyz = kspacePlaneRecon(sensor_data_rs, kgrid.dy, kgrid.dz, kgrid.dt, ...
+    medium.sound_speed, 'DataOrder', 'yzt', 'PosCond', true, 'Plot', true);
+</pre>
+
+<p>The size of the recorded data and the time to compute the reconstruction are both printed to the command line.</p>
+
+<pre class="codeinput">
+Running k-Wave planar reconstruction...
+  grid size: 212 by 44 by 44 grid points
+  interpolation mode: *nearest
+  applying positivity condition...
+  computation completed in 0.14516s
+</pre>
+
+<p>A plot of the initial pressure distribution and the reconstructed initial pressure distribution with a positivity condition (interpolated onto a k-space grid with the same dimensions) are shown below. The three displayed image planes intersect at the centre of ball shown above. An animated slice-by-slice visualisation of the reconstructed initial pressure distribution can also be viewed using <code><a href="flyThrough.html">flyThrough</a></code>.</p>
+
+<img vspace="5" hspace="5" src="images/example_pr_3D_fft_planar_sensor_02.png" style="width:560px;height:420px;" alt="">
+<img vspace="5" hspace="5" src="images/example_pr_3D_fft_planar_sensor_03.png" style="width:560px;height:420px;" alt="">
+
+</div></body></html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>The Doppler Effect Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="The Doppler Effect Example.">
+</head>
+
+<body><div class="content">
+
+<h1>The Doppler Effect Example</h1>
+
+<p>This example demonstrates the doppler effect in which a stationary sensor point records a shift in frequency as a moving source travels past. It builds on the <a href="example_tvsp_homogeneous_medium_monopole.html">Monopole Point Source In A Homogeneous Propagation Medium Example</a>.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_tvsp_doppler_effect.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_tvsp_doppler_effect']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+        <li><a href="#heading2">Creating a moving source</a></li>
+    </ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Creating a moving source</h2>
+
+<p>The moving source is created by using a line of source points and then gradually moving the active points along this line. To create a smoother source transition from point to point, the source strength is interpolated between pairs of points using linear interpolation. The input pressure signal to each source point along with the total input pressure is plotted below.</p>
+
+<img vspace="5" hspace="5" src="images/example_tvsp_doppler_effect_01.png" style="width:560px;height:420px;" alt=""> 
+
+<p>A snapshot of the moving source is given below. In this example the source is moving to the right. Notice that the wavefronts are slightly closer together on the right hand side than on the left.</p>
+
+<img vspace="5" hspace="5" src="images/example_tvsp_doppler_effect_02.png" style="width:560px;height:420px;" alt=""> 
+
+<p>As the source approaches the receiver, the amplitude gradually increases and the perceived frequency is shifted upwards according to the relative velocity between them. The amplitude of the recorded signal reaches a maximum when the source is adjacent to the receiver. The amplitude then gradually decreases as the source moves away, with the perceived frequency similarly shifted downwards. The shift in frequency can clearly be seen by analysing the parts of the time series corresponding to the approach of the source to the receiver and its retreat away again.</p>
+
+<img vspace="5" hspace="5" src="images/example_tvsp_doppler_effect_03.png" style="width:560px;height:420px;" alt=""> 
+<img vspace="5" hspace="5" src="images/example_tvsp_doppler_effect_04.png" style="width:560px;height:420px;" alt=""> 
+
+</div></body></html>

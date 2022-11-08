@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>focus :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>focus</h1>
+<p class="purpose">Create input signal based on source mask and focus position.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+input_signal_mat = focus(kgrid, input_signal, source_mask, focus_position, sound_speed)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>focus</code> takes a single input signal and a source mask and creates an input signal matrix (with one input signal for each source point). The appropriate time delays required to focus the signals at a given position in Cartesian space are automatically added based on the user inputs for <code>focus_position</code> and <code>sound_speed</code>. </p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>kgrid</code></td>
+        <td>k-Wave grid object returned by <code><a href="kWaveGrid.html">kWaveGrid</a></code></td>
+    </tr>  
+	<tr valign="top">
+        <td><code>input_signal</code></td>
+        <td>single time series input</td>
+    </tr>   
+    <tr valign="top">
+        <td><code>source_mask</code></td>
+        <td>matrix specifying the positions of the time varying source distribution (i.e., source.p_mask or source.u_mask)</td>
+    </tr>  
+    <tr valign="top">
+        <td><code>focus_position</code></td>
+        <td>position of the focus in Cartesian coordinates</td>
+    </tr>   
+    <tr valign="top">
+        <td><code>sound_speed</code></td>
+        <td>scalar sound speed</td>
+    </tr>   
+    
+</table>
+    
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>input_signal_mat</code></td>
+        <td>matrix of time series following the source points using MATLAB's column-wise linear index ordering</td>
+    </tr>
+</table>
+
+
+
+
+</div></body></html>

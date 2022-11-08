@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>getWin :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>getWin</h1>
+<p class="purpose">Return a frequency domain windowing function.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+win = getWin(N, type)
+win = getWin(N, type, ...)
+[win, cg] = getWin(N, type)
+[win, cg] = getWin(N, type, ...)
+</pre>
+
+<h2>Description</h2>
+<p><code>getWin</code> returns a 1D, 2D, or 3D frequency domain window of the specified type of the given dimensions. By default, higher dimensional windows are created using the outer product. The windows can alternatively be created using rotation by setting the optional input <code>'Rotation'</code> to <code>true</code>. The coherent gain of the window can also be returned. Several examples are given below.</p>
+    
+<pre class="codeinput">
+getWin(32, 'Hanning', 'Plot', true);
+</pre>
+
+<img vspace="5" hspace="5" src="images/getWin_01.png" style="width:560px;height:420px;" alt="">
+
+<pre class="codeinput">
+getWin(32, 'Hanning', 'Plot', true, 'Symmetric', false);
+</pre>
+
+<img vspace="5" hspace="5" src="images/getWin_02.png" style="width:560px;height:420px;" alt="">
+
+<pre class="codeinput">
+getWin([32, 32], 'Gaussian', 'Plot', true);
+</pre>
+
+<img vspace="5" hspace="5" src="images/getWin_03.png" style="width:560px;height:420px;" alt="">
+
+<pre class="codeinput">
+getWin([30, 40], 'Gaussian', 'Plot', true, 'Rotation', true);
+</pre>
+
+<img vspace="5" hspace="5" src="images/getWin_04.png" style="width:560px;height:420px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>N</code></td>
+        <td>
+            <p>number of samples, use</p>
+            <p><code>N = Nx</code> for 1D<br/><code>N = [Nx Ny]</code>  for 2D<br/><code>N = [Nx Ny Nz]</code> for 3D</p>
+        </td>
+    </tr>     
+    
+    <tr valign="top">
+        <td><code>type</code></td>
+        <td>
+            <p>window type. Supported values are</p>
+            <p>
+<code>'Bartlett'</code><br/>
+<code>'Bartlett-Hanning'<br/>
+<code>'Blackman'</code><br/>
+<code>'Blackman-Harris'</code><br/>
+<code>'Blackman-Nuttall'</code><br/>
+<code>'Cosine'</code><br/>
+<code>'Flattop'</code><br/>
+<code>'Gaussian'</code><br/>
+<code>'HalfBand'</code><br/>
+<code>'Hamming'</code><br/>
+<code>'Hanning'</code><br/>
+<code>'Kaiser'</code><br/>
+<code>'Lanczos'</code><br/>
+<code>'Nuttall'</code><br/>
+<code>'Rectangular'</code><br/>
+<code>'Triangular'</code><br/>
+<code>'Tukey'</code><br/></p>
+        </td>
+    </tr>  
+          
+</table>
+
+<h2>Optional Inputs</h2>
+
+<p>Optional 'string', value pairs that may be used to modify the default computational settings.</p>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="18%"><col width="18%"><col width="18%"><col width="46%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Input</th>
+            <th bgcolor="#B2B2B2">Valid Settings</th>
+            <th bgcolor="#B2B2B2">Default</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Plot'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the window is displayed.</td>
+        </tr>     
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Param'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>0.16 ('Blackman')</code><br/><code>0.5 ('Gaussian')</code><br/><code>3 ('Kaiser')</code><br/><code>0.5 ('Tukey')</code></td>            
+            <td bgcolor="#F2F2F2">Control parameter for the Blackman, Gaussian, Kaiser, and Tukey windows.</td>
+        </tr>   
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Rotation'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether 2D and 3D windows are created via rotation or the outer product. Windows created via rotation will have edge values outside the window radius set to zero.</td>
+        </tr> 
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Symmetric'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean)</em></td>
+            <td bgcolor="#F2F2F2"><code>true</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the window is symmetrical. If set to false, a window of length N + 1 is created and the first N points are returned. For 2D and 3D windows, <code>'Symmetric'</code> can be defined as a vector defining the symmetry in each matrix dimension.</td>
+        </tr> 
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Square'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the window is forced to be square. If set to true and Nx and Nz are not equal, the window is created using the smaller variable, and then padded with zeros.</td>
+        </tr>             
+    </tbody>
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>win</code></td>
+        <td>window</td>
+    </tr>  
+
+    <tr valign="top">
+        <td><code>cg</code></td>
+        <td>coherent gain of the window</td>
+    </tr>     
+</table>
+
+<h2>Examples</h2>
+<ul>
+<li><a href="example_pr_2D_tr_absorption_compensation.html">Image Reconstruction With Compensation For Acoustic Absorption</a></li>
+<li><a href="example_na_source_smoothing.html">Source Smoothing</a></li>               
+</ul>
+
+</div></body></html>

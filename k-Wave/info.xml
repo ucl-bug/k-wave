@@ -1,0 +1,23 @@
+<productinfo
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="optional">
+	<?xml-stylesheet type="text/xsl" href="optional"?>
+    <!-- info.xml file for the k-Wave Toolbox -->
+    <!-- Version 1.4 -->
+    <!-- Copyright (2009-2022) (Bradley Treeby, Ben Cox, and Jiri Jaros).-->
+	
+	<matlabrelease>2011a</matlabrelease>
+	<name>k-Wave</name>
+	<type>toolbox</type>
+	<icon>$toolbox/matlab/icons/matlabicon.gif</icon>
+	<help_location>./helpfiles</help_location>
+
+	<list>
+		<listitem>
+			<label>Product Page (Web)</label>
+			<callback>web www.k-wave.org -browser</callback>
+			<icon>$toolbox/matlab/icons/webicon.gif</icon>
+		</listitem>
+	</list>
+
+</productinfo>

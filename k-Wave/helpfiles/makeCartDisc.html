@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>makeCartDisc :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>makeCartDisc</h1>
+<p class="purpose">Create evenly distributed Cartesian points covering a disc.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+disc = makeCartDisc(disc_pos, radius, focus_pos, num_points)
+disc = makeCartDisc(disc_pos, radius, focus_pos, num_points, plot_disc)
+disc = makeCartDisc(disc_pos, radius, focus_pos, num_points, plot_disc, use_spiral)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>makeCartDisc</code> creates an array of the Cartesian coordinates of points evenly distributed over a disc. The disc points are calculated using either Fermat's spiral or a set of concentric circles (the default). The position of the disc is set by <code>disc_pos</code>. If given as a 2 element vector, the Cartesian disc points are returned in 2D. If given as a 3 element vector, the Cartesian disc points are returned in 3D assuming the disc lies in the x-y plane. In 3D, the orientation of the disc can optionally be defined using the <code>focus_pos</code> input. The 2D plot that is displayed after calling <code>makeCartDisc([1, 1], 1, [], 200, true);</code> is given below.</p>
+
+<img vspace="5" hspace="5" src="images/makeCartDisc_01.png" style="width:700px;height:525px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>disc_pos</code></td>
+        <td>Cartesian position of the centre of the disc given as a two (2D) or three (3D) element vector [m]</td>
+    </tr>     
+    <tr valign="top">
+        <td width = "150"><code>radius</code></td>
+        <td>Radius of the disc [m]</td>        
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>focus_pos</code></td>
+        <td>Any point on the beam axis of the disc given as a three element vector <code>[fx, fy, fz]</code> [m], can be set to [] to define a disc in the x-y plane [m]</td>        
+    </tr> 
+    <tr valign="top">
+        <td width = "150"><code>num_points</code></td>
+        <td>Number of points on the disc</td>        
+    </tr> 
+</table>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">   
+    <tr valign="top">
+        <td width = "150"><code>plot_disc</code></td>
+        <td>Boolean controlling whether the Cartesian coordinates are plotted (default = false)</td>
+    </tr>    
+    <tr valign="top">
+        <td width = "150"><code>use_spiral</code></td>
+        <td>Boolean controlling whether the Cartesian points are chosen using a spiral sampling pattern instead of concentric sampling (default = false)</td>
+    </tr>  
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>disc</code></td>
+        <td>2 x <code>num_points</code> or 3 x <code>num_points</code> array of Cartesian coordinates</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="makeDisc.html">makeDisc</a></code>, <code><a href="makeCartBowl.html">makeCartBowl</a></code>
+
+</div></body></html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Modelling Sensor Directivity In 3D Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Modelling Sensor Directivity In 3D Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Modelling Sensor Directivity In 3D Example</h1>
+
+<p>This example demonstrates how the sensitivity of a large single element detector varies with the angular position of a point-like source. It is a 3D version of the <a href="example_sd_directivity_modelling_2D.html">Modelling Sensor Directivity In 2D</a> example.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_sd_directivity_modelling_3D.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_sd_directivity_modelling_3D']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Defining a large element detector</a></li>
+		<li><a href="#heading3">Defining a collection of point sources</a></li>
+		<li><a href="#heading4">Running simulations for each point source</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Defining a large element detector</h2>
+
+<p>The sensor is defined as a large area detector in the shape of a square.</p>
+
+<pre class="codeinput">
+<span class="comment">% define a large area detector</span>
+sz = 16;        <span class="comment">% [grid points]</span>
+sensor.mask = zeros(Nx, Ny, Nz);
+sensor.mask(Nx/2 + 1, (Ny/2 - sz/2 + 1):(Ny/2 + sz/2 + 1), (Nz/2 - sz/2 + 1):(Nz/2 + sz/2 + 1)) = 1;
+</pre>
+
+<a name="heading3"></a>
+<h2>Defining a collection of point sources</h2>
+
+<p>Equi-spaced point sources are then defined at a fixed distance from the centre of the detector face. To do this, the Cartesian coordinates of the points are calculated using <code><a href="makeCartCircle.html">makeCartCircle</a></code>. A binary source mask corresponding to these Cartesian points is then calculated using <code><a href="cart2grid.html">cart2grid</a></code>. The indices of the matrix elements for which the binary mask is equal to 1 (the source points) are found using <code><a href="matlab: doc find">find</a></code>.</p>
+
+<pre class="codeinput">
+<span class="comment">% define equally spaced point sources lying on a circle centred at the
+% centre of the detector face</span>
+radius = 20;    <span class="comment">% [grid points]</span>
+points = 11;
+circle = makeCartCircle(radius * dx, points, [0, 0], pi);
+circle = [circle; zeros(1, points)];
+
+<span class="comment">% find the binary sensor mask most closely corresponding to the cartesian
+% coordinates from makeCartCircle</span>
+circle3D = cart2grid(kgrid, circle);
+
+<span class="comment">% find the indices of the sources in the binary source mask</span>
+source_positions = find(circle3D == 1);
+</pre>
+
+<img vspace="5" hspace="5" src="images/example_sd_directivity_modelling_3D_01.png" style="width:560px;height:420px;" alt="">
+
+<p>A time varying pressure source is defined to drive the point sources.</p>
+
+<pre class="codeinput">
+<span class="comment">% define a time varying sinusoidal source</span>
+source_freq = 0.25e6;   <span class="comment">% [Hz]</span>
+source_mag = 1;         <span class="comment">% [Pa]</span>
+source.p = source_mag * sin(2 * pi * source_freq * kgrid.t_array);
+
+<span class="comment">% filter the source to remove high frequencies not supported by the grid</span>
+source.p = filterTimeSeries(kgrid, medium, source.p);
+</pre>
+
+<a name="heading4"></a>
+<h2>Running simulations for each point source</h2>
+
+<p>For each point source, a new binary source mask is defined, and the simulation is run. When each simulation has finished, the returned sensor data is summed together to mimic a single large detector.</p>
+
+<pre class="codeinput">
+<span class="comment">% run a simulation for each of these sources to see the effect that the
+% angle from the detector has on the measured signal</span>
+for source_loop = 1:points
+    
+    <span class="comment">% select a point source</span>
+    source.p_mask = zeros(Nx, Ny, Nz);
+    source.p_mask(source_positions(source_loop)) = 1;
+
+    <span class="comment">% create a display mask to display the transducer</span>
+    display_mask = source.p_mask + sensor.mask;
+
+    <span class="comment">% run the simulation</span>
+    input_args = {'PMLSize', 10, 'DisplayMask', display_mask, ...
+        'PlotScale', [-0.2, 0.2], 'PlotFreq', 50,  'DataCast', 'single'};
+    sensor_data = kspaceFirstOrder3D(kgrid, medium, source, sensor, input_args{:});
+
+    <span class="comment">% average the data recorded for each grid point to simulate the
+    % measured signal from a large aperture, single element, detector</span>
+    single_element_data(:, source_loop) = sum(sum(sensor_data, 1), 1);
+
+end
+</pre>
+
+<img vspace="5" hspace="5" src="images/example_sd_directivity_modelling_3D_02.png" style="width:560px;height:420px;" alt="">
+
+<p>The maxima of the time series, one per source position, are plotted below as a function of the angle between the detector plane and a line joining the point source and the centre of the detector face. The directionality introduced by the large size of the detector is clearly seen.</p>
+
+<img vspace="5" hspace="5" src="images/example_sd_directivity_modelling_3D_03.png" style="width:560px;height:420px;" alt="">
+
+</div></body></html>

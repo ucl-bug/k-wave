@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Equivalent Source Holography Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Equivalent Source Holography Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Equivalent Source Holography Example</h1>
+
+<p>This examples demonstrates how to project a plane of measured data using <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> by calculating an equivalent mass source (i.e., <code>source.p</code> with <code>source.p_mode =
+’additive’</code>) positioned in a parallel plane that recreates the measured data. It builds on the <a href="example_tvsp_3D_simulation.html">Simulations In Three Dimensions</a> and <a href="example_tvsp_angular_spectrum.html">Holographic Projections Using The Angular Spectrum Method</a> examples.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_tvsp_equivalent_source_holography.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_tvsp_equivalent_source_holography']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<p>For a more detailed discussion of this example and the underlying techniques, see B. Treeby, F. Lucka, E. Martin, E. and B. Cox, "Equivalent-Source Acoustic Holography for Projecting Measured Ultrasound Fields Through Complex Media," <em>IEEE Transactions on Ultrasonics, Ferroelectrics, and Frequency Control</em>, vol. 65, no, 10, pp.1857-1864, 2018.</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Overview</a></li>
+		<li><a href="#heading3">Generating the input and output data</a></li>
+        <li><a href="#heading4">Calculating the equivalent source</a></li>
+		<li><a href="#heading5">Holographic projections</a></li>
+    </ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Overview</h2>
+
+<p>Holographic projections of experimental ultrasound measurements generally use the angular spectrum method or Rayleigh integral, where the measured acoustic pressure is imposed as a Dirichlet boundary condition. In contrast, the acoustic modelling functions in k-Wave use interior mass sources (i.e., <code>source.p</code>) to introduce acoustic energy into the simulation. It is possible to enforce measured values in the simulation by using the <code>source.p_mode =
+’dirichlet’</code> option. At each time step, this replaces the pressure values over the measurement plane with the measured data. However, this data replacement at discrete time steps does not exactly preserve the spatial gradients that existed in the original field and thus introduces numerical errors. (Note, this is not unique to k-Wave and also applies to other collocation methods including those based on finite differences.)</p>
+
+<p>In this example, the function <code><a href="calculateMassSourceCW.html">calculateMassSourceCW</a></code> is used to generate an equivalent interior mass source, positioned on a parallel plane, that reproduces the measurement data. The function uses gradient-based optimization to find the equivalent source, where the update steps are calculated using gradient descent and the gradients of the error functional are calculated using a numerical forward model and its adjoint (more details are given in the reference above). The calculated equivalent-source can then be used with <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> to accurately compute holographic projections through complex media including nonlinearity and heterogeneous material properties. Note, for fields that are not time-harmonic, the function <code><a href="calculateMassSource.html">calculateMassSource</a></code> should be used.</p>
+
+</code>
+
+<a name="heading3"></a>
+<h2>Generating the input and output data</h2>
+
+<p>The function <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> is used to simulate the output from a rectangular piston transducer driven by a 2 MHz continuous wave sinusoid created using <code><a href="createCWSignals.html">createCWSignals</a></code>. The transducer is oriented in the z-direction. The sensor mask is defined as two planes: an x-y plane positioned 8 grid points from the source (this is used for the input data), and the central x-z plane through the domain (this is used for comparison with the projected fields).</p>
+
+<pre class="codeinput">
+<span class="comment">% define rectangular source mask</span>
+source.p_mask = zeros(Nx, Ny, Nz);
+source.p_mask(Nx/2 - rect_x_radius + 1:Nx/2 + rect_x_radius, Ny/2 - rect_y_radius + 1:Ny/2 + rect_y_radius, 1) = 1;
+
+<span class="comment">% define source signal as a continuous wave sinusoid</span>
+source.p = createCWSignals(kgrid.t_array, source_freq, 1, 0);
+
+<span class="comment">% define two planar sensor masks using opposing corners of a cuboid</span>
+sensor.mask = [1, 1,    input_plane_z_index, Nx, Ny,   input_plane_z_index; ...
+               1, Ny/2, input_plane_z_index, Nx, Ny/2, Nz].';
+</pre>
+
+<p>The time step for the simulation is defined using an integer number of points-per-period. The simulation is then run until steady state, with the time-varying acoustic pressure recorded over the last three cycles. After the simulation is complete, the function <code><a href="extractAmpPhase.html">extractAmpPhase</a></code> is used to extract the amplitude and phase at each point over the two sensor planes. Using an integer number of points-per-period and recording for an integer number of periods means the amplitude and phase can be precisely extracted from the amplitude spectrum without spectral leakage.</p>
+
+<pre class="codeinput">
+<span class="comment">% compute sampling rates, forcing points-per-period to be an integer</span>
+points_per_wavelength = c0 / (source_freq * dx);
+points_per_period = round(points_per_wavelength / cfl);
+
+<span class="comment">% compute corresponding time spacing</span>
+dt = 1 / (points_per_period * source_freq);    
+
+<span class="comment">% create the time array</span>
+Nt = round(t_end / dt);
+kgrid.setTime(Nt, dt);
+
+<span class="comment">% set the start time to only record the last three periods</span>
+sensor.record_start_index = kgrid.Nt - 3 * points_per_period + 1;
+</pre>
+
+<p>The calculated input plane is shown below (referred to herein as the measured data). Note, to project experimental data, this can be replaced with a 2D matrix of complex pressure values extracted from the experimentally measured data.</p>
+
+<img vspace="5" hspace="5" src="images/example_tvsp_equivalent_source_holography_01.png" style="width:560px;height:250px;" alt="">
+
+<a name="heading4"></a>
+<h2>Calculating the equivalent source</h2>
+
+<p>The function <code><a href="calculateMassSourceCW.html">calculateMassSourceCW</a></code> is used to calculate the equivalent source. This computes a continuous wave (CW) additive pressure source positioned on a plane parallel to the measurement plane separated by <code>source_offset</code> grid points (<code><a href="calculateMassSource.html">calculateMassSource</a></code> should be should be used for non-CW data). For focused ultrasound fields, the equivalent source plane will usually need to be larger than the measured input plane. In this case, the <code>grid_expansion</code> input should be specified so that the grid size is large enough to capture the source variation. Note, the position of the equivalent source plane does not need to match the position of the real source in the experiment (although this can be useful in some cases). It is merely a device to generate the correct input to the numerical model.</p>
+
+<pre class="codeinput">
+<span class="comment">% calculate equivalent source</span>
+[source_estimate, optim_params] = calculateMassSourceCW(input_plane_complex, dx, source_freq, c0, source_offset, grid_expansion);
+</pre>
+
+<p>As <code><a href="calculateMassSourceCW.html">calculateMassSourceCW</a></code> runs, a graphical output is provided showing the progress of the optimisation. This shows the amplitude and phase of the input (measured) data, the corresponding amplitude and phase calculated using the current estimate of the equivalent source, the current amplitude and phase error, and a convergence plot of the error with iteration number. By default, 20 iterations of the optimisation are performed (where two model runs are needed per iteration). In most cases, this will be sufficient for the solution to have converged. If needed, the number of iterations can be controlled using the optional input parameter <code>'NumSteps'</code>. For this example, after 20 iterations, the error is very small, and there is a close match between the measured and modelled data.</p>
+
+<img vspace="5" hspace="5" src="images/example_tvsp_equivalent_source_holography_02.png" style="width:769px;height:523px;" alt="">
+
+<p>After the specified number of iterations, the last estimate of the equivalent source is returned. This is shown below. Note, in this example, the amplitude of the equivalent source does not conform to an exact rectangle. This is because the input plane where the measured data is recorded is positioned sufficiently far from the source that evanescent waves are not recorded.</p>
+
+<img vspace="5" hspace="5" src="images/example_tvsp_equivalent_source_holography_03.png" style="width:560px;height:250px;" alt="">
+
+<a name="heading5"></a>
+<h2>Holographic projections</h2>
+
+<p>The acoustic pressure field generated using the original rectangular source is shown below (reference field). For comparison, three relative error plots are also given corresponding to different holographic projections of the input data.</p>
+<ol>
+<li>The measured input plane projected with <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> using <code>source.p_mode = ’dirichlet’</code>.</li>
+<li>The calculated equivalent source plane projected with <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> using <code>source.p_mode = ’additive’</code> (the default).</li>
+<li>The measured input plane projected with <code><a href="angularSpectrumCW.html">angularSpectrumCW</a></code></li>.
+</ol>
+
+<p>As mentioned above, when directly enforcing the measured data within <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> using <code>source.p_mode = ’dirichlet’</code>, the spatial gradients that existed in the original field are not exactly preserved, so errors of a few percent are seen in the projected field (Dirichlet projection). These errors are reduced by using the equivalent source and are comparable to using the angular spectrum method (in this case slightly smaller). The calculated equivalent source can also be used to project the measured data through heterogeneous media including the effects of nonlinearity.</p>
+
+<img vspace="5" hspace="5" src="images/example_tvsp_equivalent_source_holography_04.png" style="width:560px;height:420px;" alt="">
+
+</div></body></html>

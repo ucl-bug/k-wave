@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>makeCartSphericalSegment :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>makeCartSphericalSegment</h1>
+<p class="purpose">Create evenly distributed Cartesian points covering a spherical segment.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+segment = makeCartSphericalSegment(bowl_pos, radius, inner_diameter, outer_diameter, focus_pos, num_points)
+segment = makeCartSphericalSegment(bowl_pos, radius, inner_diameter, outer_diameter, focus_pos, num_points, plot_bowl)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>makeCartSphericalSegment</code> makeCartSphericalSegment creates a 3 x <code>num_points</code> array of the Cartesian coordinates of points evenly distributed over the surface of a spherical segment. This function is closely related to <code><a href="makeCartBowl.html">makeCartBowl</a></code>, however, only a segment of the bowl is used (equivalent to an annulus if the bowl was a disc).</p>
+    
+<p>The points are calculated using Fermat's spiral. The position of the segment is set by <code>bowl_pos</code>, which corresponds to the center of the rear surface of the bowl from which the annulus is derived. The orientation of the annulus is set by <code>focus_pos</code>, which corresponds to any point on the axis of the annulus (note, this must not be equal to <code>bowl_pos</code>). It is assumed that the solid angle of the bowl from which the annulus is derived is equal to or less than 2*pi steradians. If the radius is set to inf, an annular disc is generated.</p>
+    
+<p>The 3D plot that is displayed after calling <code>makeCartSphericalSegment([0, 0, 0], 60e-3, 30e-3, 60e-3, [0, 0, -1], 500, true);</code> is given below.</p>
+
+<img vspace="5" hspace="5" src="images/makeCartSphericalSection_01.png" style="width:700px;height:525px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>bowl_pos</code></td>
+        <td>Cartesian position of the centre of the rear surface of the underlying bowl on which the spherical segment lies given as a three element vector <code>[bx, by, bz]</code> [m]</td>
+    </tr>     
+    <tr valign="top">
+        <td width = "150"><code>radius</code></td>
+        <td>Radius of curvature of the underlying bowl [m]</td>        
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>inner_diameter</code></td>
+        <td>Inner aperture diameter of the spherical segment [m]</td>        
+    </tr> 
+    <tr valign="top">
+        <td width = "150"><code>outer_diameter</code></td>
+        <td>Outer aperture diameter of the spherical segment [m]</td>        
+    </tr> 
+    <tr valign="top">
+        <td width = "150"><code>focus_pos</code></td>
+        <td>Any point on the beam axis of the underlying bowl given as a three element vector <code>[fx, fy, fz]</code> [m]</td>        
+    </tr> 
+    <tr valign="top">
+        <td width = "150"><code>num_points</code></td>
+        <td>Number of points on the spherical segment</td>        
+    </tr> 
+</table>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">   
+    <tr valign="top">
+        <td width = "150"><code>plot_bowl</code></td>
+        <td>Boolean controlling whether the Cartesian points are plotted (default = false)</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>num_points_inner</code></td>
+        <td>If constructing an annular array with contiguous elements (no kerf), the positions of the points will not exactly match <code><a href="makeCartBowl.html">makeCartBowl</a></code>, as each element has no knowledge of the number of points on the internal elements. To force the points to match, specify the total number of points used on all annular segments internal to the current one.</td>
+    </tr> 
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>points</code></td>
+        <td>3 x <code>num_points</code> array of Cartesian coordinates</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="makeCartBowl.html">makeCartBowl</a></code>
+
+</div></body></html>

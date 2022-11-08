@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>makeBowl :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body><div class="content">
+
+<a name="top_of_page"></a>
+<h1>makeBowl</h1>
+<p class="purpose">Create a binary map of a bowl within a 3D grid.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+bowl = makeBowl(grid_size, bowl_pos, radius, diameter, focus_pos)
+bowl = makeBowl(grid_size, bowl_pos, radius, diameter, focus_pos, ...)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>makeBowl</code> creates a binary map of a bowl from a symmetric spherical shell within a three-dimensional grid. The bowl position is denoted by 1's in the matrix with 0's elsewhere. The bowl surface within the Cartesian grid is found using a bi-directional line search along each row and column to find the grid point with radius closest to the desired radius.</p>
+
+<p>The position of the bowl is set by <code>bowl_pos</code>, which corresponds to the center of the rear bowl surface. The orientation of the bowl is set by <code>focus_pos</code>, which corresponds to any point on the axis of the bowl (note, this must not be equal to <code>bowl_pos</code>). It is assumed that the solid angle of the bowl is equal to or less than 2*pi steradians. If the <code>radius</code> is set to <code>inf</code>, a disc is generated.</p>
+
+<p>In some cases, the generated bowl will not be simply connected, and there will be a small number of overlapping grid points. To remove these points, set the optional input 'RemoveOverlap' to true.</p>
+
+<h2>Examples</h2>
+
+<pre class="codeinput">
+<span class="comment">% define parameters</span>
+grid_size = [32, 64, 64];
+bowl_pos  = [1, 32, 32];
+radius    = 60;
+diameter  = 61;
+focus_pos = [32, 32, 32];
+
+<span class="comment">% create bowl</span>
+makeBowl(grid_size, bowl_pos, radius, diameter, focus_pos, 'Plot', true);
+</pre>
+
+<img vspace="5" hspace="5" src="images/makeBowl_01.png" style="width:560px;height:420px;" alt="">
+
+<pre class="codeinput">
+<span class="comment">% define parameters</span>
+grid_size = [128, 128, 128];
+bowl_pos  = [80, 80, 80];
+radius    = 60;
+diameter  = 81;
+focus_pos = [1, 1, 1];
+
+<span class="comment">% create bowl</span>
+makeBowl(grid_size, bowl_pos, radius, diameter, focus_pos, 'Plot', true);
+</pre>
+
+<img vspace="5" hspace="5" src="images/makeBowl_02.png" style="width:560px;height:420px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>grid_size</code></td>
+        <td>size of the 3D grid given as a three element vector [Nx, Ny, Nz] [grid points] </td>
+    </tr>
+    
+    <tr valign="top">
+        <td width = "150"><code>bowl_pos</code></td>
+        <td>centre of the rear surface of the bowl given as a three element vector [bx, by, bz] [grid points]</td>
+    </tr>
+
+    <tr valign="top">
+        <td width = "150"><code>radius</code></td>
+        <td>radius of curvature of the bowl [grid points]</td>
+    </tr>
+    
+    <tr valign="top">
+        <td width = "150"><code>diameter</code></td>
+        <td>aperture diameter of the bowl [grid points]</td>
+    </tr>
+    
+	<tr valign="top">
+        <td width = "150"><code>focus_pos</code></td>
+        <td>any point on the beam axis of the bowl given as a three element vector [fx, fy, fz] [grid points]</td>
+    </tr>    
+    
+</table>
+    
+<h2>Optional Inputs</h2>
+
+<p>Optional 'string', value pairs that may be used to modify the default computational settings.</p>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="18%"><col width="18%"><col width="18%"><col width="46%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Input</th>
+            <th bgcolor="#B2B2B2">Valid Settings</th>
+            <th bgcolor="#B2B2B2">Default</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+    	<tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Binary'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the bowl map is returned as a double precision matrix (false) or a logical matrix (true).</td>
+        </tr>  
+    
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Plot'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the bowl is plotted using <code><a href="voxelPlot.html">voxelPlot</a></code>.</td>
+        </tr>     
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'RemoveOverlap'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether overlapped grid points are removed.</td>
+        </tr>            
+    </tbody>
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>bowl</code></td>
+        <td>3D binary map of a bowl</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="makeArc.html">makeArc</a></code>, <code><a href="makeBall.html">makeBall</a></code>, <code><a href="makeCartBowl.html">makeCartBowl</a></code>, <code><a href="makeMultiBowl.html">makeMultiBowl</a></code>, <code><a href="makeSphere.html">makeSphere</a></code>, <code><a href="makeSphericalSection.html">makeSphericalSection</a></code>
+
+</div></body></html>

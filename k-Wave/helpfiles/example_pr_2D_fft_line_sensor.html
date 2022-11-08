@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>2D FFT Reconstruction For A Line Sensor Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="2D FFT Reconstruction For A Line Sensor Example.">
+</head>
+
+<body><div class="content">
+
+<h1>2D FFT Reconstruction For A Line Sensor Example </h1>
+
+<p>This example demonstrates the use of k-Wave for the reconstruction of a two-dimensional photoacoustic wave-field recorded over a linear array of sensor elements. The sensor data is simulated using <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code> and reconstructed using <code><a href="kspaceLineRecon.html">kspaceLineRecon</a></code>. It builds on the <a href="example_ivp_homogeneous_medium.html">Homogeneous Propagation Medium</a> and <a href="example_ivp_heterogeneous_medium.html">Heterogeneous Propagation Medium</a> examples.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_pr_2D_FFT_line_sensor.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_pr_2D_FFT_line_sensor']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Defining a smooth initial pressure distribution</a></li>
+		<li><a href="#heading3">Defining the time array</a></li>
+		<li><a href="#heading4">Simulating the sensor data</a></li>
+		<li><a href="#heading5">Performing the reconstruction</a></li>
+		<li><a href="#heading6">The limited view problem</a></li>
+		<li><a href="#heading7">Setting the interpolation mode</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Defining a smooth initial pressure distribution</h2>
+
+<p>The sensor data used for the reconstruction is generated using <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code> in the same way as in the <a href="k-wave_initial_value_problems.html">Initial Value Problems</a> examples. (The reconstruction of experimental data can approached in the same fashion by substituting the numerical sensor data with experimental measurements.) It is important to note that, by default, the function <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code> spatially smooths the initial pressure distribution using <code><a href="smooth.html">smooth</a></code> (see the <a href="example_na_source_smoothing.html">Source Smoothing Example</a>). To provide a valid comparison, the output of the reconstruction code <code><a href="kspaceLineRecon.html">kspaceLineRecon</a></code> must be compared to the <em>smoothed</em> version of the initial pressure used in the simulation. This can be achieved by explicitly using <code><a href="smooth.html">smooth</a></code> before passing the initial pressure to <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>.</p>
+
+<pre class="codeinput">
+<span class="comment">% smooth the initial pressure distribution and restore the magnitude</span>
+source.p0 = smooth(source.p0, true);
+</pre>
+
+<p>The default smoothing within <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code> can be modified via the optional input parameter <code>'Smooth'</code>. If given as a single Boolean value, this setting controls the smoothing of the initial pressure along with the sound speed and density distributions. To control the smoothing of these distributions individually, <code>'Smooth'</code> can also be given as a three element array controlling the smoothing of the initial pressure, the sound speed, and the density, respectively.</p>
+
+<a name="heading3"></a>
+<h2>Defining the time array</h2>
+
+<p>Although <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code> 
+can be used to automatically define the simulation length and time-step (by default <code>kgrid.t_array</code>, <code>kgrid.Nt</code>, and <code>kgrid.dt</code> are set to <code>'auto'</code> by <code><a href="kWaveGrid.html">kWaveGrid</a></code>), this information is also required by <code><a href="kspaceLineRecon.html">kspaceLineRecon</a></code> and thus in this example the time array must be explicitly created. This can be easily achieved by directly calling the <code>makeTime</code> method of the <code><a href="kWaveGrid.html">kWaveGrid</a></code> class. This is the same function that is called internally by the first-order simulation functions when <code>kgrid.t_array</code> is set to <code>'auto'</code>.</p>
+
+<pre class="codeinput">
+<span class="comment">% create the time array</span>
+kgrid.makeTime(medium.sound_speed);
+</pre>
+
+<a name="heading4"></a>
+<h2>Simulating the sensor data</h2>
+
+<p>The FFT reconstruction function <code><a href="kspaceLineRecon.html">kspaceLineRecon</a></code> requires data recorded along an equally spaced line-shaped array of sensor points. A sensor with this shape can be created by defining a binary sensor mask matrix with a line of 1's along the first matrix row (i.e., a line along x = const).</p>
+
+<pre class="codeinput">
+<span class="comment">% define a binary line sensor</span>
+sensor.mask = zeros(Nx, Ny);
+sensor.mask(1, :) = 1;
+</pre>
+
+<p>The initial pressure distribution (along with the binary sensor mask) and the recorded sensor data returned after running the simulation are shown below.</p>
+
+<img vspace="5" hspace="5" src="images/example_pr_2D_fft_line_sensor_01.png" style="width:560px;height:273px;" alt="">
+<img vspace="5" hspace="5" src="images/example_pr_2D_fft_line_sensor_02.png" style="width:560px;height:420px;" alt="">
+
+<a name="heading5"></a>
+<h2>Performing the reconstruction</h2>
+
+<p>The reconstruction is invoked by calling <code><a href="kspaceLineRecon.html">kspaceLineRecon</a></code> with the recorded sensor data, as well as the properties of the acoustic medium and the sampling parameters. By default, the sensor data input must be indexed as <code>p(time, sensor_position)</code>. This means the simulated sensor data returned by <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code> which is indexed as <code>sensor_data(sensor_position, time)</code> must first be rotated. Alternatively, the optional input parameter <code>'DataOrder'</code> can be set to <code>'yt'</code> (the default settings is <code>'ty'</code>). By setting the optional input parameter <code>'Plot'</code> to <code>true</code>, a plot of the reconstructed initial pressure distribution is also produced.</p>
+
+<pre class="codeinput">
+<span class="comment">% reconstruct the initial pressure</span>
+p_xy = kspaceLineRecon(sensor_data.', dy, kgrid.dt, medium.sound_speed, 'Plot', true);
+</pre>
+
+<p>As the reconstruction runs, the size of the recorded data and the time to compute the reconstruction are both printed to the command line.</p>
+
+<pre class="codeinput">
+Running k-Wave line reconstruction...
+  grid size: 216 by 778 grid points
+  interpolation mode: *nearest
+  computation completed in 0.059504s
+</pre>
+
+<img vspace="5" hspace="5" src="images/example_pr_2D_fft_line_sensor_03.png" style="width:560px;height:420px;" alt="">
+
+<p>Regardless of the physical alignment of the sensor within the acoustic medium, the reconstruction is always returned as if the sensor was located along the first matrix row (i.e., x = const). The resolution of the reconstruction in the y-direction is defined by the physical location and spacing of the sensor elements, while the resolution in the x-direction is defined by the sampling rate at which the pressure field is recorded (i.e., <code>dt</code>). Consequently, the reconstructed initial pressure map typically will have a much finer discretisation in the x- (time) direction. By default, the reconstructed initial pressure distribution is not re-scaled or thresholded in any way. However, a positivity condition can be automatically enforced by setting the optional input parameter <code>'PosCond'</code> to <code>true</code>.</p>
+
+<a name="heading6"></a>
+<h2>The limited view problem</h2>
+
+<p>To directly compare the initial pressure distribution with that produced from the reconstruction, it is convenient to interpolate the reconstructed pressure onto a k-space grid with the same dimensions as <code>source.p0</code>.</p>
+
+<pre class="codeinput">
+<span class="comment">% define a second k-space grid using the dimensions of p_xy</span>
+[Nx_recon, Ny_recon] = size(p_xy);
+kgrid_recon = kWaveGrid(Nx_recon, kgrid.dt * medium.sound_speed, Ny_recon, dy);
+
+<span class="comment">% resample p_xy to be the same size as source.p0</span>
+p_xy_rs = interp2(kgrid_recon.y, kgrid_recon.x - min(kgrid_recon.x(:)), p_xy, kgrid.y, kgrid.x - min(kgrid.x(:)));
+</pre>
+
+<p>The interpolated reconstructed initial pressure distribution (using a positivity condition) with the same plot scaling as the plot of <code>source.p0</code> above is shown below. A x = const slice through the center of the larger disc is also shown for comparison. The reconstructed pressure magnitude is decreased due to the limited view problem; the reconstruction is only exact if the data is collected over an infinite line, here a finite length sensor is used.</p>
+
+<img vspace="5" hspace="5" src="images/example_pr_2D_fft_line_sensor_04.png" style="width:560px;height:273px;" alt="">
+<img vspace="5" hspace="5" src="images/example_pr_2D_fft_line_sensor_05.png" style="width:560px;height:420px;" alt="">
+
+<a name="heading7"></a>
+<h2>Setting the interpolation mode</h2>
+
+<p>The FFT reconstruction algorithm relies on the interpolation between a temporal and a spatial domain coordinate with different spacings. This means both the speed and accuracy of the reconstruction  are dependent on the method used for this interpolation. This can be controlled via the optional input parameter <code>'Interp'</code> which is passed directly to <code><a href="matlab: doc interp2">interp2</a></code>. By default, this is set to <code>'*nearest'</code> which optimises the interpolation for speed. The accuracy of the interpolation can be improved by setting <code>'Interp'</code> to <code>'*linear'</code> or <code>'*cubic'</code>, and re-running the simulation. This increases the time to compute the reconstruction, however, the noise in the reconstruction is noticeably improved, and the error in the magnitude of the reconstruction is also slightly reduced.</p>
+
+<img vspace="5" hspace="5" src="images/example_pr_2D_fft_line_sensor_06.png" style="width:560px;height:273px;" alt="">
+<img vspace="5" hspace="5" src="images/example_pr_2D_fft_line_sensor_07.png" style="width:560px;height:420px;" alt="">
+
+<p>In practice, <code>'*linear'</code> interpolation provides a good balance between reconstruction speed and image artefacts.</p>
+
+</div></body></html>

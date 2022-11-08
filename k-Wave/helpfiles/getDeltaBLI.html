@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>getDeltaBLI :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>getDeltaBLI</h1>
+<p class="purpose">Exact BLI of an arbitrarily positioned delta function.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+f = getDeltaBLI(Nx, dx, x, x0)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>getDeltaBLI</code> calculates the exact BLI of an arbitrarily positioned delta function. For grid dimensions with an evenly-sampled periodicity, a small Nyquist frequency sinusoid is added. This sinusoid is invisible on grid samples and has zero amplitude when the delta function lies on a grid node. It is important when the evaluation points aren't grid nodes, and when the delta function is off-grid. It serves to ensure conjugate symmetry in the BLI's Fourier transform.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>Nx</code></td>
+        <td>Number of grid points in the relevant Cartesian direction</td>
+    </tr>    
+
+    <tr valign="top">
+        <td width = "150"><code>dx</code></td>
+        <td>Grid point spacing [m]</td>
+    </tr>   
+
+    <tr valign="top">
+        <td width = "150"><code>x</code></td>
+        <td>Coordinates at which the BLI is evaluated [m]</td>
+    </tr>   
+
+    <tr valign="top">
+        <td width = "150"><code>x0</code></td>
+        <td>Coordinate at which the BLI is centred [m]</td>
+    </tr>   
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>f</code></td>
+        <td>Value of the BLI at the specified coordinates</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="getBLI.html">getBLI</a></code>
+
+</div></body></html>

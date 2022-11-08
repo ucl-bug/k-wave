@@ -1,0 +1,327 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>kWaveGrid :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body><div class="content">
+
+<h1>kWaveGrid</h1>
+<p class="purpose">Class definition for k-Wave grid.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+kgrid = kWaveGrid(Nx, dx)
+kgrid = kWaveGrid(Nx, dx, Ny, dy)
+kgrid = kWaveGrid(Nx, dx, Ny, dy, Nz, dz)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>kWaveGrid</code> is the grid class used across the k-Wave Toolbox. An object of the <code>kWaveGrid</code> class contains the grid coordinates and wavenumber matrices used within the simulation and reconstruction functions in k-Wave. The grid matrices are indexed as: (x, 1) in 1D; (x, y) in 2D; and (x, y, z) in 3D. The grid is assumed to be a regularly spaced Cartesian grid, with grid spacing given by <code>dx</code>, <code>dy</code>, <code>dz</code> (typically the grid spacing in each direction is constant).</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>Nx, Ny, Nz</code></td>
+        <td>number of grid points in each Cartesian direction</td>
+    </tr>     
+    <tr valign="top">
+        <td width = "150"><code>dx, dy, dz</code></td>
+        <td>grid point spacing in each Cartesian direction [m]</td>        
+    </tr>     
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>kgrid</code></td>
+        <td><code>kWaveGrid</code> object used by the simulation and reconstructions functions within k-Wave</td>
+    </tr>
+</table>
+
+<h2>Dynamic Properties</h2>
+
+<p>Properties which can be queried or modified after the object is created.</p>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="25%"><col width="75%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Fieldname</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>kgrid.Nt</code></td>
+            <td bgcolor="#F2F2F2">number of time steps (default = 'auto')</td>
+        </tr>
+    </tbody>
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>kgrid.dt</code></td>
+            <td bgcolor="#F2F2F2">time step [s] (default = 'auto')</td>
+        </tr>
+    </tbody>      
+
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>kgrid.t_array</code></td>
+            <td bgcolor="#F2F2F2">evenly spaced array of time values [s] (default = 'auto') </td>
+        </tr>
+    </tbody>   
+    
+</table>
+
+<p>Note, <code>t_array</code> is a derived property, thus changing <code>Nt</code> or <code>dt</code> will also change <code>t_array</code>, and modifying <code>t_array</code> will update <code>Nt</code> and <code>dt</code>.</p>
+
+<h2>Static Properties</h2>
+
+<p>Properties which can be queried, but not modified, after the object is created.</p>
+
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="25%"><col width="75%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Fieldname</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>kgrid.k</code></td>
+            <td bgcolor="#F2F2F2"><code>Nx</code> x <code>Ny</code> x <code>Nz</code> grid of the scalar wavenumber, where <code>k = sqrt(kx.^2 + ky.^2 + kz.^2)</code> [rad/m]</td>
+        </tr>
+    </tbody>
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>kgrid.k_max</code></td>
+            <td bgcolor="#F2F2F2">maximum wavenumber (spatial frequency) supported by the grid [rad/m] </td>
+        </tr>
+    </tbody>      
+   	
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>kgrid.dim</code></td>
+            <td bgcolor="#F2F2F2">number of spatial dimensions</td>
+        </tr>
+    </tbody>  
+	
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>kgrid.total_grid_points</code></td>
+            <td bgcolor="#F2F2F2">total number of grid points (equal to <code>Nx*Ny*Nz</code>)</td>
+        </tr>
+    </tbody>	
+
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>kgrid.highest_prime_factors</code></td>
+            <td bgcolor="#F2F2F2">3 x 1 vector of the highest prime factor in each direction</td>
+        </tr>
+    </tbody>
+    
+</table>
+
+<p>And for each spatial dimension x, y, z:</p>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="25%"><col width="75%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Fieldname</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>kgrid.Nx</code></td>
+            <td bgcolor="#F2F2F2">number of grid points in the x-direction</td>
+        </tr>
+    </tbody>
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>kgrid.dx</code></td>
+            <td bgcolor="#F2F2F2">grid point spacing in the x-direction [m]</td>
+        </tr>
+    </tbody>    
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>kgrid.x_vec</code></td>
+            <td bgcolor="#F2F2F2"><code>Nx</code> x 1 vector of the grid coordinates in the x-direction [m]</td>
+        </tr>
+    </tbody>     
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>kgrid.x</code></td>
+            <td bgcolor="#F2F2F2"><code>Nx</code> x <code>Ny</code> x <code>Nz</code> grid containing repeated copies of the grid coordinates in the x-direction [m]</td>
+        </tr>
+    </tbody> 
+        
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>kgrid.x_size</code></td>
+            <td bgcolor="#F2F2F2">length of grid dimension in the x-direction [m]</td>
+        </tr>
+    </tbody> 
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>kgrid.kx_vec</code></td>
+            <td bgcolor="#F2F2F2"><code>Nx</code> x 1 vector of the wavenumber components in the x-direction [rad/m]</td>
+        </tr>
+    </tbody>	    
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>kgrid.kx</code></td>
+            <td bgcolor="#F2F2F2"><code>Nx</code> x <code>Ny</code> x <code>Nz</code> grid containing repeated copies of the wavenumber components in the x-direction [rad/m]</td>
+        </tr>
+    </tbody>   
+	
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>kgrid.kx_max</code></td>
+            <td bgcolor="#F2F2F2">maximum wavenumber (spatial frequency) supported by the grid in the x-direction [rad/m]</td>
+        </tr>
+    </tbody> 
+ 
+</table>
+
+<h2>Methods: setTime</h2>
+
+<p><code>setTime</code> sets <code>Nt</code> and <code>dt</code> to the input values. The syntax is:</p>
+
+<pre class="codeinput">
+kgrid.setTime(Nt, dt)
+</pre>
+
+<h2>Methods: makeTime</h2>
+
+<p><code>makeTime</code> automatically specifies <code>Nt</code>, <code>dt</code>, and <code>t_array</code> based on the Courant-Friedrichs-Lewy (CFL) number and the grid size. The sytax is:</p>
+
+<pre class="codeinput">
+kgrid.makeTime(sound_speed)
+kgrid.makeTime(sound_speed, cfl)
+kgrid.makeTime(sound_speed, cfl, t_end)
+kgrid.makeTime(sound_speed, [], t_end)
+</pre>
+
+<p>where the inputs are given by</p>
+
+<pre class="codeinput">
+sound_speed - sound speed in the medium [m/s]
+cfl         - CFL number (default = 0.3)
+t_end       - simulation time [s]
+</pre>
+
+<p>The time-step <code>dt</code> is chosen based on the CFL number (the default is 0.3), where <code>dt = cfl * dx / sound_speed</code>. If <code>t_end</code> is not specified, the number of time-steps is chosen based on the time it takes to travel from one corner of the grid to the geometrically opposite corner. Note, if <code>sound_speed</code> is given as a matrix, the calculation for <code>dt</code> is based on the maximum value, and the calculation for <code>t_end</code> based on the minimum value. </p>
+
+<h2>Methods: Discrete Trigonometric Transforms</h2>
+
+<p>Objects of the <code>kWaveGrid</code> class also have the following methods to return the wavenumbers for use with discrete sine and cosine transforms. The syntax is:</p>
+
+<pre class="codeinput">
+k      = kgrid.k_dtt(dtt_type)
+kx_vec = kgrid.kx_vec_dtt(dtt_type)
+ky_vec = kgrid.ky_vec_dtt(dtt_type)
+kz_vec = kgrid.kz_vec_dtt(dtt_type)
+</pre>
+
+<p>Here <code>dtt_type</code> is the type of discrete trigonometric transform (this determines the assumed symmetry of the input function), where:</p>
+
+<pre class="codeinput">
+1 -> DCT-I    WSWS (W: Whole Sample, S: Symmetric)
+2 -> DCT-II   HSHS 
+3 -> DCT-III  WSWA
+4 -> DCT-IV   HSHA
+5 -> DST-I    WAWA
+6 -> DST-II   HAHA (H: Half Sample, A: Antisymmetric)
+7 -> DST-III  WAWS
+8 -> DST-IV   HAHS
+</pre>
+
+<p>These methods can also return the implied periodic length of the grid (denoted <code>M</code>) given the grid size and the <code>dtt_type</code>, e.g.,</p>
+
+<pre class="codeinput">
+[kx_vec, Mx] = kgrid.kx_vec_dtt(1);
+[k, M]       = kgrid.k_dtt(1);
+</pre>
+
+<p>The method <code>.k_dtt</code> returns the product of the implied length in each dimension, e.g., in 2D, <code>M = Mx*My</code>. This is used for scaling the inverse trigonometric transforms.</p>
+
+<h2>Example</h2>
+
+<p>Running <code>kgrid = kWaveGrid(128, 0.1, 128, 0.1)</code> at the command line will return:</p>
+
+<pre class="codeinput">
+kgrid = kWaveGrid(128, 0.1, 128, 0.1)
+
+kgrid = 
+
+  kWaveGrid with properties:
+
+                       Nx: 128
+                       Ny: 128
+                       Nz: 0
+                       dx: 0.1000
+                       dy: 0.1000
+                       dz: 0
+                   kx_vec: [128x1 double]
+                   ky_vec: [128x1 double]
+                   kz_vec: 0
+                        k: [128x128 double]
+                   kx_max: 31.4159
+                   ky_max: 31.4159
+                   kz_max: 0
+                    k_max: 31.4159
+                      dim: 2
+               nonuniform: 0
+                       dt: 'auto'
+                       Nt: 'auto'
+                    x_vec: [128x1 double]
+                    y_vec: [128x1 double]
+                    z_vec: 0
+                        x: [128x128 double]
+                        y: [128x128 double]
+                        z: 0
+                       kx: [128x128 double]
+                       ky: [128x128 double]
+                       kz: 0
+                   x_size: 12.8000
+                   z_size: 0
+                   y_size: 12.8000
+        total_grid_points: 16384
+    highest_prime_factors: [2 2 0]
+                  t_array: 'auto'
+</pre>
+
+<h2>See Also</h2>
+
+<code><a href="kspaceFirstOrder1D.html">kspaceFirstOrder1D</a></code>, <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>, <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>, <code><a href="kspaceSecondOrder.html">kspaceSecondOrder</a></code>, <code><a href="pstdElastic2D.html">pstdElastic2D</a></code>, <code><a href="pstdElastic3D.html">pstdElastic3D</a></code>
+
+</div></body></html>

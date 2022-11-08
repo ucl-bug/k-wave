@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>writeFlags :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>writeFlags</h1>
+<p class="purpose">Write input flags to a k-Wave HDF5 file.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+writeFlags(filename)
+</pre>
+
+<h2>Description</h2>
+<p><code>writeFlags</code> reads the input HDF5 file and derives and writes the required source and medium flags based on the datasets present in the file. For example, if the file contains a data set named <code>'BonA'</code>, the <code>nonlinear_flag</code> will be written as true. Conditional flags are also written. The source mode flags are written when appropriate if they are not already present in the file. The default source mode is <code>'additive'</code>.</p>
+
+<p>List of flags that are always written</p>
+<ul>
+<li><code>ux_source_flag</li></code>
+<li><code>uy_source_flag</li></code>
+<li><code>uz_source_flag</li></code>
+<li><code>p_source_flag</li></code>
+<li><code>p0_source_flag</li></code>
+<li><code>transducer_source_flag</li></code>
+<li><code>nonuniform_grid_flag</li></code>
+<li><code>nonlinear_flag</li></code>
+<li><code>absorbing_flag</li></code>
+<li><code>sensor_mask_type</li></code>
+</ul>
+
+<p>List of conditional flags</p>
+<ul>
+<li><code>u_source_mode</li></code>
+<li><code>u_source_many</li></code>
+<li><code>p_source_mode</li></code>
+<li><code>p_source_many</li></code>
+</ul>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>filename</code></td>
+        <td>name of HDF5 file to write matrix to</td>
+    </tr>  
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="matlab: doc h5writeatt">h5writeatt</a></code>, <code><a href="writeAttributes.html">writeAttributes</a></code>, <code><a href="writeGrid.html">writeGrid</a></code>, <code><a href="writeMatrix.html">writeMatrix</a></code>
+
+</div></body></html>

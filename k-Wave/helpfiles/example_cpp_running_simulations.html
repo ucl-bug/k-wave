@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Running C++ Simulations Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Running C++ Simulations Example">
+</head>
+
+<body>
+
+<a name="top_of_page"></a>
+<div class="content">
+
+<h1>Running C++ Simulations Example</h1>
+
+<p>This example demonstrates how to use the C++ versions of <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>. Before use, the appropriate C++ codes must be downloaded from <a href="http://www.k-wave.org/download.php">http://www.k-wave.org/download.php</a>  and placed in the <code>binaries</code> folder of the toolbox.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_cpp_running_simulations.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_cpp_running_simulations']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">MATLAB and C++</a></li>
+		<li><a href="#heading3">Running simulations using the C++ code</a></li>
+		<li><a href="#heading4">Reloading the output data into MATLAB</a></li>
+		<li><a href="#heading5">Running the C++ code directly from MATLAB</a></li>
+		<li><a href="#heading6">Running GPU simulations using the C++ CUDA code</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>MATLAB and C++</h2>
+
+<p>MATLAB is a very powerful environment for scientific computing. It interfaces with a number of highly-optimised matrix and maths libraries, and can be programmed using relatively simple syntax. User written MATLAB code is also highly portable across operating systems and computer platforms. The portability comes from MATLAB being an interpreted language. This means the code is analysed and executed line by line as the program runs, without needing to be compiled into machine code in advance. In most situations, this means the k-Wave Toolbox works straight out of the (virtual) box on any computer installed with MATLAB.</p>
+
+<p>The downside of MATLAB being an interpreted language is that it can be difficult to optimise user code. Within the main time loop of the k-Wave simulation functions, the code consists primarily of FFTs and element-wise matrix operations like multiplication and addition. Executing these tasks involves a large number of memory operations for relatively few compute operations. For example, to multiply two matrices together element by element, the individual matrix elements are transferred from main memory to cache in blocks, multiplied together using the CPU, and then the results transferred back to main memory. If the matrix elements were already stored in cache, the multiplication would be an order of magnitude faster. However, because the lines of code in MATLAB are executed independently, there is no way in MATLAB to fuse together multiple  operations to maximise the temporal and spatial locality of the data.</p>
+
+<p>For simulations using small grid sizes, the compute times are short enough that the drawbacks of MATLAB being an interpreted language are not a concern. However, for simulations using large grid sizes (for example, 512 by 512 by 512), the compute times in MATLAB can stretch into tens of hours. To reduce these compute times, k-Wave also includes optimised versions of <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>, <code><a href="kspaceFirstOrderAS.html">kspaceFirstOrderAS</a></code>, and <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> written in C++ . The code for desktop computers and servers is called <code>kspaceFirstOrder-OMP</code> (the same binary is used for simulations in 2D, 3D, and axisymmetric coordinates). This is optimised for shared memory computer architectures, including machines with multiple CPUs based on a non-uniform memory access (NUMA) design. The code for NVIDIA graphics processing units (GPUs) is called <code>kspaceFirstOrder-CUDA</code> (the same binary is used for simulations in 2D and 3D - axisymmetric simulations are not currently supported).</p>
+
+<a name="heading3"></a>
+<h2>Running simulations using the C++ code</h2>
+
+<p>The C++ code has been designed as a standalone application that can be used completely independently of MATLAB. This is important when using computers and servers that do not have MATLAB support. For this reason, simulation data must be transferred between MATLAB and the C++ code using external input and output files. These files are stored using the Hierarchical Data Format <a href="http://www.hdfgroup.org/HDF5/">HDF5</a>. The input file defines the properties of the grid, medium, source, and sensor in the same way as the input files passed to the MATLAB code. The output file contains the recorded simulation data along with performance statistics like the compute time and memory usage. A more detailed discussion of the file format and properties is given in the k-Wave manual.</p>
+
+<p>Although the required input file may be created using C++ or any programming language that supports HDF5, for most users it will be easiest to use the MATLAB functions <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>, <code><a href="kspaceFirstOrderAS.html">kspaceFirstOrderAS</a></code>, and <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> to create the input matrices and save them to disk in the required format (note, this requires MATLAB 2011a or later). The HDF5 input file is automatically generated by adding the flag <code>'SaveToDisk'</code> and a filename (or pathname and filename) to the optional input arguments as shown below. When this flag is given, the MATLAB code runs the preprocessing steps, saves the input parameters to disk, and then aborts without running the actual simulation (set <code>example_number = 1</code> within the example m-file).</p>
+
+<pre class="codeinput">
+<span class="comment">% save input files to disk</span>
+filename = 'example_input.h5';
+kspaceFirstOrder3D(kgrid, medium, source, sensor, 'SaveToDisk', filename);
+</pre>
+
+<p>After saving the input data, the compiled C++ code <code>kspaceFirstOrder-OMP</code> can be called from a terminal window or the  command prompt. The code requires two command line parameters to specify the input and output files, in addition to a number of optional parameters and flags (a full list is given in the k-Wave manual). For example, assuming the input file is located in a root folder called <code>data</code>, in Linux, the C++ code can be run from a terminal window using the syntax</p>
+
+<pre class="codeinput">
+./kspaceFirstOrder-OMP -i /data/example_input.h5 -o /data/example_output.h5
+</pre>
+
+<p>Similarly, in Windows, the C++ code can be run from the command prompt using the syntax</p>
+
+<pre class="codeinput">
+kspaceFirstOrder-OMP.exe -i C:\data\example_input.h5 -o C:\data\example_output.h5
+</pre>
+
+<p>By default, the time varying pressure at the grid points specified by the sensor mask are recorded during the simulation. When using the MATLAB code, it is possible to control the acoustic variables that are recorded during the simulation by setting the value of <code>sensor.record</code>. For the C++ code, the same behaviour is achieved using additional command line parameters (a full list is given in the k-Wave manual). For example, the final pressure field and the particle velocity can be recorded using the syntax
+
+<pre class="codeinput">
+./kspaceFirstOrder-OMP -i /data/example_input.h5 -o /data/example_output.h5 --p_final --p_max 
+</pre>
+
+As the code runs, status updates and computational parameters are printed to the command line. The verbosity of the outputs can be controlled using the <code>--verbose</code> command line argument.</p>
+
+<pre class="codeoutput">
++---------------------------------------------------------------+ 
+|                   kspaceFirstOrder-OMP v1.3                   | 
++---------------------------------------------------------------+ 
+| Reading simulation configuration:                        Done | 
+| Number of CPU threads:                                     16 | 
+| Processor name:     Intel(R) Xeon(R) CPU E5-1660 v3 @ 3.00GHz | 
++---------------------------------------------------------------+ 
+|                      Simulation details                       | 
++---------------------------------------------------------------+ 
+| Domain dimensions:                             256 x 128 x 64 | 
+| Medium type:                                               3D | 
+| Simulation time steps:                                   1200 | 
++---------------------------------------------------------------+ 
+|                        Initialization                         | 
++---------------------------------------------------------------+ 
+| Memory allocation:                                       Done | 
+| Data loading:                                            Done | 
+| Elapsed time:                                           0.04s | 
++---------------------------------------------------------------+ 
+| FFT plans creation:                                      Done | 
+| Pre-processing phase:                                    Done | 
+| Elapsed time:                                           0.02s | 
++---------------------------------------------------------------+ 
+|                    Computational resources                    | 
++---------------------------------------------------------------+ 
+| Current host memory in use:                             212MB | 
+| Expected output file size:                                8MB | 
++---------------------------------------------------------------+ 
+|                          Simulation                           | 
++----------+----------------+--------------+--------------------+ 
+| Progress |  Elapsed time  |  Time to go  |  Est. finish time  | 
++----------+----------------+--------------+--------------------+ 
+|     0%   |        0.125s  |     74.898s  |  01/08/19 09:05:06 | 
+|     5%   |        2.268s  |     41.620s  |  01/08/19 09:04:35 | 
+|    10%   |        4.130s  |     36.494s  |  01/08/19 09:04:32 | 
+|    15%   |        5.986s  |     33.485s  |  01/08/19 09:04:31 | 
+|    20%   |        7.921s  |     31.356s  |  01/08/19 09:04:31 | 
+|    25%   |        9.998s  |     29.728s  |  01/08/19 09:04:31 | 
+|    30%   |       12.585s  |     29.134s  |  01/08/19 09:04:34 | 
+|    35%   |       14.535s  |     26.797s  |  01/08/19 09:04:33 | 
+|    40%   |       19.321s  |     28.781s  |  01/08/19 09:04:39 | 
+|    45%   |       22.935s  |     27.843s  |  01/08/19 09:04:42 | 
+|    50%   |       25.300s  |     25.132s  |  01/08/19 09:04:42 | 
+|    55%   |       29.590s  |     24.048s  |  01/08/19 09:04:46 | 
+|    60%   |       31.868s  |     21.098s  |  01/08/19 09:04:45 | 
+|    65%   |       34.129s  |     18.243s  |  01/08/19 09:04:44 | 
+|    70%   |       36.733s  |     15.618s  |  01/08/19 09:04:44 | 
+|    75%   |       38.785s  |     12.814s  |  01/08/19 09:04:43 | 
+|    80%   |       41.020s  |     10.148s  |  01/08/19 09:04:43 | 
+|    85%   |       43.007s  |      7.491s  |  01/08/19 09:04:42 | 
+|    90%   |       45.128s  |      4.922s  |  01/08/19 09:04:41 | 
+|    95%   |       47.232s  |      2.399s  |  01/08/19 09:04:41 | 
++----------+----------------+--------------+--------------------+ 
+| Elapsed time:                                          49.65s | 
++---------------------------------------------------------------+ 
+| Sampled data post-processing:                            Done | 
+| Elapsed time:                                           0.06s | 
++---------------------------------------------------------------+ 
+|                            Summary                            | 
++---------------------------------------------------------------+ 
+| Peak memory in use:                                     215MB | 
++---------------------------------------------------------------+ 
+| Total execution time:                                  49.84s | 
++---------------------------------------------------------------+ 
+|                       End of computation                      | 
++---------------------------------------------------------------+ 
+</pre>
+
+<a name="heading4"></a>
+<h2>Reloading the output data into MATLAB</h2>
+
+<p>After the C++ code has executed, the output files can be reloaded into MATLAB using the function <a href="matlab: doc h5read"><code>h5read</code></a> (set <code>example_number = 2</code> within the example m-file, ensuring that the path to the output file is correct). The variables stored in the HDF5 output file have the identical names to the MATLAB code. For example, for a simulation run with the <code>--p_final</code> and <code>--p_max</code> flags, equivalent to setting <code>sensor.record = {'p_final', 'p_max'}</code>, the output data can be loaded into MATLAB as shown below.</p>
+
+<pre class="codeinput">
+<span class="comment">% load output data from the C++ simulation</span>
+sensor_data.p_final = h5read('example_output.h5', '/p_final');
+sensor_data.p_max   = h5read('example_output.h5', '/p_max');
+</pre>
+
+<p>For the simulation in the example file, the source is a square piston driven by a continuous wave, and the medium has a heterogeneous inclusion in the beam path. The expected output from the simulation is shown below.</p>
+
+<img vspace="5" hspace="5" src="images/example_cpp_running_simulations_01.png" style="width:560px;height:420px;" alt="">
+
+<p>Note, not all simulation options are currently supported by the C++ code. The sensor mask must be given as a binary matrix or a list of cuboid corners (Cartesian sensor masks are not supported), and all display parameters are ignored as the C++ code does not have a graphical output. Moreover, if using a <a href="kWaveTransducer.html">Transducer</a> as the sensor (e.g., as used in the <a href="example_us_bmode_linear_transducer.html">Simulating B-mode Ultrasound Images Example</a>), the returned sensor data will be different to the MATLAB code. This is because the C++ code returns the time series recorded at each grid point, rather than averaged across each physical sensor element. The C++ sensor data can be converted to the MATLAB format using the <code>combine_sensor_data</code> method of the <code>kWaveTransducer</code> class (note this is automatically called if using <code><a href="kspaceFirstOrder3DC.html">kspaceFirstOrder3DC</a></code> as described below).</p>
+
+<pre class="codeinput">
+sensor_data = transducer.combine_sensor_data(sensor_data)
+</pre>
+
+<a name="heading5"></a>
+<h2>Running the C++ code directly from MATLAB</h2>
+
+<p>In addition to calling the C++ code from a terminal or command window, it is also possible to run the C++ code directly from MATLAB. To run the code blindly, calls to <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> can be directly substituted with calls to <code><a href="kspaceFirstOrder3DC.html">kspaceFirstOrder3DC</a></code> (similarly for 2D and AS simulations) without any other changes (set <code>example_number = 3</code> within the example m-file). This function automatically adds the <code>'SaveToDisk'</code> flag, calls <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> to create the input variables, calls the C++ code using the <a href="matlab: doc computer"><code>computer</code></a> command, reloads the output variables from disk using <a href="matlab: doc h5read"><code>h5read</code></a>, then deletes the input and output files. This is useful when running MATLAB interactively. The disadvantage of running the C++ code from within MATLAB is the additional memory footprint of having many variables allocated in memory twice, as well as the overhead of running MATLAB.
+
+<a name="heading6"></a>
+<h2>Running GPU simulations using the C++ CUDA code</h2>
+
+<p>In addition to the CPU code, k-Wave also includes an optimised C++/CUDA code for running simulations on graphics processing units (GPUs). The code is called <code>kspaceFirstOrder-CUDA</code> and is used in the identical way to <code>kspaceFirstOrder-OMP</code>. The code requires a CUDA-enabled NVIDIA GPU with a minimum compute capability of 1.3 and a recent NVIDIA driver. To run the code directly from MATLAB, calls to <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code> and <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> can be directly substituted with calls to <code><a href="kspaceFirstOrder2DG.html">kspaceFirstOrder2DG</a></code> and <code><a href="kspaceFirstOrder3DG.html">kspaceFirstOrder3DG</a></code> (set <code>example_number = 4</code> within the example m-file).</p>
+
+</div></body></html>

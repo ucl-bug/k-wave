@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>interpCartData :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>interpCartData</h1>
+<p class="purpose">Interpolate data from a Cartesian to a binary sensor mask.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+binary_sensor_data = interpCartData(kgrid, cart_sensor_data, cart_sensor_mask, binary_sensor_mask)
+binary_sensor_data = interpCartData(kgrid, cart_sensor_data, cart_sensor_mask, binary_sensor_mask, interp)
+</pre>
+
+<h2>Description</h2>
+<p><code>interpCartData</code> takes a matrix of time-series data recorded over a set of Cartesian sensor points given by <code>cart_sensor_mask</code> and computes the equivalent time-series at each sensor position on the binary sensor mask <code>binary_sensor_mask</code> using interpolation. The properties of <code>binary_sensor_mask</code> are defined by the k-Wave grid object <code>kgrid</code>. Two and three dimensional data are supported.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>kgrid</code></td>
+        <td>k-Wave grid object returned by <code><a href="kWaveGrid.html">kWaveGrid</a></code></td>
+    </tr>
+
+    <tr valign="top">
+        <td><code>cart_sensor_data</code></td>
+        <td>original sensor data measured over <code>cart_sensor_mask</code> indexed as <code>cart_sensor_data(<em>sensor position</em>, <em>time</em>)</code></td>
+    </tr>  
+    
+    <tr valign="top">
+        <td><code>cart_sensor_mask</code></td>
+        <td>Cartesian sensor mask over which <code>cart_sensor_data</code> is measured</td>
+    </tr>      
+    
+    <tr valign="top">
+        <td><code>binary_sensor_mask</code></td>
+        <td>binary sensor mask at which equivalent time-series are computed via interpolation</td>
+    </tr>       
+</table>
+    
+<h2>Optional Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>interp</code></td>
+        <td>interpolation mode used to compute the time-series, both <code>'nearest'</code> and <code>'linear'</code> (two-point) modes are supported (default = <code>'nearest'</code>)</td>
+    </tr>   
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>binary_sensor_data</code></td>
+        <td>array of time-series corresponding to the sensor positions given by <code>binary_sensor_mask</code></td>
+    </tr>   
+</table>
+
+<h2>Examples</h2>
+<ul>
+    <li><a href="example_pr_2D_tr_circular_sensor.html">2D Time Reversal For A Circular Sensor</a></li>
+    <li><a href="example_pr_3D_tr_spherical_sensor.html">3D Time Reversal For A Spherical Sensor</a></li>
+    <li><a href="example_pr_2D_tr_absorption_compensation.html">Image Reconstruction With Compensation For Acoustic Absorption</a></li> 
+</ul>
+
+<h2>See Also</h2>
+
+<code><a href="cart2grid.html">cart2grid</a></code>, <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>, <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>, <code><a href="kWaveGrid.html">kWaveGrid</a></code>
+
+</div></body></html>

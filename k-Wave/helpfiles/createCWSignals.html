@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>createCWSignals :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>createCWSignals</h1>
+<p class="purpose">Generate array of CW signals from amplitude and phase.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+cw_signal = createCWSignal(t_array, freq, amp, phase)
+cw_signal = createCWSignal(t_array, freq, amp, phase, ramp_length)
+</pre>
+
+<h2>Description</h2>
+<p><code>createCWSignals</code> generates a series of continuous wave (CW) signals based on the 1D or 2D input matrices <code>amp</code> and <code>phase</code>, where each signal is  given by:</p>
+<pre class="codeinput">
+amp(i, j) .* sin(2 .* pi .* freq .* t_array + phase(i, j)); 
+</pre>
+To avoid startup transients, a cosine tapered up-ramp is applied to the beginning of the signal. By default, the length of this ramp is  four periods of the wave. The up-ramp can be turned off by setting the <code>ramp_length</code> to 0.</p>
+
+<p>Example:</p>
+
+<pre class="codeinput">
+<span class="comment">% define sampling parameters</span>
+f = 5e6;
+T = 1/f;
+Fs = 100e6;
+dt = 1/Fs;
+t_array = 0:dt:10*T;
+
+<span class="comment">% define amplitude and phase</span>
+amp = getWin(9, 'Gaussian');
+phase = linspace(0, 2*pi, 9).';
+
+<span class="comment">% create signals and plot</span>
+cw_signal = createCWSignals(t_array, f, amp, phase);
+stackedPlot(cw_signal);
+</pre>
+
+<img vspace="5" hspace="5" src="images/createCWSignals_01.png" style="width:560px;height:420px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>t_array</code></td>
+        <td>1D vector of time points [s]</td>
+    </tr>     
+    
+    <tr valign="top">
+        <td><code>freq</code></td>
+        <td>frequency of the CW signal [Hz]</td>
+    </tr>
+    
+    <tr valign="top">
+        <td><code>amp</code></td>
+        <td>1D or 2D matrix of amplitudes [au]</td>
+    </tr>
+    
+    <tr valign="top">
+        <td><code>phase</code></td>
+        <td>1D or 2D matrix of phases [rad]</td>
+    </tr>    
+</table>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>ramp_length</code></td>
+        <td>length of the up-ramp used to reduce start-up transients in periods (default = 4)</td>
+    </tr>    
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>cw_signal</code></td>
+        <td>matrix of CW signals</td>
+    </tr> 
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="extractAmpPhase.html">extractAmpPhase</a></code>, <code><a href="toneBurst.html">toneBurst</a></code>
+
+</div></body></html>

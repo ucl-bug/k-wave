@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Automatic Sound Speed Selection Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Automatic sound speed selection  Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Automatic Sound Speed Selection Example</h1>
+
+<p>This example illustrates an autofocus approach for automatically selecting the sound speed used in photoacoustic image reconstruction. The selection is based on maximising the sharpness of the reconstructed image as quantified by a focus function.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_pr_2D_TR_autofocus.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_pr_2D_TR_autofocus']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<p>For a more detailed discussion of this example and the underlying techniques, see B. E. Treeby, T. K. Varslot, E. Z. Zhang, J. G. Laufer, and P. C. Beard, "Automatic sound speed selection in photoacoustic image reconstruction using an autofocus approach," <em>J. Biomed. Optics</em>, vol. 16, no. 9, p. 090501, 2011.</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Selecting a focus function</a></li>
+		<li><a href="#heading3">Running the reconstruction</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Selecting a focus function</h2>
+
+<p>The reconstruction of images in photoacoustic tomography is reliant on specifying the speed of sound within the propagation medium. However, for in vivo imaging, this value is not normally accurately known. To overcome this, an optimisation of the selected sound speed is performed to maximize the sharpness of prominent features visible within the reconstructed image. This is based on an autofocus approach in which a focus function is used to give quantitative assessment of the image sharpness. </p>
+
+<p>There is a large body of literature concerning the quantification of image sharpness. In general, a sharp image will contain more high-frequency information than its blurry counterpart, however, there is no universally accepted measure for this difference. A variety of sharpness metrics (or equivalently, focus functions) have been proposed, including those based on the image gradient, pixel count, power, variance, entropy, and autocorrelation. The best functions produce a single maximum with a sharp peak when the image is in focus, have a large range between the local minima on either side of the maximum, and are robust to noise in the image.</p>
+
+<p>Here, the image sharpness is estimated using the function <code><a href="sharpness.html">sharpness</a></code>. This implements three focus functions that generally perform well: the Brenner gradient, the Tenenbaum gradient, and the normalised variance.</p>
+
+<a name="heading3"></a>
+<h2>Running the reconstruction</h2>
+
+<p>In this example, the sensor data is generated using a 2D vessel phantom and a full-view circular sensor mask. The selection of the sound speed that maximises the image sharpness is then performed by iteratively reconstructing the image and evaluating the image sharpness.</p>
+
+<pre class="codeinput">
+<span class="comment">% run the reconstruction in a loop using different values for sound speed</span>
+sound_speed_array = 1450:5:1550;
+for index = 1:length(sound_speed_array)
+    
+    <span class="comment">% update value of sound speed</span>
+    medium.sound_speed = sound_speed_array(index);
+    
+    <span class="comment">% run the reconstruction</span>
+    p0_recon = kspaceFirstOrder2D(kgrid, medium, source, sensor, input_args{:});
+    
+    <span class="comment">% update the value of the focus function</span>
+    focus_func(1, index) = sharpness(p0_recon, 'Brenner');
+    focus_func(2, index) = sharpness(p0_recon, 'Tenenbaum');
+    focus_func(3, index) = sharpness(p0_recon, 'NormVariance');
+    
+end
+</pre>
+
+<p>The variation in the focus functions with sound speed is shown below. Each of the three metrics give the same maximum value at 1500 m/s, which corresponds to the actual sound speed in this example.</p> 
+
+<img vspace="5" hspace="5" src="images/example_pr_2D_tr_autofocus_01.png" style="width:560px;height:420px;" alt="">
+
+<p>In general, the efficacy of this approach will depend on both the intrinsic content of the reconstructed image in addition to any image artifacts (for example, limited-view artifacts). If the reconstructed image is rich in features and any image artifacts are comparatively small in magnitude, then the autofocus approach will work correctly to maximize the sharpness of the image features. However, if the converse is true, then the autofocus approach may incorrectly attempt to maximize the sharpness or the prevalence of edges in the image artifacts.</p>
+
+</div></body></html>

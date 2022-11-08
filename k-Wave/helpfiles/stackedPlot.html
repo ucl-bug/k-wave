@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>stackedPlot :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>stackedPlot</h1>
+<p class="purpose">Stacked linear plot.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+stackedPlot(data)
+stackedPlot(x, data)
+stackedPlot(x, y, data)
+</pre>
+
+<h2>Description</h2>
+<p><code>stackedPlot</code> produces a series of stacked linear plots of the rows in <code>data</code> (a 2D matrix) against the vector <code>x</code>. The vector <code>y</code> defines the y-axis label for each linear plot. The plot scaling is defined using the global maximum and minimum of the data. The plot can be annotated in the normal fashion after display. For example, each of the following</p>
+
+<pre class="codeinput">
+stackedPlot(rand(5, 100));
+stackedPlot(0.1:0.1:10, rand(5, 100));
+stackedPlot(0.1:0.1:10, {'a', 'b', 'c', 'd', 'e'}, rand(5, 100));
+</pre>
+
+<p>will produce stacked plots of random data, but with different axis labels.</p>
+
+<img vspace="5" hspace="5" src="images/stackedPlot_01.png" style="width:560px;height:420px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>x</code></td>
+        <td>vector defining the x-axis values</td>
+    </tr>
+    
+    <tr valign="top">
+        <td width = "150"><code>y</code></td>
+        <td>vector defining the y-axis labels used for each plot</td>
+    </tr> 
+    
+    <tr valign="top">
+        <td width = "150"><code>data</code></td>
+        <td>2D matrix to plot</td>
+    </tr>     
+</table>
+
+<h2>Optional Inputs</h2>
+
+<p>Optional 'string', value pairs that may be used to modify the default computational settings.</p>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="18%"><col width="18%"><col width="18%"><col width="46%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Input</th>
+            <th bgcolor="#B2B2B2">Valid Settings</th>
+            <th bgcolor="#B2B2B2">Default</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Spacing'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>0.1</code></td>            
+            <td bgcolor="#F2F2F2">Spacing between the individual plots as a fraction of the maximum plot range.</td>
+        </tr>     
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Symmetric'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the max and minimum of the individual plots are forced to be symmetric. This forces the y-ticks to be at zero.</td>
+        </tr>   
+           
+    </tbody>
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="matlab: doc plot">plot</a></code>
+
+</div></body></html>

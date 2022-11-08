@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Simulating Ultrasound Beam Patterns Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Simulating Ultrasound Beam Patterns Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Simulating Ultrasound Beam Patterns Example</h1>
+
+<p>This example shows how the nonlinear beam pattern from an ultrasound transducer can be modelled. It builds on the <a href="example_us_defining_transducer.html">Defining An Ultrasound Transducer</a> and <a href="example_tvsp_transducer_field_patterns.html">Simulating Transducer Field Patterns</a> examples.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_us_beam_patterns.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_us_beam_patterns']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Simulating the total beam pattern</a></li>
+		<li><a href="#heading3">Simulating harmonic beam patterns using the recorded sensor data</a></li>
+		<li><a href="#heading4">Extending the simulations</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Simulating the total beam pattern</h2>
+
+<p>Once a transducer has been created (see <a href="example_us_defining_transducer.html">Defining An Ultrasound Transducer</a>), a map of the resulting rms or maximum pressure within the medium can be produced (this distribution is typically called a <i>beam pattern</i>). This is done using a binary sensor mask which covers the plane of interest. For example, to compute the beam pattern in the x-y plane that dissects the transducer, the sensor mask should be defined as shown below (set <code>MASK_PLANE = 'xy';</code> within the example m-file).</p>
+
+<pre class="codeinput">
+<span class="comment">% define a sensor mask through the central plane of the transducer</span>
+sensor.mask = zeros(Nx, Ny, Nz);
+sensor.mask(:, :, Nz/2) = 1;
+</pre>
+
+<p>If only the total beam pattern is required (rather than the beam pattern at particular frequencies), this can be produced without having to store the time series at each sensor point by setting <code>sensor.record</code> to <code>{'p_rms', 'p_max'}</code>. With this option, at each time step k-Wave only updates the maximum and root-mean-squared (RMS) values of the pressure at each sensor element. This can significantly reduce the memory requirements for storing the sensor data, particularly if sensor masks with large numbers of active elements are used. </p>
+
+<pre class="codeinput">
+<span class="comment">% set the record mode such that only the rms and peak values are stored</span>
+sensor.record = {'p_rms', 'p_max'};
+</pre>
+
+<p>After the simulation has run, the resulting sensor data is returned as a structure with the fields <code>sensor_data.p_max</code> and <code>sensor_data.p_rms</code>. These correspond to the maximum and RMS of the pressure field at each sensor position. Because the time history is not stored, these are indexed as <code>sensor_data.p_max(sensor_position)</code>. This data must be reshaped to the correct dimensions before display.</p>
+
+<pre class="codeinput">
+<span class="comment">% reshape the returned rms and max fields to their original position</span>
+sensor_data.p_rms = reshape(sensor_data.p_rms, [Nx, Ny]);
+sensor_data.p_max = reshape(sensor_data.p_max, [Nx, Ny]);
+</pre>
+
+<p>A plot of the beam pattern produced using the maximum pressure in the x-y and x-z planes is shown below. Note, in this example the number of active sensor elements is set to 32. To allow the the size of the computational domain to be reduced (and thus speed up the simulation) <code>transducer.number_elements</code> is also set to 32.</p>
+
+<img vspace="5" hspace="5" src="images/example_us_beam_patterns_01.png" style="width:560px;height:420px;" alt="">
+<img vspace="5" hspace="5" src="images/example_us_beam_patterns_02.png" style="width:560px;height:420px;" alt="">
+
+<a name="heading3"></a>
+<h2>Simulating harmonic beam patterns using the recorded sensor data</h2>
+
+<p>If the harmonic beam pattern is of interest (the beam pattern produced at different frequencies), the time series at each sensor position must be stored, and then analysed after the simulation has completed (set <code>USE_STATISTICS = false;</code> within the example m-file). To reduce the memory consumed as a result of storing the time history over a complete plane (which can become significant for larger simulations), the sensor data can be incrementally streamed to disk by setting the optional input <code>'StreamToDisk'</code> to <code>true</code>. Alternatively, <code>'StreamToDisk'</code> can be set to the number of time steps that are stored before saving the data to disk. This is useful if running simulations on GPUs with limited amounts of memory.</p>
+
+<p>After the simulation is complete, there are several processing steps required to produce the beam pattern. These are shown in the code snippet below. Here <code>j</code> corresponds to the second axis of interest. This will by the y-axis if <code>MASK_PLANE</code> is set to <code>'xy'</code> within the example m-file, or the z-axis if this is set to <code>'xz'</code>. The values of <code>beam_pattern_f1</code> and <code>beam_pattern_f2</code> correspond to the relative spectral amplitudes at the fundamental and second harmonic frequencies of the input signal used to drive the transducer (0.5 MHz in this example).</p> 
+
+<pre class="codeinput">
+<span class="comment">% reshape the sensor data to its original position so that it can be
+% indexed as sensor_data(x, j, t)</span>
+sensor_data = reshape(sensor_data, [Nx, Nj, kgrid.Nt]);
+
+<span class="comment">% compute the amplitude spectrum</span>
+[freq, amp_spect] = spect(sensor_data, 1/kgrid.dt, 'Dim', 3);
+
+<span class="comment">% compute the index at which the source frequency and its harmonics occur</span>
+[f1_value, f1_index] = findClosest(freq, tone_burst_freq);
+[f2_value, f2_index] = findClosest(freq, 2 * tone_burst_freq);
+
+<span class="comment">% extract the amplitude at the source frequency and store</span>
+beam_pattern_f1 = amp_spect(:, :, f1_index);
+
+<span class="comment">% extract the amplitude at the second harmonic and store</span>
+beam_pattern_f2 = amp_spect(:, :, f2_index);       
+
+<span class="comment">% extract the integral of the total amplitude spectrum</span>
+beam_pattern_total = sum(amp_spect, 3);
+</pre>
+
+<p>A plot of the beam pattern at the fundamental frequency and the second harmonic are shown below.</p>
+
+<img vspace="5" hspace="5" src="images/example_us_beam_patterns_03.png" style="width:560px;height:420px;" alt="">
+<img vspace="5" hspace="5" src="images/example_us_beam_patterns_04.png" style="width:560px;height:420px;" alt="">
+
+<p>These distributions can also be used to analyse the lobe widths of the fundamental frequency and harmonics at the transducer focus. An example of this is given below.</p>
+
+<img vspace="5" hspace="5" src="images/example_us_beam_patterns_05.png" style="width:560px;height:420px;" alt="">
+
+<a name="heading4"></a>
+<h2>Extending the simulations</h2>
+
+<p>This example can be used as a framework for simulating the beam patterns produced by a wide range of linear transducers. For example, the number of grid points in the computational grid could be increased to allow higher transmit frequencies to be studied. Similarly, the effect of apodization on the beam characteristics could be investigated by changing the value of <code>transducer.transmit_apodization</code> to one of the inputs accepted by <code><a href="getWin.html">getWin</a></code> (or to a custom apodization). As the simulations are performed in 3D, both on-axis and off-axis responses can be visualised (change <code>MASK_PLANE</code> to <code>'xz'</code>). Beam patterns in heterogeneous media can also be generated by assigning heterogeneous medium parameters to <code>medium.sound_speed</code> and <code>medium.density</code>.</p>
+
+</div></body></html>

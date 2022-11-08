@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Saving Input Files In Parts Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Saving Input Files In Parts Example.">
+</head>
+
+<body>
+
+<a name="top_of_page"></a>
+<div class="content"><h1>Saving Input Files In Parts Example</h1>
+
+<p>This example demonstrates how to save the HDF5 input files required by the C++ code in parts. It builds on the <a href="example_cpp_running_simulations.html">Running C++ Simulations Example</a>.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_cpp_io_in_parts.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_cpp_io_in_parts']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Saving the medium, source, and sensor</a></li>
+		<li><a href="#heading3">Saving the grid and file attributes</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Saving the medium, source, and sensor</h2>
+
+<p>When performing simulations with very large grid sizes, out-of-memory errors can sometimes be encountered when using <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> to generate the input files for the C++ code. This is because all input matrices are first created in memory before saving them to disk. It is also possible to create the input HDF5 files in parts, where each input matrix is generated, saved to disk, and then cleared from memory sequentially, rather than all at once. Variables are written to the input file by first casting them to the correct data type, and then using the <code><a href="writeMatrix.html">writeMatrix</a></code> function. The required data types are stored as the literals <code>MATRIX_DATA_TYPE_MATLAB</code> and <code>INTEGER_DATA_TYPE_MATLAB</code> defined in  <code>private/getH5Literals.m</code>. These can be loaded to the workspace using</p>
+
+<pre class="codeinput">
+<span class="comment">% load HDF5 constants</span>
+run([getkWavePath 'private/getH5Literals']);
+</pre>
+
+<p>The variables stored in the HDF5 file must be given the correct names and must have the correct data type and matrix structure. A comprehensive list of the required input variables and their format is given in the k-Wave Manual. For example, the syntax for casting and saving the sound speed is:</p>
+
+<pre class="codeinput">
+<span class="comment">% make sure the input is in the correct data format</span>
+eval(['c0 = ' MATRIX_DATA_TYPE_MATLAB '(c0);']);
+    
+<span class="comment">% save the sound speed matrix</span>
+writeMatrix([pathname input_filename], c0, 'c0');
+</pre>
+
+<p>Note, the interpolation functions in MATLAB used to calculate the values of the density on a staggered grid, become very inefficient for large matrices. In this case, it is better to use alternative methods to calculate the density values on the staggered grids.</p>
+
+<p>When using a time-varying pressure or velocity source, the source mask must be defined as a 1D list of linear grid indices that correspond to the grid points that will act as source points. For example, if the source is square piston, the source mask can be created and written to the input file as follows:</p>
+
+<pre class="codeinput">
+<span class="comment">% define a square source mask facing in the x-direction using the
+% normal k-Wave syntax</span>
+p_mask = false(Nx, Ny, Nz);
+p_mask(1 + pml_x_size, Ny/2 - source_y_size/2:Ny/2 + source_y_size/2, Nz/2 - source_z_size/2:Nz/2 + source_z_size/2) = 1;
+
+<span class="comment">% find linear source indices</span>
+p_source_index = find(p_mask == 1);
+p_source_index = reshape(p_source_index, [], 1);
+
+<span class="comment">% make sure the input is in the correct data format</span>
+eval(['p_source_index = ' INTEGER_DATA_TYPE_MATLAB '(p_source_index);']);
+
+<span class="comment">% save the source index matrix</span>
+writeMatrix([pathname input_filename], p_source_index, 'p_source_index');
+</pre>
+
+<p>The corresponding time-varying pressure source is created in the normal fashion and then written to the <code>p_source_input</code> within the input file. Note, when using <code><a href="writeMatrix.html">writeMatrix</a></code> instead of <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> to create the input file, the source scaling must be manually applied.</p>
+
+<pre class="codeinput">
+<span class="comment">% define a time varying sinusoidal source</span>
+p_source_input  = source_strength .* sin(2 * pi * source_freq * (0:(Nt - 1)) * dt);
+
+<span class="comment">% apply an cosine ramp to the beginning to avoid startup transients</span>
+ramp_length = round((2*pi/source_freq)/dt);
+p_source_input(1:ramp_length) = p_source_input(1:ramp_length).*(-cos( (0:(ramp_length-1))*pi/ramp_length ) + 1)/2;
+
+<span class="comment">% scale the source magnitude to be in the correct units for the code</span>
+p_source_input = p_source_input .* (2 * dt ./ (3 * c_source * dx));
+
+<span class="comment">% cast matrix to single precision</span>
+eval(['p_source_input = ' MATRIX_DATA_TYPE_MATLAB '(p_source_input);']);
+
+<span class="comment">% save the input signal</span>
+writeMatrix([pathname input_filename], p_source_input, 'p_source_input');
+</pre>
+
+<p>The sensor mask must be defined as a 1D list of linear grid indices in the same way as the source masks:</p>
+
+<pre class="codeinput">
+<span class="comment">% define a sensor mask through the central plane</span>
+sensor_mask = false(Nx, Ny, Nz);
+sensor_mask(:, :, Nz/2) = 1;
+
+<span class="comment">% extract the indices of the active sensor mask elements</span>
+sensor_mask_index = find(sensor_mask);
+sensor_mask_index = reshape(sensor_mask_index, [], 1);
+
+<span class="comment">% make sure the input is in the correct data format</span>
+eval(['sensor_mask_index = ' INTEGER_DATA_TYPE_MATLAB '(sensor_mask_index);']);
+
+<span class="comment">% save the sensor mask</span>
+writeMatrix([pathname input_filename], sensor_mask_index, 'sensor_mask_index');
+</pre>
+
+<p>Alternatively, the sensor mask can be defined as a list of cuboid corners as described in the k-Wave manual.</p>
+
+<a name="heading3"></a>
+<h2>Saving the grid and file attributes</h2>
+
+<p>After the medium, source, and sensor properties have been written to the input file, a number of additional grid variables, input flags, and file attributes must also be added. This can be done by using the functions <code><a href="writeGrid.html">writeGrid</a></code>, <code><a href="writeFlags.html">writeFlags</a></code>, and <code><a href="writeAttributes.html">writeAttributes</a></code>.</p>
+
+<pre class="codeinput">
+<span class="comment">% write grid parameters</span>
+writeGrid([pathname input_filename], [Nx, Ny, Nz], [dx, dy, dz], ...
+    [pml_x_size, pml_y_size, pml_z_size], [pml_x_alpha, pml_y_alpha, pml_z_alpha], ...
+    Nt, dt, c_ref);
+
+<span class="comment">% write flags</span>
+writeFlags([pathname input_filename]);
+
+<span class="comment">% set additional file attributes</span>
+writeAttributes([pathname input_filename]);
+</pre>
+
+<p>After the input file is generated, the C++ code can be called in the same way as the <a href="k-wave_using_cpp_code.html">Using the C++ Code Example</a>.</p>
+
+</div></body></html>

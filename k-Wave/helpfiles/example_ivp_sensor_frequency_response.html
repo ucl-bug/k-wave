@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Defining A Gaussian Sensor Frequency Response Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Defining A Gaussian Sensor Frequency Response Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Defining A Gaussian Sensor Frequency Response Example</h1>
+
+<p>This example shows how to account for the frequency response of detectors when this response has a Gaussian shape (for example, piezoelectric ultrasound  transducers). It builds on the <a href="example_ivp_homogeneous_medium.html">Homogeneous Propagation Medium Example</a>.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_ivp_sensor_frequency_response.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_ivp_sensor_frequency_response']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Defining the sensor frequency response</a></li>
+		<li><a href="#heading3">Running the simulation</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Defining the sensor frequency response</h2>
+
+<p>The frequency response of the sensor is assigned using the <code>frequency_response</code> field of the <code>sensor</code> input structure. This accepts two parameters, one for the center frequency, and one for the bandwidth of the frequency response. The transducer bandwidth, defined as a percentage, controls the full-width at half-maximum (FWHM) of the filter, where the FWHM = % bandwidth * center frequency.</p>
+
+<pre class="codeinput">
+<span class="comment">% define the frequency response of the sensor elements</span>
+center_freq = 3e6;      <span class="comment">% [Hz]</span>
+bandwidth = 80;         <span class="comment">% [%]</span>
+sensor.frequency_response = [center_freq, bandwidth];
+</pre>
+
+<p>When an input for <code>sensor.frequency_response</code> is defined, a Gaussian filter is applied within the simulation functions after the simulation is completed by multiplying the Fourier transformed signals by a zero-phase Gaussian window using <code><a href="gaussianFilter.html">gaussianFilter</a></code>. Note, the same filter can also easily be applied by calling <code><a href="gaussianFilter.html">gaussianFilter</a></code> explicitly when the sensor data is returned.</p>
+
+<img vspace="5" hspace="5" src="images/example_ivp_sensor_frequency_response_01.png" style="width:561px;height:420px;" alt="">
+
+<a name="heading3"></a>
+<h2>Running the simulation</h2>
+
+<p>To illustrate the effect of the filter, the time series recorded at the first sensor position for a simulation with and without the <code>sensor.frequency_response</code> field defined are plotted below. The corresponding amplitude spectrums are also shown. The removal of the low frequency information has a significant effect on the signal amplitude.</p>
+
+<img vspace="5" hspace="5" src="images/example_ivp_sensor_frequency_response_02.png" style="width:560px;height:420px;" alt="">
+<img vspace="5" hspace="5" src="images/example_ivp_sensor_frequency_response_03.png" style="width:560px;height:420px;" alt="">
+
+</div></body></html>

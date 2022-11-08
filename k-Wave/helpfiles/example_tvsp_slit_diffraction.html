@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Diffraction Through A Slit Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Diffraction Through A Slit Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Diffraction Through A Slit Example</h1>
+
+<p>This example illustrates the diffraction of a plane acoustic wave through a slit. It builds on the <a href="example_tvsp_homogeneous_medium_monopole.html">Monopole Point Source In A Homogeneous Propagation Medium</a> and <a href="example_tvsp_transducer_field_patterns.html">Simulating Transducer Field Patterns</a> examples.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_tvsp_slit_diffraction.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_tvsp_slit_diffraction']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+        <li><a href="#heading2">Defining the medium properties</a></li>
+		<li><a href="#heading3">Defining the reference sound speed</a></li>
+        <li><a href="#heading4">Running the simulation</a></li>
+        <li><a href="#heading5">Diffraction through a double slit</a></li>
+    </ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Defining the medium properties</h2>
+
+<p>The current version of k-Wave cannot explicitly enforce impedance boundary conditions. However, rigid boundaries can still be modelled by assigning a boundary with a large sound speed and density compared to the rest of the propagation medium. As this impedance difference is increased, the behaviour of the interface will approach that of a rigid boundary. Here, a diffraction slit is created by defining a thin layer with a significantly different sound speed and density to the background medium such that most of the incident wave is reflected. (Note, using <code>barrier_scale = 20</code>, some of the incident wave will still be transmitted through the barrier causing additional interference fringes. These can be reduced by increasing the barrier scale.)</p>
+
+<pre class="codeinput">
+<span class="comment">% define the ratio between the barrier and background sound speed and density</span>
+barrier_scale = 20;
+
+<span class="comment">% create a mask of a barrier with a slit</span>
+slit_thickness = 2;                     <span class="comment">% [grid points]</span>
+slit_width = 10;                        <span class="comment">% [grid points]</span>
+slit_x_pos = Nx - Nx/4;                 <span class="comment">% [grid points]</span>
+slit_offset = Ny/2 - slit_width/2 - 1;  <span class="comment">% [grid points]</span>
+slit_mask = zeros(Nx, Ny);
+slit_mask(slit_x_pos:slit_x_pos + slit_thickness, 1:1 + slit_offset) = 1;
+slit_mask(slit_x_pos:slit_x_pos + slit_thickness, end - slit_offset:end) = 1;
+
+<span class="comment">% define the source wavelength to be the same as the slit size</span>
+source_wavelength = slit_width * dx;    <span class="comment">% [m]</span>
+
+<span class="comment">% assign the slit to the properties of the propagation medium</span>
+medium.sound_speed = c0 * ones(Nx, Ny);
+medium.density = rho0 * ones(Nx, Ny);
+medium.sound_speed(slit_mask == 1) = barrier_scale * c0;
+medium.density(slit_mask == 1) = barrier_scale * rho0;
+</pre>
+
+<a name="heading3"></a>
+<h2>Defining the reference sound speed</h2>
+
+<p>For a homogeneous medium, the simulations in k-Wave are unconditionally stable and free from numerical dispersion (this is a type of numerical error where the sound speed incorrectly depends on frequency which distorts the shape of the propagating waves). When the medium is heterogeneous, the calculation is only exact in regions of the domain where the sound speed matches a scalar reference sound speed used in the model. By default, k-Wave sets the reference sound speed to the maximum sound speed anywhere in the domain. This means the simulation will be unconditionally stable (it won't "blow up"), but won't prevent numerical dispersion in other parts of the domain where the sound speed is lower. In this example, the maximum sound speed is much greater than the sound speed in the background medium, and thus numerical dispersion can arise. To counteract this, it is possible to explicitly specify the value for the reference sound speed (assigned to <code>medium.sound_speed_ref</code>). However, when the reference sound speed is less than the maximum, the simulation is no longer unconditionally stable, and the time step must be chosen to be less than the stability criterion. Here, the sound speed is set to be 5% less than the maximum stable time step. A more in-depth discussion of this issue is given in the k-Wave manual.</p>
+
+<pre class="codeinput">
+<span class="comment">% assign the reference sound speed to the background medium</span>
+medium.sound_speed_ref = c0;
+
+<span class="comment">% find the time step at the stability limit</span>
+c_ref = medium.sound_speed_ref;
+c_max = barrier_scale * c0;
+k_max = max(kgrid.k(:));
+dt_limit = 2 / (c_ref * k_max) * asin(c_ref / c_max);
+
+<span class="comment">% create the time array, with the time step just below the stability limit</span>
+dt = 0.95 * dt_limit;   <span class="comment">% [s]</span>
+t_end = 40e-6;          <span class="comment">% [s]</span>
+kgrid.setTime(round(t_end / dt), dt);
+</pre>
+
+<a name="heading4"></a>
+<h2>Running the simulation</h2>
+
+<p>In the first example (set <code>example_number = 1</code> within the example m-file), a sinusoidal plane wave source is created with a wavelength equal to the slit width. The source is defined as a velocity source in the x-direction extending the full width of the grid (including within the PML). This creates a plane wave source that isn't affect by the PML in the lateral direction. A visualisation of the barrier is also produced by assigning the <code>slit_mask</code> created above to the optional input parameter <code>'DisplayMask'</code>. The size of the perfectly matched layer is explicitly defined (see <a href="example_na_controlling_the_pml.html">Controlling The Absorbing Boundary Layer Example</a>), the simulation is run in <code>single</code> precision to reduce the computation time (see <a href="example_na_optimising_performance.html">Optimising k-Wave Performance Example</a>), and the final pressure and velocity fields are returned by <code>sensor.record</code> to <code>{'p_final', 'u_final'}</code> (see <a href="example_ivp_recording_particle_velocity.html">Recording The Particle Velocity Example</a>).</p>
+
+<pre class="codeinput">
+<span class="comment">% set the input options</span>
+input_args = {...
+    'PMLSize', pml_size, ...
+    'PlotPML', false, ...
+    'DisplayMask', slit_mask, ...
+    'DataCast', 'single', ...
+    };
+
+<span class="comment">% run the simulation</span>
+sensor_data = kspaceFirstOrder2D(kgrid, medium, source, sensor, input_args{:});
+</pre>
+
+<p>A visualisation of the pressure field is given below. The wave field on the far side of the slit appears reasonably omni-directional.</p>
+
+<img vspace="5" hspace="5" src="images/example_tvsp_slit_diffraction_01.png" style="width:560px;height:420px;" alt="">
+
+<p>In the second example (set <code>example_number = 2</code> within the example m-file), the slit size is increased and the wavelength is reduced to be a quarter of the slit width. A visualisation of the pressure field is given below. In this case, the directionality of the wavefield is increased, and interference fringes are visible.</p> 
+
+<img vspace="5" hspace="5" src="images/example_tvsp_slit_diffraction_02.png" style="width:560px;height:420px;" alt="">
+
+<a name="heading5"></a>
+<h2>Diffraction through a double slit</h2>
+
+<p>In the third example (set <code>example_number = 3</code> within the example m-file), a double slit is used and the wavelength set equal to the slit width. The final velocity fields are also displayed.</p> 
+
+<img vspace="5" hspace="5" src="images/example_tvsp_slit_diffraction_03.png" style="width:560px;height:420px;" alt="">
+<img vspace="5" hspace="5" src="images/example_tvsp_slit_diffraction_04.png" style="width:560px;height:420px;" alt="">
+<img vspace="5" hspace="5" src="images/example_tvsp_slit_diffraction_05.png" style="width:560px;height:420px;" alt="">
+
+<p>Note, the pictures shown here were computed using <code>barrier_scale = 50</code> and <code>scale = 2</code> within the example m-file.</p>
+
+</div></body></html>

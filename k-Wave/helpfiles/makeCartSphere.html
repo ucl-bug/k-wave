@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>makeCartSphere :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>makeCartSphere</h1>
+<p class="purpose">Create a 3D Cartesian sphere.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+sphere = makeCartSphere(radius, num_points)
+sphere = makeCartSphere(radius, num_points, center_pos)
+sphere = makeCartSphere(radius, num_points, center_pos, plot_sphere)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>makeCartSphere</code> creates a 3 x <code>num_points</code> array of the Cartesian coordinates of points evenly distributed over a sphere using the Golden Section Spiral method. The function is based on code by Patric Boucher and Henry Bland on <a href="http://www.xsi-blog.com">http://www.xsi-blog.com</a>. The 3D plot that is displayed after calling <code>makeCartSphere(10, 500, [0,0,0], true);</code> is given below.</p>
+
+<img vspace="5" hspace="5" src="images/makeCartSphere_01.png" style="width:560px;height:420px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>radius</code></td>
+        <td>sphere radius [m]</td>
+    </tr>     
+    <tr valign="top">
+        <td width = "150"><code>num_points</code></td>
+        <td>number of points on the sphere</td>        
+    </tr>          
+</table>
+
+<h2>Optional Inputs</h2>
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>center_pos</code></td>
+        <td>[x, y, z] position of the circle center [m] (default = [0, 0, 0])</td>        
+    </tr>      
+    <tr valign="top">
+        <td width = "150"><code>plot_sphere</code></td>
+        <td>Boolean controlling whether the Cartesian coordinates are plotted using <code><a href="matlab: doc plot3">plot3</a></code> (default = false)</td>
+    </tr>     
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>sphere</code></td>
+        <td>3 x <code>num_points</code> array matrix of Cartesian points</td>
+    </tr>
+</table>
+
+<h2>Examples</h2>
+<ul>
+<li><a href="example_pr_3D_tr_spherical_sensor.html">3D Time Reversal For A Spherical Sensor</a></li>
+</ul>
+
+<h2>See Also</h2>
+
+<code><a href="cart2grid.html">cart2grid</a></code>, <code><a href="makeCartCircle.html">makeCartCircle</a></code>, <code><a href="makeSphere.html">makeSphere</a></code>
+
+</div></body></html>

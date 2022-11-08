@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>sharpness :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>sharpness</h1>
+<p class="purpose">Calculate image sharpness metric.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+s = sharpness(im)
+s = sharpness(im, metric)
+</pre>
+
+<h2>Description</h2>
+<p><code>sharpness</code> returns a scalar metric related to the sharpness of the 2D or 3D image matrix defined by <code>im</code>. By default, the metric is based on the Brenner gradient which returns the sum of the centered finite-difference at each matrix element in each Cartesian direction. Metrics calculated using the Sobel operator or the normalised variance can also be returned by setting the input paramater <code>metric</code>.</p>
+
+<p>For further details, see B. E. Treeby, T. K. Varslot, E. Z. Zhang, J. G. Laufer, and P. C. Beard, "Automatic sound speed selection in photoacoustic image reconstruction using an autofocus approach," J. Biomed. Opt., vol. 16, no. 9, p. 090501, 2011.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>im</code></td>
+        <td>2D or 3D image data to evaluate</td>
+    </tr>       
+</table>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>metric</code></td>
+         <td>
+            <p>sharpness metric. Supported values are</p>
+            <p>
+<code>'Brenner'</code> (default)<br/>
+<code>'Tenenbaum'</code><br/>
+<code>'NormVariance'</code><br/></p>
+        </td>
+    </tr>       
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>s</code></td>
+        <td>computed sharpness metric</td>
+    </tr>       
+</table>
+
+</div></body></html>

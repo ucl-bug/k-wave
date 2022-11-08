@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>trimCartPoints :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>trimCartPoints</h1>
+<p class="purpose">Remove Cartesian points that are not within a kgrid.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+points = trimCartPoints(kgrid, points)
+</pre>
+
+<h2>Description</h2>
+<p><code>trimCartPoints</code> filters a <code>dim x num_points</code> array of Cartesian points so that only those within the bounds of a given <code>kgrid</code> remain.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td><code>kgrid</code></td>
+        <td>k-Wave grid object returned by <code><a href="kWaveGrid.html">kWaveGrid</a></code></td>
+    </tr>    
+    
+    <tr valign="top">
+        <td width = "150"><code>points</code></td>
+        <td><code>dim x num_points</code> array of Cartesian coordinates to trim [m]</td>
+    </tr>
+</table>
+    
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>points</code></td>
+        <td><code>dim x num_points</code> array of Cartesian coordinates array of Cartesian coordinates that lie within the grid defined by <code>kgrid</code> [m]</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="cart2grid.html">cart2grid</a></code>, <code><a href="grid2cart.html">grid2cart</a></code>
+
+</div></body></html>

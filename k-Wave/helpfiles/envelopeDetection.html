@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>envelopeDetection :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>envelopeDetection</h1>
+<p class="purpose">Extract signal envelope using the Hilbert Transform.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+env = envelopeDetection(x)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>envelopeDetection</code> applies the Hilbert transform to extract the envelope from an input vector <code>x</code>. If <code>x</code> is a matrix, the envelope along each row is returned. For example, running the code</p>
+
+<pre class="codeinput">
+<span class="comment">% create tone burst</span>
+x = toneBurst(10e6, 0.5e6, 10);
+
+<span class="comment">% plot tone burst and envelope</span>
+figure;
+plot(0:length(x) - 1, x, 'k-', 0:length(x) - 1, envelopeDetection(x), 'r-');
+legend('Input Signal', 'Envelope');
+</pre>
+
+<p>produces the output</p>
+
+<img vspace="5" hspace="5" src="images/envelopeDetection_01.png" style="width:560px;height:420px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>x</code></td>
+        <td>input function</td>
+    </tr>    
+</table>
+   
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>env</code></td>
+        <td>envelope of input function</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+<code><a href="matlab: doc fft">fft</a></code>
+
+
+
+
+</div></body></html>

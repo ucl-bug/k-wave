@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>gaussianFilter :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>gaussianFilter</h1>
+<p class="purpose">Filter signals using a frequency domain Gaussian filter.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+signal = gaussianFilter(signal, Fs, freq, bandwidth)
+signal = gaussianFilter(signal, Fs, freq, bandwidth, plot_filter)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>gaussianFilter</code> applies a frequency domain Gaussian filter with the specified center frequency and percentage bandwidth to the input signal. If the input signal is given as a matrix, the filter is applied to each matrix row.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>signal</code></td>
+        <td>signal/s to filter</code></td>
+    </tr>    
+
+    <tr valign="top">
+        <td width = "150"><code>Fs</code></td>
+        <td>sampling frequency [Hz]</td>
+    </tr> 
+	
+	<tr valign="top">
+        <td width = "150"><code>freq</code></td>
+        <td>filter center frequency [Hz]</td>
+    </tr>  
+	
+	<tr valign="top">
+        <td width = "150"><code>bandwidth</code></td>
+        <td>filter bandwidth [%]</td>
+    </tr>  
+</table>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>plot_filters</code></td>
+        <td>Boolean controlling whether the filtering process is plotted</td>
+    </tr>    
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>signal</code></td>
+        <td>filtered signal/s</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="applyFilter.html">applyFilter</a></code>, <code><a href="filterTimeSeries.html">filterTimeSeries</a></code>, <code><a href="gaussian.html">gaussian</a></code>
+
+
+
+
+</div></body></html>

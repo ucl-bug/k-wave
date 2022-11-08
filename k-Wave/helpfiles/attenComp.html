@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>attenComp :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>attenComp</h1>
+<p class="purpose">Attenuation compensation using time-variant filtering.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+signal = attenComp(signal, dt, c, alpha_0, y)
+signal = attenComp(signal, dt, c, alpha_0, y, ...)
+[signal, tfd, cutoff_freq] = attenComp(signal, dt, c, alpha_0, y)
+[signal, tfd, cutoff_freq] = attenComp(signal, dt, c, alpha_0, y, ...)
+</pre>
+
+<h2>Description</h2>
+<p><code>attenComp</code> corrects for frequency dependent acoustic attenuation in photoacoustic signals using time-variant filtering [1]. The time-variant filter is constructed to correct for acoustic attenuation and dispersion following a frequency power law of the form <code>alpha_0*f^y</code> under the assumption the distribution of attenuation parameters is homogeneous. The filter is applied directly to the recorded time-domain signals using a form of non-stationary convolution. The approach is computationally efficient and can be used with any detector geometry or reconstruction algorithm.</p>
+
+<p>To prevent high-frequency noise from being amplified, the compensation is regularised using a Tukey window with a time-variant cutoff frequency. The cutoff frequency can be specified manually using the optional input <code>'FilterCutoff'</code>. This is set as a two-element vector corresponding to the cutoff frequency in Hz for the first and last time points, respectively. For a fixed cutoff, these should be specified as the same value, e.g., <code>[3e6, 3e6]</code>. Alternatively, if <code>'FilterCutoff'</code> is set to <code>'auto'</code> (the default), the cutoff frequency is chosen based on the local time-frequency distribution of the recorded signals using the following steps:</p>
+
+<ol>
+<li>Compute the average time-frequency distribution of the input signals (the method can be defined using the optional input <code>'Distribution'</code>)</li>
+<li>Threshold the time-frequency distribution to remove noise (the threshold value can be defined using the optional input <code>'NoiseThreshold'</code>)</li>
+<li>Calculate the integral of the thresholded time-frequency distribution at each time point using <code>cumsum</code></li>
+<li>Find the cutoff frequency at each time point where the integral reaches a given percentage of the maximum value (this percentage can be defined using the optional input <code>'EnergyThreshold'</code>)</li>
+<li>Increase the filter cutoff frequency by a fixed multiplier so the cutoff corresponds to the edge of the passband for the Tukey window (the multiplier can be defined using the optional input <code>'FrequencyMultiplier'</code>)</li>
+<li>Smooth the variation of the cutoff frequency over time (the smoothing function can be defined using the optional input <code>'FitType'</code>)</li>
+<li>Threshold any values of the cutoff frequency below zero or above the Nyquist limit</li>
+</ol>
+
+<p>If the input contains a matrix of signals, the cutoff frequency is based on the average time frequency distribution. To calculate the cutoff frequency for each signal individually, this function should be called in a loop. This can be parallelised, for example, using <code>parfor</code> from the parallel computing toolbox. For further details about this function and attenuation compensation using time variant filtering, see the reference below.</p>
+
+<p>[1] B. E. Treeby (2013) "Acoustic attenuation compensation in photoacoustic tomography using time-variant filtering," J. Biomed. Opt., vol. 18, no. 3, p.036008.</p>
+   
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>signal</code></td>
+        <td>matrix of time series to compensate indexed as <code>(sensor_index, time_index)</code></td>
+    </tr>     
+    
+    <tr valign="top">
+        <td><code>dt</code></td>
+        <td>time step [s]</td>
+    </tr>
+    
+    <tr valign="top">
+        <td><code>c</code></td>
+        <td>sound speed [m/s]</td>
+    </tr>   
+    
+    <tr valign="top">
+        <td><code>alpha_0</code></td>
+        <td>power law absorption prefactor [dB/(MHz^y cm)]</td>
+    </tr>
+    
+    <tr valign="top">
+        <td><code>y</code></td>
+        <td>power law absorption exponent [0 < y < 3, y ~= 1]</td>
+    </tr>
+          
+</table>
+
+<h2>Optional Inputs</h2>
+
+<p>Optional 'string', value pairs that may be used to modify the default computational settings.</p>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="18%"><col width="18%"><col width="18%"><col width="46%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Input</th>
+            <th bgcolor="#B2B2B2">Valid Settings</th>
+            <th bgcolor="#B2B2B2">Default</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+    
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'DisplayUpdates'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>true</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether command line updates and compute time are printed to the command line.</td>
+        </tr>       
+    
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Distribution'</code></td>
+            <td bgcolor="#F2F2F2"><code>'Rihaczek'</code><br><code>'Wigner'</code></td>
+            <td bgcolor="#F2F2F2"><code>'Rihaczek'</code></td>            
+            <td bgcolor="#F2F2F2">Time-frequency distribution used to automatically compute the filter cutoff frequency if <code>'FilterCutoff'</code> is set to <code>'auto'</code>. Note, the option <code>'Wigner'</code> requires the Discrete TFD toolbox                        from <a href="http://tfd.sourceforge.net">http://tfd.sourceforge.net</a>.</td>
+        </tr>     
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'EnergyThreshold'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>0.98</code></td>            
+            <td bgcolor="#F2F2F2">Threshold value given as a percentage of the total amplitude spectrum used to choose the filter cutoff frequency at each time point.</td>
+        </tr>   
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'FilterCutoff'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric two element vector)</em> or<br><code>'auto'</code></td>
+            <td bgcolor="#F2F2F2"><code>'auto'</code></td>            
+            <td bgcolor="#F2F2F2">Option to manually define the cutoff frequencies for a linear variation in the filter cutoff instead of using an automatic search.</td>
+        </tr> 
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'FitType'</code></td>
+            <td bgcolor="#F2F2F2"><code>'spline'</code><br><code>'linear'</code><br><code>'mav'</code></td>
+            <td bgcolor="#F2F2F2"><code>'spline'</code></td>            
+            <td bgcolor="#F2F2F2">Fitting type used to smooth the filter cutoff frequency after an automatic search, where <code>'spline'</code> fits a smoothed spline, <code>'linear'</code> fits a linear line, and <code>'mav'</code> computes the moving average.</td>
+        </tr> 
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'FrequencyMultiplier'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>2</code></td>            
+            <td bgcolor="#F2F2F2">By default, the compensation is regularised using a Tukey window with a time-variant cutoff frequency. The default Tukey window has a taper ratio of 0.5, so the filter cutoff frequency found by the automatic search is increased by a frequency multiplier so that the filter cutoff frequency corresponds to the edge of the passband of the Tukey window.</td>
+        </tr>             
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'NumSplines'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>40</code></td>            
+            <td bgcolor="#F2F2F2">Number of spline segments used in the smoothing spline if <code>'FitType'</code> is set to <code>'spline'</code>.</td>
+        </tr>          
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'NoiseThreshold'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>0.03</code></td>            
+            <td bgcolor="#F2F2F2">Threshold value given as a percentage of the signal maximum used to threshold the TFD before the automatic search for the filter cutoff.</td>
+        </tr> 
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Plot'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether a plot of the time frequency distribution and filter cutoff frequency are displayed.</td>
+        </tr> 
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'PlotRange'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric two element vector)</em> or<br><code>'auto'</code><br><code>'full'</code></td>
+            <td bgcolor="#F2F2F2"><code>'auto'</code></td>            
+            <td bgcolor="#F2F2F2">Option to manually set the plot range in the frequency axis when <code>'Plot'</code> is set to <code>true</code>. This can be manually specified, or set to <code>'auto'</code> (1.5 x the maximum filter cutoff frequency) or <code>'full'</code> (maximum supported frequency range).</td>
+        </tr> 
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'TaperRatio'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>0.5</code></td>            
+            <td bgcolor="#F2F2F2">Taper ratio used to construct the Tukey Windows.</td>
+        </tr> 
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'T0'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>0</code></td>            
+            <td bgcolor="#F2F2F2">Time index of T0 in the input signals. For photoacoustic imaging, T0 corresponds to the arrival of the excitation laser pulse at the sample.</td>
+        </tr>         
+        
+    </tbody>
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>signal_comp</code></td>
+        <td>time series after attenuation compensation</td>
+    </tr>  
+
+    <tr valign="top">
+        <td><code>tfd</code></td>
+        <td>average time frequency distribution of the input signals</td>
+    </tr>     
+    
+    <tr valign="top">
+        <td><code>cutoff_freq</code></td>
+        <td>filter cutoff frequency for each time index</td>
+    </tr>         
+</table>
+
+<h2>Examples</h2>
+<ul>
+<li><a href="example_pr_2D_tr_time_variant_filtering.html">Attenuation Compensation Using Time Variant Filtering</a></li>              
+</ul>
+
+</div></body></html>

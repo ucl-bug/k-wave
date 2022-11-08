@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>revolve2D :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>revolve2D</h1>
+<p class="purpose">Form 3D matrix from revolution of 2D matrix.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+mat3D = revolve2D(mat2D)
+</pre>
+
+<h2>Description</h2>
+<p><code>revolve2D</code> revolves the values of a 2D matrix about the x axis (or matrix rows) to form a 3D matrix. A single point is taken as the x-axis origin, thus for an input matrix of size m by n, the output matrix will be m by (2n-1) by (2n-1). Values outside the interpolation range are set to zero. An example of revolving a 2D triangle is shown below.</p>
+
+<pre class="codeinput">
+<span class="comment">% create a triangle in a 2D grid</span>
+triangle = tril(ones(10, 10));
+
+<span class="comment">% rotate in 3D</span>
+triangle_3D = revolve2D(triangle);
+
+<span class="comment">% plot the revolved triangle</span>
+voxelPlot(triangle_3D);
+camup([0, -1, 0]);
+</pre>
+
+<img vspace="5" hspace="5" src="images/revolve2D_01.png" style="width:232px;height:410px;" alt="">
+<img vspace="5" hspace="5" src="images/revolve2D_02.png" style="width:560px;height:420px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>mat2D</code></td>
+        <td>2D input matrix</td>
+    </tr>        
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>mat3D</code></td>
+        <td>3D output matrix</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="matlab: doc interp1">interp1</a></code>
+
+</div></body></html>

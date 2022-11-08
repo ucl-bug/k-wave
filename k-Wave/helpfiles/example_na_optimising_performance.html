@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Optimising k-Wave Performance Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Optimising k-Wave Performance Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Optimising k-Wave Performance Example</h1>
+
+<p>This example demonstrates how to increase the computational performance of k-Wave using optional input parameters and data casting. A separate standardised benchmarking script <code><a href="benchmark.html">benchmark</a></code> is also included within the k-Wave toolbox to allow computational times to be compared across different computers and GPUs.</p></p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_na_optimising_performance.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_na_optimising_performance']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Controlling input options</a></li>
+		<li><a href="#heading3">Data casting</a></li>
+		<li><a href="#heading4">Running k-Wave on the GPU</a></li>
+		<li><a href="#heading5">Multicore support</a></li>
+		<li><a href="#heading6">C++ code</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Controlling input options</h2>
+
+<p>To investigate where the computational effort is spent during a k-Wave simulation, it is useful to use the inbuilt MATLAB profiler which examines the execution times for the various k-Wave and inbuilt functions. Running the profiler on a typical forward simulation using <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code> with a Cartesian sensor mask and no optional inputs gives the following command line output (set <code>example_number = 1</code> within the example m-file):</p>
+
+<pre class="codeinput">
+Running k-Wave simulation...
+  start time: 04-Jun-2017 14:45:23
+  reference sound speed: 1500m/s
+  dt: 3.9063ns, t_end: 9.4258us, time steps: 2414
+  input grid size: 512 by 512 grid points (10 by 10mm)
+  maximum supported frequency: 38.4MHz
+  smoothing p0 distribution...
+  calculating Delaunay triangulation...
+  precomputation completed in 1.7434s
+  starting time loop...
+  estimated simulation time 1min 3.1502s...
+  simulation completed in 59.8023s
+  total computation time 1min 1.61s
+</pre>
+
+<p>The corresponding profiler output is given below.</p>
+
+<img vspace="5" hspace="5" src="images/example_na_optimising_performance_01.png" style="width:629px;height:589px;" alt="">
+
+<p>Aside from computations within the parent functions, it is clear the majority of the time is spent running <code>ifft2</code> and <code>fft2</code>. These are the fast Fourier transforms (FFTs) used to calculate spatial gradients as part of the k-space pseudospectral method used in k-Wave. Several seconds are also spent computing the Delaunay triangulation used for calculating the pressure over the Cartesian sensor mask using interpolation. The triangulation is calculated once during the precomputations and this time is encapsulated within the precomputation time printed to the command line. The Delaunay triangulation can be avoided by setting the optional input <code>'CartInterp'</code> to <code>'nearest'</code>, or by using a binary sensor mask. A Cartesian sensor mask can be converted to a binary mask using <code><a href="cart2grid.html">cart2grid</a></code> as shown below.</p>
+
+<pre class="codeinput">
+<span class="comment">% convert Cartesian sensor mask to binary mask</span>
+sensor.mask = cart2grid(kgrid, sensor.mask);
+</pre>
+
+<p>Several seconds are also spent running the various functions associated with the animated visualisation (<code>imagesc</code>, <code>newplot</code>, <code>cla</code>, etc). The visualisation can be switched off by setting the optional input <code>'PlotSim'</code> to <code>false</code>. Re-running the profile with these two changes gives the following command line output (set <code>example_number = 2</code> within the example m-file):</p>
+
+<pre class="codeinput">
+Running k-Wave simulation...
+  start time: 04-Jun-2017 14:48:21
+  reference sound speed: 1500m/s
+  dt: 3.9063ns, t_end: 9.4258us, time steps: 2414
+  input grid size: 512 by 512 grid points (10 by 10mm)
+  maximum supported frequency: 38.4MHz
+  smoothing p0 distribution...
+  precomputation completed in 0.14281s
+  starting time loop...
+  estimated simulation time 56.6807s...
+  simulation completed in 51.8237s
+  total computation time 51.967s
+</pre>
+    
+<p>The precomputation time has been reduced, and the loop computation time has also been reduced by several seconds. The corresponding profiler output is given below.</p>
+
+<img vspace="5" hspace="5" src="images/example_na_optimising_performance_02.png" style="width:625px;height:236px;" alt="">
+
+<a name="heading3"></a>
+<h2 class="title">Data casting</h2>
+
+<p>Even after the modifications above, the majority of the computational time is still spent computing the FFT and the point-wise multiplication of large matrices (within the function <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>). It is possible to decrease this burden by capitalising on MATLAB's use of overloaded functions for different data types. For example, computing an FFT of a matrix of <code>single</code> type takes less time than for <code>double</code> (the standard data format used within MATLAB). For almost all simulations, the loss in precision as a result of performing calculations in <code>single</code> type is negligible, especially as the perfectly matched layer (PML) is only accurate to a few decimal points at best. Within <code><a href="kspaceFirstOrder1D.html">kspaceFirstOrder1D</a></code>, <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>, and <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>, the data type used for the variables within the time loop can be controlled via the optional input parameter <code>'DataCast'</code>. Re-running the profile with <code>'DataCast'</code> set to <code>'single'</code> gives the following command line output (set <code>example_number = 3</code> within the example m-file):</p>
+
+<pre class="codeinput">
+Running k-Wave simulation...
+  start time: 04-Jun-2017 14:52:00
+  reference sound speed: 1500m/s
+  dt: 3.9063ns, t_end: 9.4258us, time steps: 2414
+  input grid size: 512 by 512 grid points (10 by 10mm)
+  maximum supported frequency: 38.4MHz
+  smoothing p0 distribution...
+  casting variables to single type...
+  precomputation completed in 0.15796s
+  starting time loop...
+  estimated simulation time 37.7067s...
+  simulation completed in 33.4639s
+  total computation time 33.623s
+</pre>
+
+<p>The overall computational speed has been noticeably reduced. The corresponding profiler output is given below.</p>
+
+<img vspace="5" hspace="5" src="images/example_na_optimising_performance_03.png" style="width:628px;height:206px;" alt="">
+
+<a name="heading4"></a>
+<h2 class="title">Running k-Wave on the GPU</h2>
+
+<p>The computational time can be further improved by using other data types, in particular those which force program execution on a graphics processing unit (GPU). In particular, the MATLAB parallel computing toolbox contains overloaded MATLAB functions (such as the FFT) that work with any NVIDIA CUDA-enabled GPU. These toolboxes utilise an interface developed by NVIDIA called the CUDA SDK which allows programs written in C to run on the GPU, and then a MEX interface to allow the C programs to be run from MATLAB. Within MATLAB, the execution is as simple as casting the variables to the required data type. For example, to use the parallel computing toolbox within k-Wave, the optional input parameter <code>'DataCast'</code> is set to <code>'gpuArray-single'</code> or <code>'gpuArray-double'</code>. </p>
+
+<p>To illustrate, the command line output obtained by setting <code>'DataCast'</code> to <code>'gpuArray-single'</code> is given below (set <code>example_number = 4</code> within the example m-file). For this particular hardware configuration, the computational speed is only slightly increased compared to setting <code>'DataCast'</code> to <code>'single'</code>, however, the improvement in performance becomes more pronounced for larger problems.</p>
+
+<pre class="codeinput">
+Running k-Wave simulation...
+  start time: 04-Jun-2017 14:58:19
+  reference sound speed: 1500m/s
+  dt: 3.9063ns, t_end: 9.4258us, time steps: 2414
+  input grid size: 512 by 512 grid points (10 by 10mm)
+  maximum supported frequency: 38.4MHz
+  smoothing p0 distribution...
+  casting variables to gpuArray type...
+  precomputation completed in 0.28512s
+  starting time loop...
+  estimated simulation time 25.8781s...
+  GPU memory used: 1.0585 GB (of 6 GB)
+  simulation completed in 23.8294s
+  total computation time 24.117s
+</pre>
+
+<p>The corresponding profiler output is given below. The majority of time is now spent on computing matrix operations and the FFT on the GPU (within the function <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>). Further details on the speed-up obtained when using different GPUs is given in <code><a href="benchmark.html">benchmark</a></code>.</p>
+
+<img vspace="5" hspace="5" src="images/example_na_optimising_performance_04.png" style="width:624px;height:177px;" alt=""><br/>
+<img vspace="5" hspace="5" src="images/example_na_optimising_performance_05.png" style="width:619px;height:264px;" alt="">
+
+<a name="heading5"></a>
+<h2 class="title">Multicore support</h2>
+
+<p>The command line and profile outputs shown here were generated using MATLAB R2013a. Some earlier MATLAB versions do not include multicore support for parallelisable functions such as the FFT. If using a very old version of MATLAB, it is possible to get a noticeable increase in computational speed simply by changing MATLAB versions.</p>
+
+<a name="heading6"></a>
+<h2 class="title">C++ code</h2>
+
+<p>For 3D problems and larger problems in 2D, a significant performance increase can be obtained by using the native C++ and CUDA versions of the simulation functions. See the <a href="k-wave_using_cpp_code.html">Using the C++ Code</a> examples, and the functions <code><a href="kspaceFirstOrder2DC.html">kspaceFirstOrder2DC</a></code>, <code><a href="kspaceFirstOrder2DG.html">kspaceFirstOrder2DG</a></code>, <code><a href="kspaceFirstOrder3DC.html">kspaceFirstOrder3DC</a></code>, <code><a href="kspaceFirstOrder3DG.html">kspaceFirstOrder3DG</a></code>, and <code><a href="kspaceFirstOrderASC.html">kspaceFirstOrderASC</a></code> for more details.</p>
+
+</div></body></html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Focussed Detector In 2D Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Focussed Detector In 2D Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Focussed Detector In 2D Example</h1>
+
+<p>This example shows how k-Wave can be used to model the output of a focussed semicircular detector where the directionality arises from spatially averaging across the detector surface. It builds on the <a href="example_ivp_homogeneous_medium.html">Homogeneous Propagation Medium</a> and <a href="example_ivp_binary_sensor_mask.html">Using A Binary Sensor Mask</a> examples.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_sd_focussed_detector_2D.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_sd_focussed_detector_2D']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Defining the sensor geometry</a></li>
+		<li><a href="#heading3">Running the simulation</a></li>
+
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Defining the sensor geometry</h2>
+
+<p>For large single element detectors, the directionality arises because the output is spatially averaged across the pressure field on the transducer surface. Here this effect is simulated using a focussed semicircular detector (defined using a binary sensor mask) created with <code><a href="makeCircle.html">makeCircle</a></code>.</p>
+
+<pre class="codeinput">
+<span class="comment">% define a sensor as part of a circle centred on the grid</span>
+sensor_radius = 65; <span class="comment">% [grid points]</span>
+arc_angle = pi;     <span class="comment">% [rad]</span>
+sensor.mask = makeCircle(Nx, Ny, Nx/2, Ny/2, sensor_radius, arc_angle);
+</pre>
+
+<a name="heading3"></a>
+<h2>Running the simulation</h2>
+
+<p>To illustrate the directionality of the simulated detector, a disc shaped source (created using <code><a href="makeDisc.html">makeDisc</a></code>) is first placed at the focus of the detector and then horizontally offset. A visualisation of the two simulations is given below.</p>
+
+<img vspace="5" hspace="5" src="images/example_sd_focussed_detector_2D_01.png" style="width:560px;height:420px;" alt="">
+<img vspace="5" hspace="5" src="images/example_sd_focussed_detector_2D_02.png" style="width:560px;height:420px;" alt="">
+
+<p>The output from the simulated single element detector is then obtained by averaging the time signals recorded at each grid point within the <code>sensor.mask</code> giving a single time series output. The resulting time series for both source positions are shown below. It is clear that the detector produces a larger output for the source nearer the focus of the detector. Note, this example uses an initial value as the source of the wave, but this averaging effect will also be seen for time-varying sources. </p>
+
+<img vspace="5" hspace="5" src="images/example_sd_focussed_detector_2D_03.png" style="width:560px;height:420px;" alt="">
+
+</div></body></html>

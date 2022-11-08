@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>waterDensity :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>waterDensity</h1>
+<p class="purpose">Calculate density of air-saturated water with temperature.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+density = waterDensity(T)
+</pre>
+
+<h2>Description</h2>
+<p><code>waterDensity</code> calculates the density of air-saturated water at a given temperature using the 4th order polynomial given by Jones (1992, ITS-90 Density of Water Formulation for Volumetric Standards Calibration, J. Res. Natl. Inst. Stand. Technol., 97(3), 335-340).</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>T</code></td>
+        <td>water temperature in the range 5 to 40 [degC]</td>        
+    </tr>         
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>density</code></td>
+        <td>density of water [kg/m^3]</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="waterAbsorption.html">waterAbsorption</a></code>, <code><a href="waterNonlinearity.html">waterNonlinearity</a></code>, <code><a href="waterSoundSpeed.html">waterSoundSpeed</a></code>
+
+</div></body></html>

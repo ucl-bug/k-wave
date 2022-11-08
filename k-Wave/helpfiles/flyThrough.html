@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>flyThrough :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>flyThrough</h1>
+<p class="purpose">Display a three-dimensional matrix slice by slice.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+flyThrough(mat)
+flyThrough(mat, dim)
+flyThrough(mat, dim, fps)
+flyThrough(mat, dim, fps, loop)
+</pre>
+
+<h2>Description</h2>
+<p><code>flyThrough</code> produces an animated visualisation of the data within a three-dimensional matrix <code>mat</code> by displaying the matrix slice by slice using <code><a href="matlab: doc imagesc">imagesc</a></code> and the colormap returned by <code><a href="getColorMap.html">getColorMap</a></code>. A constant scaling parameter is automatically computed using the maximum value within <code>mat</code>.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>mat</code></td>
+        <td>the three-dimensional matrix to visualise</td>
+    </tr>
+</table>
+
+<h2>Optional Inputs</h2>
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>dim</code></td>
+        <td>matrix dimension through which the slices are taken (default = <code>1</code>)</td>
+    </tr>  
+    
+    <tr valign="top">
+        <td><code>fps</code></td>
+        <td>maximum number of frames per second to display (default = <code>5</code>)</td>
+    </tr>    
+    
+    <tr valign="top">
+        <td><code>loop</code></td>
+        <td>number of times to loop the animation (default = <code>1</code>)</td>
+    </tr>
+</table>
+
+<ul>
+    <table cellspacing="0" class="note" summary="Note" cellpadding="5" border="1">
+        <tr width="90%">
+            <td><b>Note</b>&nbsp;&nbsp;The maximum achievable <code>fps</code> is determined by the speed at which the image slices can be extracted and displayed.</td>
+        </tr>
+    </table>
+</ul>
+
+<h2>Examples</h2>
+<ul>
+<li><a href="example_tvsp_3D_simulation.html">Simulations In Three-Dimensions</a></li>
+<li><a href="example_pr_3D_fft_planar_sensor.html">3D FFT Reconstruction For A Planar Sensor</a></li>   
+</ul>
+
+<h2>See Also</h2>
+
+<code><a href="getColorMap.html">getColorMap</a></code>, <code><a href="matlab: doc imagesc">imagesc</a></code>
+
+
+
+
+</div></body></html>

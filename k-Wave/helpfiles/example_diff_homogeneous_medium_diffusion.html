@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Heat Diffusion In A Homogeneous Medium (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Heat Diffusion In A Homogeneous Medium Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Heat Diffusion In A Homogeneous Medium</h1>
+
+<p>This example provides a simple demonstration of using k-Wave for the simulation of heat diffusion within a two-dimensional heterogeneous medium. It builds on the <a href="example_ivp_homogeneous_medium.html">Homogenous Propagation Medium</a> example. </p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_diff_homogeneous_medium_diffusion.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_diff_homogeneous_medium_diffusion']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Overview</a></li>
+		<li><a href="#heading3">Defining the medium properties</a></li>
+		<li><a href="#heading4">Defining the initial temperature distribution</a></li>
+		<li><a href="#heading5">Running the simulation</a></li>
+		<li><a href="#heading6">Comparison with exact solution</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Overview</h2>
+
+<p>In addition to the simulation functions for modelling acoustic and elastic waves, k-Wave also includes functions for the time domain simulation of heat diffusion and perfusion in heterogeneous media. The main simulation tool is called <code><a href="kWaveDiffusion.html">kWaveDiffusion</a></code>, which is implemented as a MATLAB class. Similar to the other simulation functions in k-Wave, the constructor for <code><a href="kWaveDiffusion.html">kWaveDiffusion</a></code> takes four input structures. These define the properties of the computational grid, the material properties of the medium, the properties and locations of any thermal sources, and the properties and locations of the sensor points used to record the evolution of the temperature field over time. The <code>kgrid</code> and <code>sensor</code> inputs are defined in the same way as the fluid and elastic wave codes, while the medium and source input structures have different field names related to the coefficients in the bioheat equation. 
+
+<a name="heading3"></a>
+<h2>Defining the medium properties</h2>
+
+<p><code><a href="kWaveDiffusion.html">kWaveDiffusion</a></code> solves Pennes' bioheat equation, so there are two sets of medium properties that can be defined. The first set is related to the diffusion of heat (conduction to other parts of the medium), and the second set is related to perfusion (the removal of heat by blood circulating in the tissue). In this example, only the diffusion properties are set. These can be defined in two ways, either by defining a single diffusion coefficient (assigned to <code>medium.diffusion_coeff</code>), or by defining the density, specific heat capacity, and thermal conductivity of the tissue (assigned to <code>medium.density</code>, <code>medium.specific_heat</code>, and <code>medium.thermal_conductivity</code>). All parameters can be specified as single scalar values in SI units (for homogeneous coefficients), or as matrices the same size as the computational grid (for heterogeneous coefficients). In this example, the individual medium properties are set as scalar values.</p>
+
+<pre class="codeinput">
+<span class="comment">% define medium properties</span>
+medium.density              = 1079;     <span class="comment">% [kg/m^3]</span>
+medium.thermal_conductivity = 0.52;     <span class="comment">% [W/(m.K)]</span>
+medium.specific_heat        = 3540;     <span class="comment">% [J/(kg.K)]</span>
+</pre>
+
+<a name="heading4"></a>
+<h2>Defining the initial temperature distribution</h2>
+
+<p><code><a href="kWaveDiffusion.html">kWaveDiffusion</a></code> allows two source terms to be defined. These are the initial temperature distribution within the medium, and the volume rate of heat deposition. The initial temperature is specified by assigning a single scalar value or a matrix (the same size as the computational grid) to <code>source.T0</code>. A heat source can also be specified in the same way by defining <code>source.Q</code> (the volume rate of heat deposition). In this example, the initial temperature distribution is set to be a Gaussian distribution positioned in the centre of the grid.</p>
+
+<pre class="codeinput">
+<span class="comment">% set Gaussian initial temperature distribution [degC]</span>
+width = 4 * dx;
+source.T0 = 37 + 5 .* exp( -(kgrid.x ./ width).^2 - (kgrid.y ./width).^2 );
+</pre>
+
+<a name="heading5"></a>
+<h2>Running the simulation</h2>
+
+<p>The acoustic and elastic simulation functions in k-Wave (e.g., <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code> and <code><a href="pstdElastic2D.html">pstdElastic2D</a></code>) immediately execute when they are called. <code><a href="kWaveDiffusion.html">kWaveDiffusion</a></code> is different in that it is defined as a class. Instead of running the simulation when the function is called, it returns an object of the <code><a href="kWaveDiffusion.html">kWaveDiffusion</a></code> class, which can then be used to perform the simulation, or modify the settings (e.g., the properties of the source). The simulation is performed by calling the <code>takeTimeStep</code> method. By default, a visualisation of the temperature field is displayed during the simulation. The final temperature distribution can then be accessed using the <code>T</code> property of the object. Similar to the other simulation functions in k-Wave, optional inputs can also be used to modify the default behaviour.</p>
+
+<pre class="codeinput">
+<span class="comment">% set input args</span>
+input_args = {'PlotScale', [37, 40]};
+
+<span class="comment">% create kWaveDiffusion object</span>
+kdiff = kWaveDiffusion(kgrid, medium, source, [], input_args{:});
+
+<span class="comment">% take time steps (temperature can be accessed as kdiff.T)</span>
+Nt = 300;
+dt = 0.5;
+kdiff.takeTimeStep(Nt, dt);
+
+<span class="comment">% plot the current temperature field</span>
+figure;
+kdiff.plotTemp;
+</pre>
+
+<p>In this example, a <code><a href="kWaveDiffusion.html">kWaveDiffusion</a></code> object is created without a sensor (this means only the current temperature is stored). The optional input <code>'PlotScale'</code> is used to show the temperature between 37 and 40 degrees. The simulation is then executed by defining the number and size of the time steps and calling <code>takeTimeStep</code>. The temperature after the simulation is complete is then displayed by calling the <code>plotTemp</code> method. The final temperature is displayed below.</p>
+
+<img vspace="5" hspace="5" src="images/example_diff_homogeneous_medium_diffusion_01.png" style="width:560px;height:420px;" alt="">
+
+<a name="heading6"></a>
+<h2>Comparison with exact solution</h2>
+
+<p>When the medium is homogeneous, the computation by <code><a href="kWaveDiffusion.html">kWaveDiffusion</a></code> is exact and unconditionally stable. For a homogeneous medium, k-Wave also includes a second simulation function called <code><a href="bioheatExact.html">bioheatExact</a></code> which computes the exact solution to Pennes' bioheat equation at a given time in a single step. In this example, the final temperature distribution using the two codes agrees to machine precision.</p>
+
+<pre class="codeinput">
+<span class="comment">% calculate diffusivity from medium parameters</span>
+D = medium.thermal_conductivity / (medium.density * medium.specific_heat);
+
+<span class="comment">% compute Green's function solution using bioheatExact</span>
+T_exact = bioheatExact(source.T0, 0, [D, 0, 0], kgrid.dx, Nt * dt);
+</pre>
+
+<img vspace="5" hspace="5" src="images/example_diff_homogeneous_medium_diffusion_02.png" style="width:560px;height:420px;" alt="">
+
+</div></body></html>

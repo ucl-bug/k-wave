@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>getFDMatrix :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>getFDMatrix</h1>
+<p class="purpose">Create a matrix of finite-difference coefficients.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+fdm = getFDMatrix(Nx)
+fdm = getFDMatrix(Nx, dx)
+fdm = getFDMatrix(Nx, dx, deriv_order, accuracy_order)
+</pre>
+
+<h2>Description</h2>
+<p><code>getFDMatrix</code> returns a matrix of finite-difference coefficients to compute the derivative of the given order with the given numerical accuracy. The coefficients in the center of the grid use centered differences, while the coefficients at the edges of the grid use forward and backward differences. The matrix is generated and returned in sparse format. To convert to a full matrix, use the syntax fdm = full(fdm).</p>
+<p>Example: Compute the gradient of a 1D column vector</p>
+<pre class="codeinput">
+dx = pi/20;
+x = (0:dx:4*pi).';
+y = sin(x);
+fdm = getFDMatrix(length(x), dx);
+dydx = fdm * y;
+plot(x, y, 'k-', x, dydx, 'r-');
+</pre>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>Nx</code></td>
+        <td>size of data to differentiate</td>
+    </tr>         
+</table>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>dx</code></td>
+        <td>spacing between grid points (default = 1)</td>        
+	</tr>  
+	<tr valign="top">
+        <td><code>deriv_order</code></td>
+        <td>order of the derivative to compute, e.g., use 1 to compute df/dx, 2 to compute df^2/dx^2, etc. (default = 1)</td>        
+    </tr> 
+    <tr valign="top">
+        <td><code>accuracy_order</code></td>
+        <td>order of accuracy for the finite difference coefficients. Because centered differences are used, this must be set to an integer multiple of 2 (default = 2)</td>        
+    </tr>   
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>fdm</code></td>
+        <td>matrix of finite difference coefficients</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="matlab: doc gradient">gradient</a></code>, <code><a href="gradientFD.html">gradientFD</a></code>, <code><a href="gradientSpect.html">gradientSpect</a></code>
+
+
+
+
+</div></body></html>

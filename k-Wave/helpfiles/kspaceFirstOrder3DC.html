@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>kspaceFirstOrder3DC :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>kspaceFirstOrder3DC</h1>
+<p class="purpose">3D time-domain simulation of wave propagation using C++ code.</p>
+
+<h2>Syntax</h2>
+
+See <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>.
+
+<h2>Description</h2>
+<p><code>kspaceFirstOrder3DC</code> provides a blind interface to the C++ version of <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> (called <code>kspaceFirstOrder-OMP</code>). Note, the C++ code does not support all input options, and all display options are ignored (only command line outputs are given). See the k-Wave user manual for more information.</p> 
+
+<p>The function works by appending the optional input <code>'SaveToDisk'</code> to the user inputs and then calling <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> to save the input files to disk. The contents of <code>sensor.record</code> (if set) are  parsed as input flags, and the C++ code is run using the <code><a href="matlab: doc system">system</a></code> command. The output files are then automatically loaded from disk and returned in the same fashion as <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>. The input and output files are saved to the temporary directory native to the operating system, and are deleted after the function runs.</p>
+
+<p>This function is not recommended for large simulations, as the input variables will reside twice in main memory (once in MATLAB, and once in C++). For large simulations, the C++ code should be called outside of MATLAB. Again, see the k-Wave manual for more information.</p>
+
+<p>This function requires the C++ binary/executable of <code>kspaceFirstOrder-OMP</code> to be downloaded from <a href="http://www.k-wave.org/download.php">www.k-wave.org/download.php</a> and placed in the "binaries" directory of the k-Wave toolbox (the same binary is used for simulations in 2D, 3D, and axisymmetric coordinates). Alternatively, the name and location of the binary can be specified using the optional input parameters <code>'BinaryName'</code> and <code>'BinariesPath'</code>.</p>
+
+<h2>Optional Inputs</h2>
+
+<p>Optional 'string', value pairs that may be used to modify the default computational settings.</p>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="18%"><col width="18%"><col width="18%"><col width="46%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Input</th>
+            <th bgcolor="#B2B2B2">Valid Settings</th>
+            <th bgcolor="#B2B2B2">Default</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'BinaryName'</code></td>
+            <td bgcolor="#F2F2F2"><em>(string)</em></td>
+            <td bgcolor="#F2F2F2"><code>'kspaceFirstOrder-OMP'</code> on linux and <code>'kspaceFirstOrder-OMP.exe'</code> on windows</td>            
+            <td bgcolor="#F2F2F2">Name of the binary file.</td>
+        </tr>     
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'BinaryPath'</code></td>
+            <td bgcolor="#F2F2F2"><em>(string)</em></td>
+            <td bgcolor="#F2F2F2"><code>'binaries/'</code></td>            
+            <td bgcolor="#F2F2F2">Path of the binary file.</td>
+        </tr>   
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'DataName'</code></td>
+            <td bgcolor="#F2F2F2"><em>(string)</em></td>
+            <td bgcolor="#F2F2F2"><code>'kwave_[input/output]_data_[date].h5'</code></td>            
+            <td bgcolor="#F2F2F2">Prefix used to generate a custom name for the input and output data files (this is appended with <code>'_input.h5'<code> and <code>'_output.h5'<code>).</td>
+        </tr> 
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'DataPath'</code></td>
+            <td bgcolor="#F2F2F2"><em>(string)</em></td>
+            <td bgcolor="#F2F2F2">path returned by <code>tempdir</code></td>            
+            <td bgcolor="#F2F2F2">Location of the folder where the input and output HDF5 files should be stored.</td>
+        </tr> 
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'DeleteData'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>true</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the input and output HDF5 files should be deleted after running the simulation.</td>
+        </tr>  
+		
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'DeviceNum'</code></td>
+            <td bgcolor="#F2F2F2"><em>(integer scalar)</em></td>
+            <td bgcolor="#F2F2F2">first free device</td>            
+            <td bgcolor="#F2F2F2">GPU device number if running GPU binary, where 0 is first device, 1 is second device, etc.</td>
+        </tr> 		
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'FunctionName'</code></td>
+            <td bgcolor="#F2F2F2"><em>(string)</em></td>
+            <td bgcolor="#F2F2F2"><code>kspaceFirstOrder3D</code></td>            
+            <td bgcolor="#F2F2F2">Name of the k-Wave MATLAB function used to generate the input file using the <code>'SaveToDisk'</code> option.</td>
+        </tr>      
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'NumThreads'</code></td>
+            <td bgcolor="#F2F2F2"><em>(integer scalar)</em></td>
+            <td bgcolor="#F2F2F2">number of cores</td>            
+            <td bgcolor="#F2F2F2">Number of threads used. Note, setting the number of threads greater than the number of cores will decrease performance.</td>
+        </tr>   
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'ThreadBinding'</code></td>
+            <td bgcolor="#F2F2F2"><em>(integer scalar)</em><br/><code>0 = SPREAD<br/><code>1 = CLOSE</code></td>
+            <td bgcolor="#F2F2F2"><code>0</code></td>            
+            <td bgcolor="#F2F2F2">Setting for the thread binding policy (sets the environmental variable <code>OMP_PROG_BIND</code>). Note, the domain for thread migration is always set to <code>OMP_PLACES=cores</code>. Setting <code>'ThreadBinding', 1</code> can improve performance when running two instances of MATLAB to run two simulations. In this case, <code>'NumThreads'</code> for each simulation should be set to half the maximum number.</td>
+        </tr>
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'SystemCall'</code></td>
+            <td bgcolor="#F2F2F2"><em>(string)</em></td>
+            <td bgcolor="#F2F2F2"><code>''</code></td>            
+            <td bgcolor="#F2F2F2">String containing additional system calls that are made before calling the k-Wave binary to run the simulation.</td>
+        </tr>   
+                           
+    </tbody>
+</table>
+
+<h2>See Also</h2>
+<code><a href="kspaceFirstOrder2DC.html">kspaceFirstOrder2DC</a></code>, <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>, <code><a href="kspaceFirstOrder3DG.html">kspaceFirstOrder3DG</a></code>, <code><a href="kspaceFirstOrderASC.html">kspaceFirstOrderASC</a></code>
+
+</div></body></html>

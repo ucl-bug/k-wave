@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>makeCartArc :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>makeCartArc</h1>
+<p class="purpose">Create evenly distributed Cartesian points covering an arc.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+arc = makeCartArc(arc_pos, radius, diameter, focus_pos, num_points, plot_arc)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>makeCartArc</code> creates a 2 x <code>num_points</code> array of the Cartesian coordinates of points evenly distributed over an arc. The midpoint of the arc is set by <code>arc_pos</code>. The orientation of the arc is set by <code>focus_pos</code>, which corresponds to any point on the axis of the arc (note, this must not be equal to <code>arc_pos</code>). It is assumed that the arc angle is equal to or less than pi radians. If the radius is set to inf, a line is generated.<p>
+    
+<p>Note, the first and last points do not lie on the end-points of the underlying canonical arc, but are offset by half the angular spacing between the points. The plot that is displayed after calling <code>makeCartArc([0, 0], 60e-3, 60e-3, [1, 0], 30, true);</code> is given below.</p>
+
+<img vspace="5" hspace="5" src="images/makeCartArc_01.png" style="width:700px;height:525px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>arc_pos</code></td>
+        <td>Centre of the rear surface (midpoint) of the arc given as a two element vector <code>[bx, by]</code> [m]</td>
+    </tr>     
+    <tr valign="top">
+        <td width = "150"><code>radius</code></td>
+        <td>Radius of curvature of the arc [m]</td>        
+    </tr>   
+    <tr valign="top">
+        <td width = "150"><code>diameter</code></td>
+        <td>Diameter of the opening of the arc (length of line connecting arc endpoints) [m]</td>        
+    </tr> 
+    <tr valign="top">
+        <td width = "150"><code>focus_pos</code></td>
+        <td>Any point on the beam axis of the arc given as a two element vector <code>[fx, fy]</code> [m]</td>        
+    </tr> 
+    <tr valign="top">
+        <td width = "150"><code>num_points</code></td>
+        <td>number of points on the arc</td>        
+    </tr>         
+</table>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>plot_arc</code></td>
+        <td>Boolean controlling whether the Cartesian points are plotted (default = false)</td>        
+    </tr>    
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>points</code></td>
+        <td>2 x <code>num_points</code> array of Cartesian points</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="makeArc.html">makeArc</a></code>, <code><a href="makeCartDisc.html">makeCartDisc</a></code>
+
+</div></body></html>

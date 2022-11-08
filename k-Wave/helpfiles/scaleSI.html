@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>scaleSI :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>scaleSI</h1>
+<p class="purpose">Scale a number to nearest SI unit prefix.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+x_sc = scaleSI(x)
+[x_sc, scale] = scaleSI(x)
+[x_sc, scale, prefix] = scaleSI(x)
+[x_sc, scale, prefix, prefix_fullname] = scaleSI(x)
+</pre>
+
+<h2>Description</h2>
+<p><code>scaleSI</code> scales the input <code>x</code> to use the nearest SI unit prefix while keeping 1000 > x > 1. For example, <code>scaleSI(0.00001)</code> would give <code>x_sc = '10u'</code>, <code>scale = 1e6</code>, <code>prefix = 'u'</code>, and <code>prefix_fullname = 'micro'</code>.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>x</code></td>
+        <td>number to scale</td>
+    </tr>
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>x_sc</code></td>
+        <td>string of scaled input and prefix</td>
+    </tr>
+
+    <tr valign="top">
+        <td><code>scale</code></td>
+        <td>numeric scale factor</td>
+    </tr>
+    
+    <tr valign="top">
+        <td><code>prefix</code></td>
+        <td>single character scale prefix</td>
+    </tr>    
+    
+    <tr valign="top">
+        <td><code>prefix_fullname</code></td>
+        <td>full SI name for prefix</td>
+    </tr>    
+</table>
+
+<h2>Examples</h2>
+<ul>
+<li><a href="example_ivp_recording_particle_velocity.html">Recording The Particle Velocity</a></li> 
+<li><a href="example_ivp_sensor_frequency_response.html">Defining A Gaussian Sensor Frequency Response</a></li>  
+<li><a href="example_ivp_comparison_modelling_functions.html">Comparison Of Modelling Functions</a></li>
+<li><a href="example_ivp_photoacoustic_waveforms.html">Photoacoustic Waveforms in 1D, 2D and 3D</a></li>
+<li><a href="example_tvsp_homogeneous_medium_monopole.html">Monopole Point Source In A Homogeneous Propagation Medium</a></li>   
+<li><a href="example_tvsp_homogeneous_medium_dipole.html">Dipole Point Source In A Homogeneous Propagation Medium</a></li>  
+<li><a href="example_tvsp_steering_linear_array.html">Steering A Linear Array</a></li> 
+<li><a href="example_tvsp_3D_simulation.html">Simulations In Three-Dimensions</a></li>
+<li><a href="example_sd_focussed_detector_2D.html">Focussed Detector in 2D</a></li>
+<li><a href="example_pr_2D_tr_absorption_compensation.html">Image Reconstruction With Compensation For Acoustic Absorption</a></li> 
+<li><a href="example_na_source_smoothing.html">Source Smoothing</a></li> 
+<li><a href="example_na_modelling_absorption.html">Modelling Power Law Absorption</a></li>
+</ul>
+
+<h2>See Also</h2>
+
+<code><a href="scaleTime.html">scaleTime</a></code>
+
+</div></body></html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>3D Time Reversal Reconstruction For A Spherical Sensor Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="3D Time Reversal Reconstruction For A Spherical Sensor Example.">
+</head>
+
+<body><div class="content">
+
+<h1>3D Time Reversal Reconstruction For A Spherical Sensor Example</h1>
+
+<p>This example demonstrates the use of k-Wave for the time-reversal reconstruction of a three-dimensional photoacoustic wave-field recorded over a spherical sensor. 
+The sensor data is simulated and then time-reversed using <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>. 
+It builds on the <a href="example_pr_2D_tr_circular_sensor.html">2D Time Reversal Reconstruction For A Circular Sensor</a> and <a href="example_pr_3D_tr_planar_sensor.html">3D Time Reversal Reconstruction For A Planar Sensor</a> examples.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_pr_3D_TR_spherical_sensor.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_pr_3D_TR_spherical_sensor']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Simulating the sensor data</a></li>
+		<li><a href="#heading3">Running the reconstruction</a></li>
+		<li><a href="#heading4">Interpolating incomplete sensor data</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Simulating the sensor data</h2>
+
+<p>The sensor data is simulated using <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> with an initial pressure distribution created using <code><a href="makeBall.html">makeBall</a></code>. 
+A Cartesian sensor mask of 100 points evenly distributed around a sphere (using the Golden Section Spiral method) is created using <code><a href="makeCartSphere.html">makeCartSphere</a></code>. 
+A visualisation of the initial pressure and the sensor mask using <code><a href="cart2grid.html">cart2grid</a></code> and <code><a href="voxelPlot.html">voxelPlot</a></code> is shown below.</p>
+
+<img vspace="5" hspace="5" src="images/example_pr_3D_tr_spherical_sensor_01.png" style="width:560px;height:420px;" alt="">
+
+<a name="heading3"></a>
+<h2>Running the reconstruction</h2>
+    
+<p>A plot of the initial pressure distribution and the reconstructed distribution using time-reversal are shown below (the three displayed image planes intersect at the centre of ball shown above). The plot scale for the reconstructed image has the plot limits reduced by a factor of 20.</p>
+
+<img vspace="5" hspace="5" src="images/example_pr_3D_tr_spherical_sensor_02.png" style="width:560px;height:420px;" alt="">
+<img vspace="5" hspace="5" src="images/example_pr_3D_tr_spherical_sensor_03.png" style="width:560px;height:420px;" alt="">
+
+<a name="heading4"></a>
+<h2>Interpolating incomplete sensor data</h2>
+
+<p>The reconstruction can again be improved by interpolating the sensor data onto a continuous sensor surface. This is achieved using <code><a href="interpCartData.html">interpCartData</a></code> and a binary sensor mask of a continuous sphere (created here using <code><a href="makeSphere.html">makeSphere</a></code>) that is spatially equivalent to the Cartesian measurement grid. This function calculates the equivalent time-series at the sensor positions on the binary sensor mask from those on the Cartesian sensor mask via interpolation (nearest neighbour is used by default).</p>
+
+<pre class="codeinput">
+<span class="comment">% create a binary sensor mask of an equivalent continuous sphere</span>
+pixel_radius = round(sensor_radius / kgrid_recon.dx);
+binary_sensor_mask = makeSphere(kgrid_recon.Nx, kgrid_recon.Ny, kgrid_recon.Nz, pixel_radius);
+
+<span class="comment">% interpolate data to remove the gaps and assign to time reversal data</span>
+sensor.time_reversal_boundary_data = interpCartData(kgrid_recon, sensor_data, sensor_mask, binary_sensor_mask);
+</pre>
+
+<p>Details of the interpolation are printed to the command line.</p>
+
+<pre class="codeinput">
+Interpolating Cartesian sensor data...
+  interpolation mode: nearest
+  number of Cartesian sensor points: 100
+  number of binary sensor points: 4234
+  computation completed in 0.02934s
+</pre>
+
+<p>The reconstruction after interpolation is shown below. The plot limits are set to match those of the initial pressure plot shown above.</p>
+
+<img vspace="5" hspace="5" src="images/example_pr_3D_tr_spherical_sensor_04.png" style="width:560px;height:420px;" alt="">
+
+</div></body></html>

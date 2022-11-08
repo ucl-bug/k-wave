@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>unmaskSensorData :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>unmaskSensorData</h1>
+<p class="purpose">Reorder data recorded using a binary sensor mask.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+unmasked_sensor_data = unmaskSensorData(kgrid, sensor, sensor_data)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>unmaskSensorData</code> restores the grid position of the data recorded at a single time-step within the time-series data returned by <code><a href="kspaceFirstOrder1D.html">kspaceFirstOrder1D</a></code>, <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>, or <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> when using a binary sensor mask.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+	<tr valign="top">
+        <td width = "200"><p><code>kgrid</code></td>
+        <td>k-Wave grid object returned by <code><a href="kWaveGrid.html">kWaveGrid</a></code></td>       
+    </tr> 
+    <tr valign="top">
+        <td><code>sensor</code></td>
+        <td>k-Wave sensor structure where <code>sensor.mask</code> is defined as a binary grid</td>        
+    </tr>    
+    <tr valign="top">
+        <td><code>sensor_data</code></td>
+        <td>sensor data (returned by the first order simulation functions) at a single time-step ordered using MATLAB's standard column-wise linear matrix indexing</td>
+    </tr>             
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "200"><p><code>unmasked_sensor_data</code></td>
+        <td>matrix with the sensor data reordered to its original position on the sensor mask</td>
+    </tr>  
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="kWaveGrid.html">kWaveGrid</a></code>, <code><a href="kspaceFirstOrder1D.html">kspaceFirstOrder1D</a></code>, <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>, <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>, <code><a href="reorderSensorData.html">reorderSensorData</a></code>
+
+</div></body></html>

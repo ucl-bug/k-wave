@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Using A Binary Sensor Mask (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Using A Binary Sensor Mask Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Using A Binary Sensor Mask</h1>
+
+<p>This example provides a simple demonstration of using k-Wave to model the diffusion of heat within a two-dimensional homogeneous medium with a constant source term (volume rate of heat deposition). It uses a binary source mask to extract the temperature time profile. It builds on the <a href="example_diff_homogeneous_medium_diffusion.html">Heat Diffusion In A Homogeneous Medium</a> and <a href="example_diff_homogeneous_medium_source.html">Constant Rate Of Heat Deposition</a> examples.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_diff_binary_sensor_mask.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_diff_binary_sensor_mask']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Defining the sensor mask</a></li>
+		<li><a href="#heading3">Turning the source on and off</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Defining the sensor mask</h2>
+
+<p>In the <a href="example_diff_homogeneous_medium_diffusion.html">Heat Diffusion In A Homogeneous Medium</a> and <a href="example_diff_homogeneous_medium_source.html">Constant Rate Of Heat Deposition</a> examples, the sensor input is given as an empty array <code>[]</code> (i.e., it's not defined), and only the temperature after calling the <code>takeTimeStep</code> method is accessed. It is also possible to define a binary sensor mask in the same way as the other simulation functions in k-Wave (see the <a href="example_ivp_binary_sensor_mask.html">Using A Binary Sensor Mask Example</a>). This allows the time history of the temperature field to be recorded. The current sensor data can be queried using the property <code>kdiff.sensor_data</code>, where <code>kdiff</code> is the name of the <code><a href="kWaveDiffusion.html">kWaveDiffusion</a></code> object. The <code>sensor_data</code> is stored using MATLAB's standard column-wise linear matrix index ordering, indexed as <code>sensor_data(sensor_point_index, time_index)</code>. In this example, the sensor mask is defined with a single point in the centre of the grid.</p>
+
+<pre class="codeinput">
+<span class="comment">% create binary sensor mask with a single sensor point in the 
+% centre of the grid</span>
+sensor.mask = zeros(Nx, Ny);
+sensor.mask(Nx/2, Ny/2) = 1;
+
+<span class="comment">% create kWaveDiffusion object</span>
+kdiff = kWaveDiffusion(kgrid, medium, source, sensor);
+</pre>
+
+<a name="heading3"></a>
+<h2>Turning the source on and off</h2>
+
+<p>The main advantage of defining <code><a href="kWaveDiffusion.html">kWaveDiffusion</a></code> as a class, rather than a conventional MATLAB function, is that the simulation properties can be modified, and the simulation continued. In particular, the volume rate of heat deposition can be changed to model a heat source which changes over time. In this example, a Gaussian shaped heat source is used to heat the tissue for 60 seconds. The heat source is then switched off, and the tissue is allowed to cool for 120 seconds.</p>
+
+<pre class="codeinput">
+<span class="comment">% set source on time and off time</span>
+on_time  = 60;    % [s]
+off_time = 120;   % [s]
+
+<span class="comment">% set time step size</span>
+dt = 0.1;
+
+<span class="comment">% take time steps</span>
+kdiff.takeTimeStep(round(on_time / dt), dt);
+
+<span class="comment">% turn off heat source</span>
+kdiff.Q = 0;
+
+<span class="comment">% take time steps</span>
+kdiff.takeTimeStep(round(off_time / dt), dt);
+</pre>
+
+<p>The temperature time curve at the sensor position in the centre of the grid is shown below. This shows a classic heating and cooling curve.</p>
+
+<img vspace="5" hspace="5" src="images/example_diff_binary_sensor_mask_01.png" style="width:560px;height:420px;" alt="">
+
+</div></body></html>

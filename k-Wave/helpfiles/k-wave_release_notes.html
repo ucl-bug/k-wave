@@ -1,0 +1,555 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Release Notes (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body><div class="content">
+
+<h1>Release Notes</h1>
+
+<p><strong>Current Version</strong>: k-Wave Toolbox Version 1.4</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#1p4">V.1.4</a> (released 08 Nov 2022)</li>
+		<li><a href="#1p3">V.1.3</a> (released 28 Feb 2020)</li>
+		<li><a href="#1p2p1">V.1.2.1</a> (released 14 Dec 2017)</li>
+		<li><a href="#1p2">V.1.2</a> (released 28 Aug 2017)</li>
+		<li><a href="#1p1p1">V.1.1.1</a> (released 09 Oct 2015)</li>		
+		<li><a href="#1p1">V.1.1</a> (released 03 Oct 2014)</li>
+		<li><a href="#1p0">V.1.0</a> (released 13 Nov 2012)</li>
+		<li><a href="#Bp5">B.0.5</a> (released 28 Feb 2012)</li>
+		<li><a href="#Bp4">B.0.4</a> (released 21 Dec 2011)</li>
+		<li><a href="#Bp3">B.0.3</a> (released 15 Feb 2011)</li>
+		<li><a href="#Bp2">B.0.2</a> (released 23 Jan 2010)</li>
+		<li><a href="#Bp1">B.0.1</a> (released 22 July 2009)</li>		
+	</ul>
+</div>
+
+<a name="1p3"></a>
+<h2>Change Log - V.1.4</h2>
+<p class = "reduced_padding"><b>Release Date:</b> 08 Nov 2022</p>
+
+<p class = "reduced_padding"><b>New Features and Changes:</b></p>
+<ul>
+	<li>source and sensor geometries can now be defined without staircasing artifacts using the <code><a href="kWaveArray.html">kWaveArray</a></code> class</li>
+	<li><code><a href="fwhm.html">fwhm</a></code> can now return the position of the leading and trailing edges</li>
+	<li><code><a href="focusedBowlONeil.html">focusedBowlONeil</a></code> can now return the complex pressure on axis</li>
+	<li><code><a href="overlayPlot.html">overlayPlot</a></code> now allows setting the transparency</li>
+</ul>
+
+<p class = "reduced_padding"><b>Bug Fixes:</b></p>
+<ul>
+	<li>bug fix in using C++ functionality with MATLAB 2020a and later (error with default text encoding)</li>
+	<li>bug fix in <code><a href="expandMatrix.html">expandMatrix</a></code> when using logical matrix as input (gave error)</li>
+	<li>bug fix in <code><a href="attenComp.html">attenComp</a></code> (upper part of time variant filter not correctly zeroed).</li>
+</ul>
+
+<p class = "reduced_padding"><b>New Functions:</b></p>
+<ul>
+	<li><code><a href="computeLinearTransform.html">computeLinearTransform</a></code></li>
+	<li><code><a href="focusedAnnulusONeil.html">focusedAnnulusONeil</a></code></li>
+	<li><code><a href="getAffineMatrix.html">getAffineMatrix</a></code></li>
+	<li><code><a href="getDeltaBLI.html">getDeltaBLI</a></code></li>
+	<li><code><a href="kWaveArray.html">kWaveArray</a></code></li>
+	<li><code><a href="makeCartArc.html">makeCartArc</a></code></li>
+	<li><code><a href="makeCartBowl.html">makeCartBowl</a></code></li>
+	<li><code><a href="makeCartDisc.html">makeCartDisc</a></code></li>
+	<li><code><a href="makeCartRect.html">makeCartRect</a></code></li>
+	<li><code><a href="makeCartSphericalSegment.html">makeCartSphericalSegment</a></code></li>
+	<li><code><a href="offGridPoints.html">offGridPoints</a></code></li>
+	<li><code><a href="trimZeros.html">trimZeros</a></code></li>
+	<li><code><a href="trimCartPoints.html">trimCartPoints</a></code></li>
+</ul>
+
+<p class = "reduced_padding"><b>New Examples:</b></p>
+<ul>
+	<li><a href="example_at_array_as_source.html">Example: Defining A Source Using An Array Transducer</a></li>
+	<li><a href="example_at_array_as_sensor.html">Example: Defining A Sensor Using An Array Transducer</a></li>
+	<li><a href="example_at_piston_and_bowl_transducers.html">Example: Modelling Plane Piston And Focused Bowl Transducers</a></li>
+	<li><a href="example_at_linear_array_transducer.html">Example: Modelling A Linear Array Transducer</a></li>
+</ul>
+
+<a name="1p3"></a>
+<h2>Change Log - V.1.3</h2>
+<p class = "reduced_padding"><b>Release Date:</b> 28 Feb 2020</p>
+
+<p class = "reduced_padding"><b>New Features and Changes:</b></p>
+<ul>
+	<li>axisymmetric simulations are now supported using <code><a href="kspaceFirstOrderAS.html">kspaceFirstOrderAS</a></code> and <code><a href="kspaceFirstOrderASC.html">kspaceFirstOrderASC</a></code></li>
+	<li>single-frequency simulations in homogeneous media can be computed without time-stepping using <code><a href="acousticFieldPropagator.html">acousticFieldPropagator</a></code> and <code><a href="acousticFieldPropagatorC.html">acousticFieldPropagatorC</a></code></li>
+	<li>time-varying sources in <code><a href="kspaceFirstOrder1D.html">kspaceFirstOrder1D</a></code>, <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>, and <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> (and the corresponding C++ codes) now include a k-space correction which improves accuracy for small numbers of points per period</li>
+	<li>legacy behaviour for time-varying sources can be obtained by setting <code>source.p_mode = 'additive-no-correction'</code> and <code>source.u_mode = 'additive-no-correction'</code></li>
+	<li>holographic projections of planar input data can be performed using <code><a href="angularSpectrum.html">angularSpectrum</a></code> and <code><a href="angularSpectrumCW.html">angularSpectrumCW</a></code></li>
+	<li>measured pressure fields can be mapped to k-Wave inputs for accurate holographic projections using <code><a href="calculateMassSource.html">calculateMassSource</a></code> and <code><a href="calculateMassSourceCW.html">calculateMassSourceCW</a></code></li>
+	<li><code>'PMLSize'</code> can now be set to <code>'auto'</code> to automatically choose grid sizes with small prime factors</li>
+	<li>2D simulations can now be run using optimised C++ and C++/CUDA codes using <code><a href="kspaceFirstOrder2DC.html">kspaceFirstOrder2DC</a></code> and <code><a href="kspaceFirstOrder2DG.html">kspaceFirstOrder2DG</a></code></li>
+	<li><code><a href="kspaceFirstOrder3DC.html">kspaceFirstOrder3DC</a></code> (etc) now automatically calls the <code>combine_sensor_data</code> method if an object of the <code><a href="kWaveTransducer.html">kWaveTransducer</a></code> class is used as a sensor</li>
+	<li><code><a href="kspaceFirstOrder3DC.html">kspaceFirstOrder3DC</a></code> (etc) now supports optional inputs to define the number of threads, thread binding, and the verbosity level</li>
+	<li>the compiled C++ codes have been combined into two binaries now called <code>kspaceFirstOrder-OMP</code> (which supports 2D, 3D, and axisymmetric domains) and <code>kspaceFirstOrder-CUDA</code> (which supports 2D and 3D domains)</li>
+	<li>the input file for the C++ code has been updated to version 1.2 (the k-space and shift variables, and PML vectors are no longer required)</li>
+	<li><code><a href="pstdElastic2D.html">pstdElastic2D</a></code> and <code><a href="pstdElastic3D.html">pstdElastic3D</a></code> can now return the particle velocity split into compressional and shear components by setting <code>sensor.record = {'u_split_field'}</code></li>
+	<li><code><a href="kWaveDiffusion.html">kWaveDiffusion</a></code> now allows command line updates to be suppressed by setting the optional input <code>'DisplayUpdates', false</code></li>
+	<li><code><a href="kWaveDiffusion.html">kWaveDiffusion</a></code> now prints a warning if dimension sizes have high prime factors</li>
+	<li><code><a href="toneBurst.html">toneBurst</a></code> now allows the number of ring-up and ring-down cycles to be specified</li>
+	<li><code><a href="makeDisc.html">makeDisc</a></code> and <code><a href="makeBall.html">makeBall</a></code> now allow non-integer radius values and maintain correct radius on axis</li>
+	<li><code><a href="spect.html">spect</a></code> and <code><a href="extractAmpPhase.html">extractAmpPhase</a></code> now work for 4D input matrices</li>
+	<li><code><a href="waterAbsorption.html">waterAbsorption</a></code> now allows temperature to be defined as a vector</li>
+	<li><code><a href="getWin.html">getWin</a></code> now allows <code>'Symmetry'</code> input to be defined as a vector</li>
+	<li><code><a href="smooth.html">smooth</a></code> function inputs have changed (<code>kgrid</code> input no longer required)</li>
+</ul>
+
+<p class = "reduced_padding"><b>Bug Fixes:</b></p>
+<ul>
+	<li>bug fix in <code><a href="waterSoundSpeed.html">waterSoundSpeed</a></code> for matrix inputs (generated error)</li>
+	<li>bug fix in <code><a href="focusedBowlONeil.html">focusedBowlONeil</code></a> when <code>axial_position = radius</code> (sometimes returned 0)</li>
+	<li>bug fix in <code><a href="getBLI.html">getBLI</a></code> for functions with odd numbers of grid points (used incorrect wavenumbers)</li>
+	<li>bug fix in <code><a href="extractAmpPhase.html">extractAmpPhase</a></code> for optional input <code>'Dim', 1</code> (generated error)</li>
+	<li>bug fix in <code><a href="kWaveDiffusion.html">kWaveDiffusion</a></code> when using the <code>plotTemp</code> method in 3D with an odd number of grid points (generated error)</li>
+	<li>bug fix in <code><a href="smooth.html">smooth</a></code> for matrices with even numbers of grid points (incorrectly filtered DC component)</li>
+	<li>bug fix in <a href="example_us_bmode_linear_transducer.html">Simulating B-mode Ultrasound Images</a> and <a href="example_us_bmode_phased_array.html">Simulating B-mode Images Using A Phased Array</a> examples (attenuation value for time gain compensation given in incorrect units)</li>
+</ul>
+
+<p class = "reduced_padding"><b>New Functions:</b></p>
+<ul>
+    <li><code><a href="acousticFieldPropagator.html">acousticFieldPropagator</a></code></li>
+	<li><code><a href="acousticFieldPropagatorC.html">acousticFieldPropagatorC</a></code></li>
+	<li><code><a href="angularSpectrum.html">angularSpectrum</a></code></li>
+	<li><code><a href="angularSpectrumCW.html">angularSpectrumCW</a></code></li>
+	<li><code><a href="calculateMassSource.html">calculateMassSource</a></code></li>
+	<li><code><a href="calculateMassSourceCW.html">calculateMassSourceCW</a></code></li>
+	<li><code><a href="getOptimalPMLSize.html">getOptimalPMLSize</a></code></li>
+	<li><code><a href="kspaceFirstOrder2DC.html">kspaceFirstOrder2DC</a></code></li>
+	<li><code><a href="kspaceFirstOrder2DG.html">kspaceFirstOrder2DG</a></code></li>
+	<li><code><a href="kspaceFirstOrderAS.html">kspaceFirstOrderAS</a></code></li>
+	<li><code><a href="kspaceFirstOrderASC.html">kspaceFirstOrderASC</a></code></li>
+	<li><code><a href="reorderBinarySensorData.html">reorderBinarySensorData</a></code></li>
+	<li><code><a href="roundEven.html">roundEven</a></code></li>
+	<li><code><a href="roundOdd.html">roundOdd</a></code></li>
+	<li><code><a href="waterDensity.html">waterDensity</a></code></li>
+	<li><code><a href="waterNonlinearity.html">waterNonlinearity</a></code></li>
+</ul>
+
+<p  class = "reduced_padding"><b>Deprecated Functions:</b></p>
+<ul>
+	<li><code>speedSoundWater</code> (renamed to <code><a href="waterSoundSpeed.html">waterSoundSpeed</a></code>)</li>
+	<li><code>attenuationWater</code> (renamed to <code><a href="waterAbsorption.html">waterAbsorption</a></code>)</li>
+</ul>
+
+<p class = "reduced_padding"><b>New Examples:</b></p>
+<ul>
+	<li><a href="example_ivp_axisymmetric_simulation.html">Simulations In An Axisymmetric Coordinate System</a></li>
+	<li><a href="example_tvsp_acoustic_field_propagator.html">Simulating CW Fields Using The Acoustic Field Propagator</a></li>
+	<li><a href="example_tvsp_angular_spectrum.html">Holographic Projections Using The Angular Spectrum Method</a></li>
+	<li><a href="example_tvsp_equivalent_source_holography.html">Equivalent Source Holography</a></li>
+</ul>
+
+<a name="1p2p1"></a>
+<h2>Change Log - V.1.2.1</h2>
+<p class = "reduced_padding"><b>Release Date:</b> 14th December 2017</p>
+
+<p class = "reduced_padding"><b>Bug Fixes:</b></p>
+<ul>
+	<li>bug fix in <code><a href="kWaveDiffusion.html">kWaveDiffusion</a></code> when using <code>source.Q</code> with <code>medium.diffusion_coeff</code> (source term incorrectly scaled)</li>
+</ul>
+
+<a name="1p2"></a>
+<h2>Change Log - V.1.2</h2>
+<p class = "reduced_padding"><strong>Release Date:</strong> 28 Aug 2017</p>
+
+<p class = "reduced_padding"><b>New Features and Changes:</b></p>
+<ul>
+	<li>thermal simulations are now supported using the <code><a href="kWaveDiffusion.html">kWaveDiffusion</a></code> class and <code><a href="bioheatExact.html">bioheatExact</a></code></li>
+    <li>focused bowl transducers can be created using <code><a href="makeArc.html">makeArc</a></code> and <code><a href="makeMultiArc.html">makeMultiArc</a></code> in 2D, and <code><a href="makeBowl.html">makeBowl</a></code> and <code><a href="makeMultiBowl.html">makeMultiBowl</a></code> in 3D</li>
+    <li>a warning is printed if dimension sizes have high prime factors</li>
+    <li>default HDF5 compression level is now 0 (increases speed of saving input file for C++ codes)</li>
+    <li>the compression level for HDF5 files can be set using the optional input <code>'HDFCompressionLevel'</code></li>
+    <li>movies are now saved using <code><a href="matlab: doc VideoWriter">VideoWriter</a></code> (see help for changes to optional inputs)</li>
+    <li><code><a href="kspaceFirstOrder3DG.html">kspaceFirstOrder3DG</a></code> now allows the device number of the GPU to be selected</li>    
+	<li><code><a href="hounsfield2density.html">hounsfield2density</a></code> now returns matrices of the same data type as the input</li>
+	<li><code><a href="kWaveGrid.html">kWaveGrid</a></code> is now implemented as a handle class (only handles are passed to functions to save memory)</li>
+	<li><code><a href="kWaveGrid.html">kWaveGrid</a></code> now returns wavenumber vectors for discrete cosine and sine transforms</li>
+    <li><code><a href="writeMatrix.html">writeMatrix</a></code> now accepts an optional compression level input</li>
+    <li><code>makeGrid</code> has been deprecated, with grids created using the syntax <code>kgrid = kWaveGrid(...)</code></li>
+    <li><code>makeTime</code> has been deprecated, and is now a method of <code><a href="kWaveGrid.html">kWaveGrid</a></code></li>
+	<li><code>makeTransducer</code> has been deprecated, with transducers created using the syntax <code>transducer = kWaveTransducer(...)</code></li>
+	<li>update to <code><a href="overlayPlot.html">overlayPlot</a></code> to allow optional inputs</li>
+	<li><code><a href="scaleSI.html">scaleSI</a></code> now returns no scale for zero values</li>
+	<li><code><a href="makeCircle.html">makeCircle</a></code> now supports circles not contained within the grid</li>
+	<li><code><a href="speedSoundWater.html">speedSoundWater</a></code> now checks temperature limits</li>
+	<li>update to style used in MATLAB documentation</li>
+</ul>
+
+<p class = "reduced_padding"><b>Bug Fixes:</b></p>
+<ul>
+    <li>bug fix in <code><a href="kspaceFirstOrder1D.html">kspaceFirstOrder1D</a></code>, <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>, and <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> for nonlinear simulations (convective nonlinearity term implemented incorrectly)
+	<li>bug fix in using simulation functions in MATLAB 2016b and later (error with use of <code><a href="matlab: doc nargin">nargin</a></code> and <code><a href="matlab: doc nargout">nargout</a></code> in subscripts)</li>
+	<li>bug fix in <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code> when using <code>sensor.directivity_pattern = 'gradient'</code> (directional response incorrect)</li>
+	<li>bug fix in <code><a href="kspaceFirstOrder3DG.html">kspaceFirstOrder3DG</a></code> when using a sensor mask defined by opposing corners and recording intensity (generated error)</li>
+	<li>bug fix in <code>kspaceFirstOrder3D-OMP</code> when using a <code>kWaveTransducer</code> source with checkpoint restart (wrong index used for time signal on restart)</li>
+	<li>bug fix in <code><a href="kspaceLineRecon.html">kspaceLineRecon</a></code> and <code><a href="kspacePlaneRecon.html">kspacePlaneRecon</a></code> (incorrect use of <code>fftshift</code> caused energy loss at certain frequencies)</li>
+	<li>bug fix in <code><a href="findClosest.html">findClosest</a></code> (returned correct index but incorrect closest value)</li>
+    <li>bug fix in setting apodization in <code>kWaveTransducer</code> class with only one active element (returned NaN)</li>
+    <li>bug fix in <code><a href="writeGrid.html">writeGrid</a></code> for odd dimension sizes (used even wavenumber components)</li>
+</ul>
+
+<p class = "reduced_padding"><b>New Functions:</b></p>
+<ul>
+    <li><code><a href="bioheatExact.html">bioheatExact</a></code></li>
+	<li><code><a href="createCWSignals.html">createCWSignals</a></code></li>
+	<li><code><a href="extractAmpPhase.html">extractAmpPhase</a></code></li>
+	<li><code><a href="focusedBowlONeil.html">focusedBowlONeil</a></code></li>
+	<li><code><a href="fourierShift.html">fourierShift</a></code></li>
+	<li><code><a href="getComputerInfo.html">getComputerInfo</a></code></li>
+	<li><code><a href="kWaveDiffusion.html">kWaveDiffusion</a></code></li>
+    <li><code><a href="makeArc.html">makeArc</a></code></li>
+    <li><code><a href="makeMultiArc.html">makeMultiArc</a></code></li>
+    <li><code><a href="makeBowl.html">makeBowl</a></code></li>
+    <li><code><a href="makeMultiBowl.html">makeMultiBowl</a></code></li>
+</ul>
+
+<p  class = "reduced_padding"><b>Deprecated Functions:</b></p>
+<ul>
+	<li><code>makeGrid</code></li>
+	<li><code>makeTime</code></li>
+	<li><code>makeTransducer</code></li>
+	<li><code>timeShift</code></li>
+</ul>
+
+<p class = "reduced_padding"><b>New Examples:</b></p>
+<ul> 
+	<li><a href="example_diff_homogeneous_medium_diffusion.html">Heat Diffusion In A Homogeneous Medium</a></li>
+	<li><a href="example_diff_homogeneous_medium_source.html">Constant Rate Of Heat Deposition</a></li>
+	<li><a href="example_diff_binary_sensor_mask.html">Using A Binary Sensor Mask</a></li>
+	<li><a href="example_diff_focused_ultrasound_heating.html">Heating By A Focused Ultrasound Transducer</a></li>
+	<li><a href="example_pr_2D_adjoint.html">Iterative Image Reconstruction Using The Adjoint</a></li>		
+</ul>
+
+<a name="1p1p1"></a>
+<h2>Change Log - V.1.1.1</h2>
+<p class = "reduced_padding"><b>Release Date:</b> 9th October 2015</p>
+
+<p class = "reduced_padding"><b>Bug Fixes:</b></p>
+<ul>
+	<li>bug fix in <code><a href="pstdElastic2D.html">pstdElastic2D</a></code> and <code><a href="pstdElastic3D.html">pstdElastic3D</a></code> when defining material coefficients on staggered grid (generated incorrect results)</li>
+</ul>
+
+<a name="1p1"></a>
+<h2>Change Log - V.1.1</h2>
+<p class = "reduced_padding"><b>Release Date:</b> 3rd October 2014</p>
+
+<p class = "reduced_padding"><b>New Features and Changes:</b></p>
+<ul>
+	<li>simulations in elastic media are now supported using the <code><a href="pstdElastic2D.html">pstdElastic2D</a></code> and <code><a href="pstdElastic3D.html">pstdElastic3D</a></code> functions</li>
+	<li>3D simulations can be run on an NVIDIA graphics processing unit (GPU) using a native C++/CUDA code</li>
+	<li>rectangular binary sensor masks can be defined by assigning the grid coordinates of two opposing corners to <code>sensor.mask</code></li>
+	<li><code>sensor.record</code> now supports the additional input options <code>'p_min'</code>, <code>'p_max_all'</code>, <code>'p_min_all'</code>, <code>'u_min'</code>, <code>'u_max_all'</code>, <code>'u_min_all'</code>, and <code>'u_non_staggered'</code></li>
+	<li>simulation functions have been restructured to reduce code duplication</li>
+	<li>the accuracy of the acoustic intensity output for frequencies close to Nyquist limit has been improved</li>	
+	<li>the C++ code now supports command line inputs for checkpoint-restart and importing FFTW wisdom</li>
+	<li>the C++ code now exploits AVX instructions in addition to SSE</li>
+	<li>attenuation compensation for photoacoustic tomography can be performed using time-variant filtering via <code><a href="attenComp.html">attenComp</a></code></li>
+	<li>vessel filtering for photoacoustic tomography can be performed using <code><a href="vesselFilter.html">vesselFilter</a></code></li>	
+	<li><code><a href="kspaceFirstOrder3DC.html">kspaceFirstOrder3DC</a></code> now supports optional inputs to specify the name and location of the binary and data files</li>
+	<li><code><a href="makeSphere.html">makeSphere</a></code> and <code><a href="makeSphericalSection.html">makeSphericalSection</a></code> can be set to return logical matrices to reduce memory usage</li>
+	<li><code><a href="resize.html">resize</a></code> now supports 1D inputs</li>
+    <li><code><a href="checkFactors.html">checkFactors</a></code> now also reports prime numbers</li>
+</ul>
+
+<p class = "reduced_padding"><b>Bug Fixes:</b></p>
+<ul>
+	<li>bug fix in using a Cartesian sensor mask with nearest neighbour interpolation and <code>sensor.record</code> set to <code>'p_min'</code> (generated error)</li>
+	<li>bug fix in using <code>sensor.directivity_angle</code> with the optional input <code>'DataCast'</code> set to <code>'gpuArray-single'</code> (generated error)</li>
+    <li>bug fix in <code><a href="kspaceFirstOrder3DC.html">kspaceFirstOrder3DC</a></code> when performing time reversal image reconstruction using <code>sensor.time_reversal_boundary_data</code> with <code>'PMLInside'</code> set to <code>false</code> (PML was not removed)</li>
+	<li>bug fix in <code><a href="kspaceFirstOrder3DC.html">kspaceFirstOrder3DC</a></code> when calling script on a different drive using Windows (generated error)</li>    
+    <li>bug fix in <code><a href="kspaceSecondOrder.html">kspaceSecondOrder</a></code> when setting absorption values with <code>medium.alpha_power</code> to values less than 1 (returned NaN)</li>
+    <li>bug fix in <code><a href="kspaceSecondOrder.html">kspaceSecondOrder</a></code> when using <code>sensor.record = {'p_final'}</code> (generated error, grid expansion not removed)</li>
+    <li>bug fix in <code><a href="makeSphere.html">makeSphere</a></code> for grid sizes with uneven dimensions (generated error)</li>
+    <li>bug fix in <code><a href="makeSphere.html">makeSphere</a></code> to centre sphere on the kgrid origin (previously offset by 1)</li>
+    <li>bug fix in <code><a href="writeMatrix.html">writeMatrix</a></code> for source variables larger than 1 MB (incorrect chunk size generated error)</li>
+</ul>
+
+<p class = "reduced_padding"><b>New Functions:</b></p>
+<ul>
+	<li><code><a href="attenComp.html">attenComp</a></code></li>
+    <li><code><a href="checkStability.html">checkStability</a></code></li>
+	<li><code><a href="fitPowerLawParams.html">fitPowerLawParams</a></code></li>
+	<li><code><a href="getBLI.html">getBLI</a></code></li>
+	<li><code><a href="getSpacedPoints.html">getSpacedPoints</a></code></li>	
+	<li><code><a href="h5compare.html">h5compare</a></code></li>
+	<li><code><a href="kspaceFirstOrder3DG.html">kspaceFirstOrder3DG</a></code></li>
+	<li><code><a href="maxND.html">maxND</a></code></li>	
+	<li><code><a href="minND.html">minND</a></code></li>		
+	<li><code><a href="overlayPlot.html">overlayPlot</a></code></li>
+	<li><code><a href="pstdElastic2D.html">pstdElastic2D</a></code></li>
+	<li><code><a href="pstdElastic3D.html">pstdElastic3D</a></code></li>
+	<li><code><a href="revolve2D.html">revolve2D</a></code></li>
+	<li><code><a href="timeShift.html">timeShift</a></code></li>	
+	<li><code><a href="vesselFilter.html">vesselFilter</a></code></li>
+	<li><code><a href="writeAttributes.html">writeAttributes</a></code></li>
+	<li><code><a href="writeFlags.html">writeFlags</a></code></li>
+	<li><code><a href="writeGrid.html">writeGrid</a></code></li>
+</ul>
+
+<p class = "reduced_padding"><b>New Examples:</b></p>
+<ul> 
+	<li><a href="example_ivp_opposing_corners_sensor_mask.html">Defining A Sensor Mask By Opposing Corners</a></li>
+	<li><a href="example_pr_2D_tr_time_variant_filtering.html">Attenuation Compensation Using Time Variant Filtering</a></li>
+	<li><a href="example_cpp_running_simulations.html">Running C++ Simulations</a></li>
+	<li><a href="example_cpp_io_in_parts.html">Saving Input Files in Parts</a></li>
+	<li><a href="example_ewp_layered_medium.html">Explosive Source In A Layered Medium</a></li>
+	<li><a href="example_ewp_plane_wave_absorption.html">Plane Wave Absorption</a></li>
+	<li><a href="example_ewp_shear_wave_snells_law.html">Shear Waves And Critical Angle Reflection</a></li>
+	<li><a href="example_ewp_3D_simulation.html">Simulations In Three Dimensions</a></li>
+</ul>
+
+<a name="1p0"></a>
+<h2>Change Log - V.1.0</h2>
+<p class = "reduced_padding"><b>Release Date:</b> 13th November 2012</p>
+
+<p class = "reduced_padding"><b>New Features and Changes:</b></p>
+<ul>
+	<li>3D simulations can now be run using an optimised C++ code</li>
+	<li>the data recorded by the sensor mask is now set using <code>sensor.record = {'p', 'u', 'p_final', ...}</code></li>
+	<li>time-varying and averaged acoustic intensity can be returned by setting <code>sensor.record = {'I', 'I_avg', ...}</code></li>
+	<li>the inputs <code>'ReturnVelocity'</code> and <code>sensor.record_mode</code> and the output <code>field_data</code> have been deprecated</li>
+	<li>the time index at which the sensor starts recording can be set using <code>sensor.record_start_index</code></li>
+	<li><code>'DataCast'</code> can now be set to <code>'gpuArray-single'</code> or <code>'gpuArray-double'</code> to automatically run simulations on a graphics processing unit (GPU) using the Parallel Computing Toolbox (R2012a or later)</li>
+	<li>output variables are now created and returned using the data type specified by <code>'DataCast'</code></li>
+	<li>output variables can be returned in double precision by setting <code>'DataRecast'</code> to <code>true</code></li>
+	<li>Cartesian sensor masks with linear interpolation are now supported for all <code>'DataCast'</code> settings and the interpolation speed during runtime has been significantly improved</li>
+	<li><code>'CartInterp'</code> set to <code>'linear'</code> is now the default setting for 1D, 2D, and 3D simulations</li>    
+	<li>the calculation of <code>kgrid.k</code> within <code>makeGrid</code> has been modified to improve memory efficiency</li>	 
+	<li><code>spectrum</code> has been renamed to <code><a href="spect.html">spect</a></code> to avoid a naming conflict with the MATLAB signal processing toolbox, and now accepts matrix inputs</li>
+	<li><code><a href="makeTime.html">makeTime</a></code> now uses the maximum sound speed to compute <code>dt</code>, and the minimum sound speed to compute <code>t_end</code></li>
+	<li><code><a href="unmaskSensorData.html">unmaskSensorData</a></code> function inputs have changed</li>
+</ul>
+
+<p class = "reduced_padding"><b>Bug Fixes:</b></p>
+<ul>
+    <li>bug fix in using <code>'PlotLayout'</code> set to <code>true</code> when <code>medium.sound_speed</code> or <code>medium.density</code> are scalar (generated plot error)</li>
+    <li>bug fix in list of data cast variables for <code>'DataCast'</code> set to <code>'GPUsingle'</code></li>
+    <li>bug fix in setting the source scale parameter for time varying pressure sources in heterogeneous media with <code>p_mode</code> set to <code>'dirichlet'</code></li>
+    <li>bug fix in setting the axis limits in <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code> with <code>'MeshPlot'</code> set to <code>true</code></li>
+    <li>bug fix in <code>makeGrid</code> when defining the wavenumber variables <code>kgrid.k</code>, <code>kgrid.kx</code> (etc) for grid sizes with an odd number of grid points</li>
+    <li>bug fix in <code><a href="makeSphere.html">makeSphere</a></code> for grid sizes with an odd number of grid points</li>
+    <li>bug fix in <code><a href="getWin.html">getWin</a></code> for <code>type</code> set to <code>'Gaussian'</code> or <code>'Kaiser'</code> with a user input for <code>'Param'</code> (param value was not used)</li>
+    <li>bug fix in the <code>scan_line</code> method of <code>kWaveTransducer</code> for scan lines formed using a negative steering angle (generated error)</li>
+    <li>bug fix in <code><a href="grid2cart.html">grid2cart</a></code> for 1D inputs (list of Cartesian points returned in the wrong direction)</li>
+    <li>bug fix in computing axis units in <code><a href="kspaceSecondOrder.html">kspaceSecondOrder</a></code></li>
+</ul>
+
+<p class = "reduced_padding"><b>New Functions:</b></p>
+<ul>
+	<li><code><a href="beamPlot.html">beamPlot</a></code></li>
+	<li><code><a href="focus.html">focus</a></code></li>	
+	<li><code><a href="getFDMatrix.html">getFDMatrix</a></code></li>
+    <li><code><a href="gradientSpect.html">gradientSpect</a></code></li>
+    <li><code><a href="gradientFD.html">gradientFD</a></code></li>
+	<li><code><a href="kspaceFirstOrder3DC.html">kspaceFirstOrder3DC</a></code></li>
+	<li><code><a href="makeLine.html">makeLine</a></code></li>	
+    <li><code><a href="makeSphericalSection.html">makeSphericalSection</a></code></li>
+    <li><code><a href="reorderSensorData.html">reorderSensorData</a></code></li>
+	<li><code><a href="scaleFig.html">scaleFig</a></code></li>
+	<li><code><a href="scanConversion.html">scanConversion</a></code></li>
+	<li><code><a href="writeMatrix.html">writeMatrix</a></code></li>
+</ul>
+
+<p class = "reduced_padding"><b>New Examples:</b></p>
+<ul> 
+	<li><a href="example_us_bmode_phased_array.html">Simulating B-mode Images Using A Phased Array</a></li>
+</ul>
+
+<a name="Bp5"></a>
+<h2>Change Log - B.0.5</h2>
+<p class = "reduced_padding"><b>Release Date:</b> 28th February 2012</p>
+
+<p class = "reduced_padding"><b>New Features and Changes:</b></p>
+<ul>
+
+    <li>time varying pressure and velocity inputs can now be either applied as mass and force sources (the default), or enforced as a Dirichlet boundary condition by setting <code>source.p_mode</code> and <code>source.u_mode</code> to <code>'dirichlet'</code></li>
+	<li>the implementation of source terms in <a href="kspaceFirstOrder1D.html"><code>kspaceFirstOrder1D</code></a>, <a href="kspaceFirstOrder2D.html"><code>kspaceFirstOrder2D</code></a>, <a href="kspaceFirstOrder3D.html"><code>kspaceFirstOrder3D</code></a> has been modified to reduce code duplication</li>
+	<li>the performance of the PML has been improved and the default value for <code>'PMLAlpha'</code> changed to <code>2</code></li>
+	<li>the plotting speed in <a href="kspaceFirstOrder1D.html"><code>kspaceFirstOrder1D</code></a> has been improved</li>
+	<li>the axis limits for the <code>'PlotLayout'</code> option have been modified to allow easier interpretation</li>
+	<li>the default status bar position has been shifted to below the plot window</li>
+	<li>estimated simulation times are now based on the first 50 times steps with the first step excluded</li>
+	<li><code><a href="stackedPlot.html">stackedPlot</a></code> functionality has been extended and the default axis limits fixed</li>
+	<li>help files are now searchable using the MATLAB Help browser and k-Wave version is listed using <code>ver</code></li>
+</ul>
+
+<p class = "reduced_padding"><b>Bug Fixes:</b></p>
+<ul>
+    <li>bug fix in setting the scale parameter for time varying pressure and velocity sources in heterogeneous media</li>
+	<li>bug fix in setting the scale parameter using the <code>kWaveTransducer</code> class (no scaling was applied)</li>
+	<li>bug fix in applying long time varying sources using the <code>kWaveTransducer</code> class (data type was set incorrectly)</li>
+	<li>bug fix in <a href="kspaceFirstOrder1D.html"><code>kspaceFirstOrder1D</code></a> using velocity sources (source incorrectly named)</li>
+	<li>bug fix in using <code>'PlotLayout', true</code> with <code>'DataCast', 'gsingle'</code> (generated blank jacket figure)</li>
+	<li>bug fix in <code>'StreamToDisk'</code> option (error generated if <code>kgrid.Nt</code> exactly divisible by saving frequency)</li>
+</ul>
+
+<p class = "reduced_padding"><b>New Functions:</b></p>
+<ul>
+    <li><code><a href="hounsfield2density.html">hounsfield2density</a></code></li>
+    <li><code><a href="sharpness.html">sharpness</a></code></li>
+</ul>
+
+<p class = "reduced_padding"><b>New Examples:</b></p>
+<ul> 
+	<li><a href="example_pr_2D_tr_iterative.html">2D Iterative Image Improvement Using Time Reversal</a></li>
+    <li><a href="example_pr_2D_tr_autofocus.html">Automatic Sound Speed Selection</a></li>
+</ul>
+
+<a name="Bp4"></a>
+<h2>Change Log - B.0.4</h2>
+<p class = "reduced_padding"><b>Release Date:</b> 21st December 2011</p>
+
+<p class = "reduced_padding"><b>New Features and Changes:</b></p>
+<ul>
+    <li>the indexing of input matrices has been modified to (x, 1) in 1D, (x, y) in 2D and (x, y, z) in 3D to be more intuitive</li>
+    <li>the corresponding inputs to <code>makeGrid</code> are now (Nx, dx) in 1D, (Nx, dx, Ny, dy) in 2D, and (Nx, dx, Ny, dy, Nz, dz) in 3D
+    <li>cumulative nonlinear effects can be modelled by setting <code>medium.BonA</code></li>
+    <li>heterogeneous absorption values can now be used by defining <code>medium.alpha_coeff</code> as a matrix</li>
+    <li><a href="kspaceFirstOrder1D.html"><code>kspaceFirstOrder1D</code></a>, <a href="kspaceFirstOrder2D.html"><code>kspaceFirstOrder2D</code></a>, <a href="kspaceFirstOrder3D.html"><code>kspaceFirstOrder3D</code></a>, and <code>makeGrid</code> have been re-written to significantly reduce memory usage</li>
+    <li><code>source</code> and <code>sensor</code> inputs can be defined as an object of <code>kWaveTransducer</code> type (returned by <code>makeTransducer</code>) to allow simple simulations using ultrasound transducers</li>
+    <li><code>source.ux</code>, <code>source.uy</code>, and <code>source.uz</code> can be specified individually</li>
+    <li>time varying inputs <code>source.p</code>, <code>source.ux</code>, etc., can now contain any number of time points (they do not need to be the same length as <code>kgrid.t_array</code>)
+    <li>approximate GPU memory usage is reported when using k-Wave with the GPUmat or Accelereyes toolboxes</li>
+    <li>the reference sound speed used in the k-space operator can now be manually set by defining <code>medium.sound_speed_ref</code></li>
+    <li>the statistics of the pressure field at each sensor element can now be computed without storing the pressure field by setting <code>sensor.record_mode</code> to <code>'statistics'</code>
+    <li>3D <code>sensor_data</code> can now optionally be streamed to disk by setting the optional input parameter <code>'StreamToDisk'</code> to <code>true</code></li>
+    <li><a href="toneBurst.html"><code>toneBurst</code></a> function inputs have changed</li>
+	<li><a href="db2neper.html"><code>db2neper</code></a> and <a href="neper2db.html"><code>neper2db</code></a> now use exact conversion factor</li>
+	<li>frequency filtering applied when <code>sensor.frequency_response</code> is given is now performed using <code><a href="gaussianFilter.html">gaussianFilter</a></code></li>
+    <li>B.01 release style inputs no longer supported</li>
+</ul>
+
+<p class = "reduced_padding"><b>Bug Fixes:</b></p>
+<ul>
+    <li>bug fix in defining the absorption parameters for heterogeneous media</li>
+    <li>bug fix in setting initial velocity for <a href="kspaceFirstOrder3D.html"><code>kspaceFirstOrder3D</code></a></li>
+    <li>bug fix in frequency filtering applied when <code>kgrid.t_array</code> has an odd number of time points</li>
+    <li>bug fix in <a href="kspaceFirstOrder2D.html"><code>kspaceFirstOrder2D</code></a> when saving movies with <code>'MovieType'</code> set to <code>'image'</code> (the first frame did not display the sensor mask), and the movie frames variable is now preallocated</li>
+    <li>bug fix in creating the spatial wavenumber matrices using the <code>makeGrid</code> class when 1/Nx (etc) is a recurring number</li>
+</ul>
+
+<p class = "reduced_padding"><b>New Functions:</b></p>
+<ul>
+    <li><code><a href="checkFactors.html">checkFactors</a></code></li>
+    <li><code><a href="envelopeDetection.html">envelopeDetection</a></code></li>
+    <li><code><a href="findClosest.html">findClosest</a></code></li>
+	<li><code><a href="gaussianFilter.html">gaussianFilter</a></code></li>
+    <li><code><a href="logCompression.html">logCompression</a></code></li>
+    <li><code><a href="makeTransducer.html">makeTransducer</a></code></li>
+    <li><code><a href="mendousse.html">mendousse</a></code></li>
+    <li><code><a href="stackedPlot.html">stackedPlot</a></code></li>
+</ul>
+
+<p class = "reduced_padding"><b>New Examples:</b></p>
+<ul> 
+    <li><a href="example_us_defining_transducer.html">Defining An Ultrasound Transducer</a></li>
+    <li><a href="example_us_beam_patterns.html">Simulating Ultrasound Beam Patterns</a></li>
+    <li><a href="example_us_transducer_as_sensor.html">Using An Ultrasound Transducer As A Sensor </a></li>
+    <li><a href="example_us_bmode_linear_transducer.html">Simulating B-mode Ultrasound Images</a></li> 
+    <li><a href="example_na_modelling_nonlinearity.html">Modelling Nonlinear Wave Propagation</a></li>
+</ul>
+
+<a name="Bp3"></a>
+<h2>Change Log - B.0.3</h2>
+<p class = "reduced_padding"><b>Release Date:</b> 15th February 2011</p>
+<p class = "reduced_padding"><b>New Features and Changes:</b></p>
+<ul>
+    <li>support for time varying velocity inputs via <code>source.u_mask</code>, <code>source.ux</code> etc</li>
+    <li>sensor data now also returns velocity if <code>'ReturnVelocity'</code> is set to <code>true</code></li>
+    <li>sensor frequency response can be defined using <code>sensor.frequency_response</code></li>
+    <li>time reversal image reconstructions can include compensation for acoustic attenuation</li>
+    <li><code>'CartInterp'</code> set to <code>'linear'</code> now uses <code>TriScattererdInterp</code> and is supported in 3D</li>
+    <li><code>'PMLInside'</code> set to <code>false</code> is now supported in 3D</li>
+    <li>estimated simulation times are given</li>
+    <li>the PML can be hidden by setting <code>'PlotPML'</code> to <code>false</code></li>
+    <li><code>'PlotScale'</code> can now also be set to <code>'auto'</code> and the display can be log compressed by setting <code>'LogScale'</code> to <code>true</code></li>
+    <li>2D simulations can now also be displayed as a mesh plot by setting <code>'MeshPlot'</code> to <code>true</code></li>
+    <li>movie frame capture in 2D can be controlled using <code>'MovieType'</code></li>
+    <li>default smoothing now only applies to the initial pressure distribution</li>
+    <li><code>kgrid.x_off</code> (etc) fields are no longer supported</li>
+    <li>bug fix in setting initial velocity for time staggered grids</li>
+    <li>new k-space simulation function <a href="kspaceSecondOrder.html"><code>kspaceSecondOrder</code></a> based on a second-order lossy wave equation for homogeneous media</li> 
+    <li><a href="kWaveGrid.html"><code>makeGrid</code></a> now uses class definitions</li>
+    <li><a href="spect.html"><code>spectrum</code></a> now supports all window shapes defined in <a href="getWin.html"><code>getWin</code></a></li>
+    <li><a href="smooth.html"><code>smooth</code></a> now uses a Blackman window as default and supports all window shapes defined in <a href="getWin.html"><code>getWin</code></a></li>
+    <li><a href="resize.html"><code>resize</code></a> function inputs have changed and now supports 3D inputs</li>
+    <li>bug fix in <a href="kspacePlaneRecon.html"><code>kspacePlaneRecon</code></a> remapping</li>
+</ul>
+<p class = "reduced_padding"><b>New Functions:</b></p>
+<ul>
+    <li><code><a href="addNoise.html">addNoise</a></code></li>
+    <li><code><a href="applyFilter.html">applyFilter</a></code></li>
+    <li><code><a href="benchmark.html">benchmark</a></code></li>
+    <li><code><a href="expandMatrix.html">expandMatrix</a></code></li>
+    <li><code><a href="fwhm.html">fwhm</a></code></li>
+    <li><code><a href="gaussian.html">gaussian</a></code></li>
+    <li><code><a href="getAlphaFilter.html">getAlphaFilter</a></code></li>
+    <li><code><a href="getDateString.html">getDateString</a></code></li>
+    <li><code><a href="getWin.html">getWin</a></code></li>
+    <li><code><a href="interpftn.html">interpftn</a></code></li>
+    <li><code><a href="kspaceSecondOrder.html">kspaceSecondOrder</a></code></li>
+    <li><code><a href="saveTiffStack.html">saveTiffStack</a></code></li>
+    <li><code><a href="voxelPlot.html">voxelPlot</a></code></li>
+</ul>
+<p class = "reduced_padding"><b>New Examples:</b></p>
+<ul>       
+<li><a href="example_ivp_recording_particle_velocity.html">Recording The Particle Velocity</a></li> 
+<li><a href="example_ivp_sensor_frequency_response.html">Defining A Gaussian Sensor Frequency Response</a></li> 
+<li><a href="example_ivp_comparison_modelling_functions.html">Comparison Of Modelling Functions</a></li>                                   
+<li><a href="example_ivp_setting_initial_gradient.html">Setting An Initial Pressure Gradient</a></li>             
+<li><a href="example_ivp_photoacoustic_waveforms.html">Photoacoustic Waveforms in 1D, 2D and 3D</a></li> 
+<li><a href="example_tvsp_homogeneous_medium_dipole.html">Dipole Point Source In A Homogeneous Propagation Medium</a></li>  
+<li><a href="example_tvsp_doppler_effect.html">The Doppler Effect</a></li>             
+<li><a href="example_tvsp_slit_diffraction.html">Diffraction Through A Slit</a></li>                           
+<li><a href="example_sd_focussed_detector_3D.html">Focussed Detector in 3D</a></li>
+<li><a href="example_sd_directivity_modelling_2D.html">Modelling Sensor Directivity in 2D</a></li>   
+<li><a href="example_sd_directivity_modelling_3D.html">Modelling Sensor Directivity in 3D</a></li>           
+<li><a href="example_sd_directional_array_elements.html">Focussed 2D Array with Directional Elements</a></li>              		
+<li><a href="example_pr_2D_tr_directional_sensors.html">Image Reconstruction With Directional Sensors</a></li>       
+<li><a href="example_pr_2D_tr_bandlimited_sensors.html">Image Reconstruction With Bandlimited Sensors</a></li>
+<li><a href="example_pr_2D_tr_absorption_compensation.html">Image Reconstruction With Compensation For Acoustic Absorption</a></li>           
+<li><a href="example_na_source_smoothing.html">Source Smoothing</a></li>             
+<li><a href="example_na_modelling_absorption.html">Modelling Power Law Absorption</a></li>              
+</ul>
+
+<a name="Bp2"></a>
+<h2>Change Log - B.0.2</h2>
+<p class = "reduced_padding"><b>Release Date:</b> 23rd January 2010</p>
+<p class = "reduced_padding"><b>New Features:</b></p>
+<ul>
+    <li>inputs redefined as structures</li>
+    <li>power law absorption</li>
+    <li>2D sensor directivity</li>
+    <li>time varying pressure inputs</li>
+</ul>
+<p class = "reduced_padding"><b>New Functions:</b></p>
+<ul>
+    <li><code><a href="attenuationWater.html">attenuationWater</a></code></li>
+    <li><code><a href="db2neper.html">db2neper</a></code></li>
+    <li><code><a href="filterTimeSeries.html">filterTimeSeries</a></code></li>
+    <li><code><a href="grid2cart.html">grid2cart</a></code></li>
+    <li><code><a href="neper2db.html">neper2db</a></code></li>
+    <li><code><a href="numDim.html">numDim</a></code></li>
+    <li><code><a href="powerLawKramersKronig.html">powerLawKramersKronig</a></code></li> 
+    <li><code><a href="scaleSI.html">scaleSI</a></code></li>
+    <li><code><a href="scaleTime.html">scaleTime</a></code></li>
+    <li><code><a href="spect.html">spectrum</a></code></li>
+    <li><code><a href="speedSoundWater.html">speedSoundWater</a></code></li> 
+    <li><code><a href="toneBurst.html">toneBurst</a></code></li>
+</ul>
+
+<a name="Bp1"></a>
+<h2>Change Log - B.0.1</h2>
+<p class = "reduced_padding"><b>Release Date:</b> 22nd July 2009</p>
+<p class = "reduced_padding">First Beta Release.</p>
+
+</div></body></html>

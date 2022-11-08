@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>getkWavePath :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>getkWavePath</h1>
+<p class="purpose">Return pathname to the k-Wave Toolbox.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+path = getkWavePath()
+path = getkWavePath(folder_name)
+</pre>
+
+<h2>Description</h2>
+<p><code>getkWavePath</code> returns the full pathname to the root directory in the k-Wave Toolbox using the slash direction native to the users operating system. If a <code>folder_name</code> string is provided, this is appended to the pathname. Note, <code>folder_name</code> is not checked for existence, the string is simply appended to the pathname with a trailing slash.</p>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>folder_name</code></td>
+        <td>folder name string to append to the pathname</td>
+    </tr>
+</table>  
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>path</code></td>
+        <td>full pathname to the root directory in the k-Wave Toolbox</td>
+    </tr>
+</table>
+
+</div></body></html>

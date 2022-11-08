@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Loading External Image Maps Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Loading External Image Maps Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Loading External Image Maps Example</h1>
+
+<p>This example demonstrates how to assign an external image to the initial pressure distribution for the simulation of an initial value problem within a two-dimensional homogeneous propagation medium. It builds on the <a href="example_ivp_homogeneous_medium.html">Homogeneous Propagation Medium Example</a>.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_ivp_loading_external_image.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_ivp_loading_external_image']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Loading the image map</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Loading the image map</h2>
+
+<p>The initial pressure distribution <code>source.p0</code> used by <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code> is simply a two-dimensional matrix filled with arbitrary numeric values. Consequently, any data may be used to define this distribution. Here an external image map is loaded using <code><a href="loadImage.html">loadImage</a></code>. This function converts an external image into a matrix, sums the colour channels (for colour images), and scales the pixel values from 0 to 1.</p>
+
+<pre class="codeinput">
+<span class="comment">% load the initial pressure distribution from an image and scale the
+% magnitude</span>
+p0_magnitude = 3;
+p0 = p0_magnitude * loadImage('EXAMPLE_source_one.png');
+</pre>
+
+<p>The medium discretisation is again performed by calling <code><a href="kWaveGrid.html">kWaveGrid</a></code> with the required grid dimensions, after which <code><a href="resize.html">resize</a></code> is used to scale the loaded image map to the required dimensions. 
+
+<pre class="codeinput">
+<span class="comment">% create the computational grid</span>
+Nx = 128;           <span class="comment">% number of grid points in the x (row) direction</span>
+Ny = 128;           <span class="comment">% number of grid points in the y (column) direction</span>
+dx = 0.1e-3;        <span class="comment">% grid point spacing in the x direction  [m]</span>
+dy = 0.1e-3;        <span class="comment">% grid point spacing in the y direction  [m]</span>
+kgrid = kWaveGrid(Nx, dx, Ny, dy);
+
+<span class="comment">% resize the image to match the size of the computational grid and assign
+% to the source input structure</span>
+source.p0 = resize(p0, [Nx, Ny]);
+</pre>
+
+<p>The simulation is invoked in the same way as in the previous examples. A plot of the initial pressure distribution and sensor mask, and a visualisation of the recorded pressure field are shown below.</p>
+
+<img vspace="5" hspace="5" src="images/example_ivp_loading_external_image_01.png" style="width:560px;height:420px;" alt="">
+<img vspace="5" hspace="5" src="images/example_ivp_loading_external_image_02.png" style="width:560px;height:420px;" alt="">
+
+</div></body></html>

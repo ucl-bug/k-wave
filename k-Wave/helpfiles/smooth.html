@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>smooth :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>smooth</h1>
+<p class="purpose">Smooth a matrix.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+mat_sm = smooth(mat)
+mat_sm = smooth(mat, restore_max)
+mat_sm = smooth(mat, [], window_type)
+mat_sm = smooth(mat, restore_max, window_type)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>smooth</code> filters an input matrix using an n-dimensional frequency domain window created using <code><a href="getWin.html">getWin</a></code>. If no window type is specified, a Blackman window is used.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>mat</code></td>
+        <td>spatial distribution to smooth</td>
+    </tr>
+</table>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>restore_max</code></td>
+        <td>Boolean controlling whether the maximum value is restored after smoothing (default = <code>false</code>)</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>window_type</code></td>
+        <td>shape of the smoothing window; any valid inputs to <code><a href="getWin.html">getWin</a></code> are supported (default = <code>'Blackman'</code>)</td>
+    </tr>
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>mat_sm</code></td>
+        <td>smoothed spatial distribution</td>
+    </tr>
+</table>
+
+<h2>Examples</h2>
+<ul>
+<li><a href="example_pr_2D_fft_line_sensor.html">2D FFT Reconstruction For A Line Sensor</a></li>   
+<li><a href="example_pr_3D_fft_planar_sensor.html">3D FFT Reconstruction For A Planar Sensor</a></li>   
+<li><a href="example_pr_2D_tr_line_sensor.html">2D Time Reversal For A Line Sensor</a></li>
+<li><a href="example_pr_2D_tr_circular_sensor.html">2D Time Reversal For A Circular Sensor</a></li>
+<li><a href="example_pr_3D_tr_planar_sensor.html">3D Time Reversal For A Planar Sensor</a></li> 
+<li><a href="example_pr_3D_tr_spherical_sensor.html">3D Time Reversal For A Spherical Sensor</a></li>              
+<li><a href="example_pr_2D_tr_directional_sensors.html">Image Reconstruction With Directional Sensors</a></li>       
+<li><a href="example_pr_2D_tr_bandlimited_sensors.html">Image Reconstruction With Bandlimited Sensors</a></li>
+<li><a href="example_pr_2D_tr_absorption_compensation.html">Image Reconstruction With Compensation For Acoustic Absorption</a></li> 
+<li><a href="example_na_source_smoothing.html">Source Smoothing</a></li>             
+<li><a href="example_na_filtering.html">Filtering A Delta Function Input Signal</a></li>   
+<li><a href="example_na_modelling_absorption.html">Modelling Power Law Absorption</a></li>
+</ul>
+
+<h2>See Also</h2>
+
+<code><a href="matlab: doc fft">fft</a></code>, <code><a href="matlab: doc ifft">ifft</a></code>, <code><a href="matlab: doc fft2">fft2</a></code>, <code><a href="matlab: doc ifft2">ifft2</a></code>, <code><a href="matlab: doc fftn">fftn</a></code>, <code><a href="matlab: doc ifftn">ifftn</a></code>, <code><a href="kWaveGrid.html">kWaveGrid</a></code>
+
+</div></body></html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>3D Time Reversal Reconstruction For A Planar Sensor Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="3D Time Reversal Reconstruction For A Planar Sensor Example.">
+</head>
+
+<body><div class="content">
+
+<h1>3D Time Reversal Reconstruction For A Planar Sensor Example</h1>
+
+<p>This example demonstrates the use of k-Wave for the reconstruction of a three-dimensional photoacoustic wave-field recorded over a planar array of sensor elements. The sensor data is simulated and then time-reversed using <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>. It builds on the <a href="example_pr_3D_fft_planar_sensor.html">3D FFT Reconstruction For A Planar Sensor</a> and <a href="example_pr_2D_tr_line_sensor.html">2D Time Reversal Reconstruction For A Line Sensor</a> examples.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_pr_3D_TR_planar_sensor.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_pr_3D_TR_planar_sensor']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Performing the reconstruction</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Performing the reconstruction</h2>
+
+<p>The sensor data is simulated using <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> in the same way as in preceding examples. The utilised initial pressure distribution and the sensor mask are shown in <a href="example_pr_3D_fft_planar_sensor.html">3D FFT Reconstruction For A Planar Sensor</a>. The time-reversal reconstruction is then performed by assigning the time varying pressure recorded over the detector array to <code>sensor.time_reversal_boundary_data</code>.</p>
+
+<pre class="codeinput">
+<span class="comment">% run the simulation</span>
+sensor_data = kspaceFirstOrder3D(kgrid, medium, source, sensor, input_args{:});
+
+<span class="comment">% reset the initial pressure</span>
+source.p0 = 0;
+
+<span class="comment">% assign the time reversal data</span>
+sensor.time_reversal_boundary_data = sensor_data;
+
+<span class="comment">% run the time-reversal reconstruction</span>
+p0_recon = kspaceFirstOrder3D(kgrid, medium, source, sensor, input_args{:});
+</pre>
+
+<p>A plot of the reconstructed initial pressure distribution with a positivity condition is shown below.</p>
+
+<img vspace="5" hspace="5" src="images/example_pr_3D_tr_planar_sensor_01.png" style="width:560px;height:420px;" alt="">
+
+</div></body></html>

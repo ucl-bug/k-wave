@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Modelling Nonlinear Wave Propagation Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Modelling Nonlinear Wave Propagation Example.">
+</head>
+
+<body>
+<div class="content">
+
+<h1>Modelling Nonlinear Wave Propagation Example</h1>
+
+<p>This example describes the characteristics of the nonlinearity encapsulated by the first-order k-Wave simulation functions.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_na_modelling_nonlinearity.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_na_modelling_nonlinearity']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Cumulative nonlinearity</a></li>
+		<li><a href="#heading3">Numerical errors</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Cumulative nonlinearity</h2>
+
+<p>The coupled governing equations used in the k-Wave simulation functions (<code><a href="kspaceFirstOrder1D.html">kspaceFirstOrder1D</a></code>, <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>, and <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>) are derived directly from the equations of fluid mechanics. The nonlinear terms are then re-written in terms of the acoustic Lagrangian density (which characterises the difference between the kinetic and potential energy density of the acoustic wave). If only cumulative nonlinear effects are important (these are nonlinear effects that "build-up" over space and time), the Lagrangian density can then be set to zero. This is sufficient for modelling nonlinear effects in many biomedical ultrasonics applications (in the absence of microbubbles). The strength of the nonlinear effects observed is dependent on the magnitude of the pressure field (the higher the pressure, the more nonlinear effects will be observed), the material parameter B/A (the parameter of nonlinearity), and the absorption parameters (the generation of higher frequency harmonics is delicately balanced with their absorption). </p>
+
+<p>Within k-Wave, the parameter of nonlinearity is specified by <code>medium.BonA</code>. If this parameter is given, nonlinear governing equations are solved at each time step. If this is not given, linear governing equations are used (so the output results will always scale linearly with the input pressure). To illustrate the characteristics of the nonlinearity encapsulated by k-Wave, the time series recorded 15 wavelengths from the source for a shock parameter of 2 is compared with the series solution given by Mendousse (<code><a href="mendousse.html">mendousse</a></code>). There is a close agreement between the theoretical and numerical results which demonstrates that the desired nonlinear and absorption characteristics have been correctly modelled.
+
+<img vspace="5" hspace="5" src="images/example_na_modelling_nonlinearity_01.png" style="width:560px;height:420px;" alt="">
+
+<a name="heading3"></a>
+<h2>Numerical errors</h2>
+
+<p>The accuracy of the k-Wave model is dependent on several parameters. First, the number of grid points used per wavelength will control whether the computational grid can support the propagation of the generated harmonics. In turn, the rate at which these harmonics are produced will depend on the shock parameter (for example, the source strength, the receiver distance, and the nonlinearity parameter), while the rate at which they are absorbed will depend on the power law absorption parameters. Finally, the CFL number will control the amount of unwanted numerical dispersion introduced by the finite-difference time step, as well as the accuracy with which the nonlinearity and absorption terms in the governing equations are computed. For strongly nonlinear fields, the number of points per wavelength at the fundamental frequency may need to be high to allow the generated harmonics to be modelled (giving at least two points per wavelength at the highest generated harmonic).</p>
+
+</div></body></html>

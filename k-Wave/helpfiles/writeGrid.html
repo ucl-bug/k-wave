@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>writeGrid :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>writeGrid</h1>
+<p class="purpose">Write grid and PML properties to a k-Wave HDF5 file.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+writeGrid(filename, grid_size, grid_spacing, pml_size, pml_alpha, Nt, dt, c_ref)
+</pre>
+
+<h2>Description</h2>
+<p><code>writeGrid</code> creates and writes the wavenumber grids and PML variables required by the k-Wave C++ code to the HDF5 file specified by the user.</p>
+
+<p>List of parameters that are written:</p>
+<ul>
+<li><code>Nx</code></li>
+<li><code>Nx</code></li>
+<li><code>Ny</code></li>
+<li><code>Nz</code></li>
+<li><code>Nt</code></li>
+<li><code>dt</code></li>
+<li><code>dx</code></li>
+<li><code>dy</code></li>
+<li><code>dz</code></li>
+<li><code>c_ref</code></li>
+<li><code>pml_x_alpha</code></li>
+<li><code>pml_y_alpha</code></li>
+<li><code>pml_z_alpha</code></li>
+<li><code>pml_x_size</code></li>
+<li><code>pml_y_size</code></li>
+<li><code>pml_z_size</code></li>
+</ul>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>filename</code></td>
+        <td>name of HDF5 file to write matrix to</td>
+    </tr>  
+    <tr valign="top">
+        <td><code>grid_size</code></td>
+        <td><code>[Nx, Ny, Nz]</code></td>
+    </tr>  
+    <tr valign="top">
+        <td><code>grid_spacing</code></td>
+        <td><code>[dx, dy, dz]</code></td>
+    </tr>  
+    <tr valign="top">
+        <td><code>pml_size</code></td>
+        <td><code>[pml_x_size, pml_y_size, pml_z_size]</code></td>
+    </tr>  
+    <tr valign="top">
+        <td><code>pml_alpha</code></td>
+        <td><code>[pml_x_alpha, pml_y_alpha, pml_z_alpha]</code></td>
+    </tr> 
+    <tr valign="top">
+        <td><code>Nt</code></td>
+        <td>number of time points</td>
+    </tr>
+    <tr valign="top">
+        <td><code>dt</code></td>
+        <td>time step</td>
+    </tr>    
+    <tr valign="top">
+        <td><code>c_ref</code></td>
+        <td>scalar sound speed used in the k-space operator and to define the pml variables</td>
+    </tr> 
+    
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="matlab: doc h5write">h5write</a></code>, <code><a href="writeAttributes.html">writeAttributes</a></code>, <code><a href="writeFlags.html">writeFlags</a></code>, <code><a href="writeMatrix.html">writeMatrix</a></code>
+
+</div></body></html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>benchmark :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>benchmark</h1>
+<p class="purpose">Run performance benchmark.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+benchmark
+</pre>
+
+<h2>Description</h2>
+<p><code>benchmark</code> performs an analysis of the time taken to run simulations using <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> with increasing grid sizes. The default simulation uses a heterogeneous absorbing medium, a binary sensor mask with 100 points, 1000 time steps, <code>'PlotSim'</code> set to false, and grid sizes varying from 32^3 to 256^3. The times are computed from 3 averages and the function stops when memory errors are encountered or the benchmarking is complete. The computational times and settings are stored in a MATLAB formatted binary file using <code>save</code>.</p>
+<p>The computation times and relative speed running <code>benchmark</code> using an 8-Core CPU compared to using an NVIDIA Tesla C2070 GPU (graphics processing unit) are shown below. For the GPU computations, the maximum possible grid size is limited by the memory available on the GPU. Note, before running, the MATLAB workspace is cleared and any open MATLAB windows are closed.</p>
+
+<img vspace="5" hspace="5" src="images/benchmark_01.png" style="width:560px;height:420px;" alt="">
+
+</div></body></html>

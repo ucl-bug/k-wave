@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>makeMultiArc :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body><div class="content">
+
+<a name="top_of_page"></a>
+<h1>makeMultiArc</h1>
+<p class="purpose">Create a binary map of multiple arcs within a 2D grid.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+[arcs, arcs_labelled] = makeMultiArc(grid_size, arc_pos, radius, diameter, focus_pos)
+[arcs, arcs_labelled] = makeMultiArc(grid_size, arc_pos, radius, diameter, focus_pos, ...)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>makeMultiArc</code> creates a binary map of multiple arcs within a two-dimensional grid using <code><a href="makeArc.html">makeArc</a></code>. The position of the arcs is denoted by 1's in the matrix with 0's elsewhere. A labelled matrix can also be returned, where the position of the first arc is denoted by 1's, the position of the second arc by 2's, and so on.</p>
+
+<h2>Examples</h2>
+
+<pre class="codeinput">
+<span class="comment">% define grid parameters</span>
+x_size              = 300e-3;
+Nx                  = 256;
+dx                  = x_size / Nx;
+grid_size           = [Nx, Nx];
+
+<span class="comment">% create a Cartesian circle with the x, y positions of the arcs</span>
+circle_radius       = 125e-3;
+num_arcs            = 16;
+arc_pos             = makeCartCircle(circle_radius, num_arcs, [1, 1] * x_size / 2).';
+ 
+<span class="comment">% convert the Cartesian arc positions to grid points</span>
+arc_pos             = round(arc_pos/dx);
+
+<span class="comment">% define element parameters</span>
+radius              = round(x_size / (2 * dx));
+diameter            = 21;
+focus_pos           = [1, 1] * Nx/2;
+
+<span class="comment">% create arcs</span>
+makeMultiArc(grid_size, arc_pos, radius, diameter, focus_pos, 'Plot', true);
+</pre>
+
+<img vspace="5" hspace="5" src="images/makeMultiArc_01.png" style="width:560px;height:420px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>grid_size</code></td>
+        <td>size of the 2D grid given as a two element vector [Nx, Ny] [grid points]</td>
+    </tr>
+    
+    <tr valign="top">
+        <td width = "150"><code>arc_pos</code></td>
+        <td>midpoint of each arc given as a matrix of dimensions N x 2, with each row specifying the midpoint of each arc as a two element vector [ax, ay] [grid points]</td>
+    </tr>
+
+    <tr valign="top">
+        <td width = "150"><code>radius</code></td>
+        <td>radius of curvature of each arc given as either a single number (if the arcs have the same radius), or an N-element vector containing the radius for each arc [grid points]</td>
+    </tr>
+    
+    <tr valign="top">
+        <td width = "150"><code>diameter</code></td>
+        <td>diameter of each arc (length of straight line between the end points) given as either a single number (if the arcs have the same diameter), or an N-element vector containing the diameter for each arc [grid points] </td>
+    </tr>
+    
+	<tr valign="top">
+        <td width = "150"><code>focus_pos</code></td>
+        <td>any point on the beam axis of the arc given as either a two element vector (if the arcs have the same focus_pos), or as a matrix of dimensions N x 2, with each row specifying the focus_pos for each arc given as a two element vector [fx, fy] [grid points]</td>
+    </tr>    
+    
+</table>
+    
+<h2>Optional Inputs</h2>
+
+<p>Optional 'string', value pairs that may be used to modify the default computational settings.</p>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="18%"><col width="18%"><col width="18%"><col width="46%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Input</th>
+            <th bgcolor="#B2B2B2">Valid Settings</th>
+            <th bgcolor="#B2B2B2">Default</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+    	
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Plot'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the arc array is plotted using <code><a href="matlab: doc imagesc">imagesc</a></code>.</td>
+        </tr>     
+                
+    </tbody>
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>arc</code></td>
+        <td>2D binary map of an arc</td>
+    </tr>
+	
+    <tr valign="top">
+        <td width = "150"><code>arcs_labelled</code></td>
+        <td>2D labelled matrix of arcs</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="makeArc.html">makeArc</a></code>, <code><a href="makeMultiBowl.html">makeMultiBowl</a></code>
+
+</div></body></html>

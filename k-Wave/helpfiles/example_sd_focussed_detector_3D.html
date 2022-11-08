@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Focussed Detector In 3D Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Focussed Detector In 3D Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Focussed Detector In 3D Example</h1>
+
+<p>This example shows how k-Wave can be used to model the output of a focussed bowl detector where the directionality arises from spatially averaging across the detector surface. It builds on the <a href="example_sd_focussed_detector_2D.html">Focussed Detector In 2D</a> example.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_sd_focussed_detector_3D.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_sd_focussed_detector_3D']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Defining the sensor geometry</a></li>
+		<li><a href="#heading3">Defining on and off-axis point sources</a></li>
+		<li><a href="#heading4">Running the simulations</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Defining the sensor geometry</h2>
+
+<p>For large single element detectors, the directionality arises because the output is spatially averaged across the pressure field on the transducer surface. Here this effect is simulated using a focussed bowl detector (defined using a binary sensor mask) created with the help of <code><a href="makeBowl.html">makeBowl</a></code>.</p>
+
+<pre class="codeinput">
+<span class="comment">% create a concave sensor</span>
+sphere_offset = 10;                             <span class="comment">% [grid points]</span>
+diameter = Nx/2 + 1;                            <span class="comment">% [grid points]</span>
+radius = Nx/2;                                  <span class="comment">% [grid points]</span>
+bowl_pos = [1 + sphere_offset, Ny/2, Nz/2];     <span class="comment">% [grid points]</span>
+focus_pos = [Nx/2, Ny/2, Nz/2];                 <span class="comment">% [grid points]</span>
+sensor.mask = makeBowl([Nx, Ny, Nz], bowl_pos, radius, diameter, focus_pos);
+</pre>
+
+<a name="heading3"></a>
+<h2>Defining on and off-axis point sources</h2>
+
+<p>To see the focussing effect of the bowl detector, two points sources are defined, one on-axis and one off-axis.</p>
+
+<pre class="codeinput">
+<span class="comment">% place the first point source near the focus of the detector</span>
+source1 = zeros(Nx, Ny, Nz);
+source1(1 + sphere_offset + radius, Ny/2, Nz/2) = 1;
+
+<span class="comment">% place the second point source off axis</span>
+source2 = zeros(Nx, Ny, Nz);
+source2(1 + sphere_offset + radius, Ny/2 + 6, Nz/2 + 6) = 1;
+</pre>
+
+<img vspace="5" hspace="5" src="images/example_sd_focussed_detector_3D_01.png" style="width:560px;height:420px;" alt="">
+
+<a name="heading4"></a>
+<h2>Running the simulations</h2>
+
+<p>Following the simulations, the recorded time series (one per detector grid point) are averaged to model the output of a single element focussed sensor. The resulting time series for both on and off axis source positions are shown below. The detector clearly produces a larger output for the source nearer its focus.</p>
+
+<pre class="codeinput">
+<span class="comment">% run the first simulation</span>
+source.p_mask = source1;
+input_args = {'PMLSize', 10, 'DataCast', 'single', 'PlotSim', false};
+sensor_data1 = kspaceFirstOrder3D(kgrid, medium, source, sensor, input_args{:});
+
+<span class="comment">% average the data recorded at each grid point to simulate the measured
+% signal from a single element focussed detector</span>
+sensor_data1 = sum(sensor_data1, 1);
+
+<span class="comment">% run the second simulation</span>
+source.p_mask = source2;
+sensor_data2 = kspaceFirstOrder3D(kgrid, medium, source, sensor, input_args{:});
+
+<span class="comment">% average the data recorded at each grid point to simulate the measured
+% signal from a single element focussed detector</span>
+sensor_data2 = sum(sensor_data2, 1);
+</pre>
+
+<img vspace="5" hspace="5" src="images/example_sd_focussed_detector_3D_02.png" style="width:560px;height:420px;" alt="">
+
+</div></body></html>

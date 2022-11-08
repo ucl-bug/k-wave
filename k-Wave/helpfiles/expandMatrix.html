@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>expandMatrix :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>expandMatrix</h1>
+<p class="purpose">Enlarge a matrix by extending the edge values.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+mat_new = expandMatrix(mat, exp_coeff)
+mat_new = expandMatrix(mat, exp_coeff, edge_val)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>expandMatrix</code> enlarges an input matrix by extension of the values at the outer faces of the matrix (endpoints in 1D, outer edges in 2D, outer surfaces in 3D). Alternatively, if an input for <code>edge_val</code> is given, all expanded matrix elements will have this value. The values for <code>exp_coeff</code> are forced to be real positive integers (or zero). Note, indexing is done inline with other k-Wave functions using <code>mat(x)</code> in 1D, <code>mat(x, y)</code> in 2D, and <code>mat(x, y, z)</code> in 3D.</p>
+
+<p>For example, running</p>
+
+<pre class="codeinput">
+mat = magic(3)
+expandMatrix(mat, 1)
+expandMatrix(mat, [2 0 1 0], 0)
+</pre>
+
+<p>will give the outputs</p>
+
+<pre class="codeinput">
+ans =
+
+     8     8     1     6     6
+     8     8     1     6     6
+     3     3     5     7     7
+     4     4     9     2     2
+     4     4     9     2     2
+
+ans =
+
+     0     0     0     0     0
+     0     0     8     1     6
+     0     0     3     5     7
+     0     0     4     9     2
+</pre>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>mat</code></td>
+        <td>the matrix to enlarge</td>
+    </tr>
+
+    <tr valign="top">
+        <td width = "150"><code>exp_coeff</code></td>
+        <td>the number of elements to add in each dimension, where</p>
+            <p><code>exp_coeff = [a]</code> or <code>[x_start, x_end]</code> in 1D</p>
+            <p><code>exp_coeff = [a]</code> or <code>[x, y]</code> or <code>[x_start, x_end, y_start, y_end]</code> in 2D</p>
+            <p><code>exp_coeff = [a]</code> or <code>[x, y, z]</code> or <code>[x_start, x_end, y_start, y_end, z_start, z_end]</code> in 3D</p>
+            <p>(here <code>a</code> is applied to all dimensions)</p>
+    </tr>   
+    
+</table>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>edge_val</code></td>
+        <td>value to use in the matrix expansion</td>
+    </tr>     
+    
+</table>
+    
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>mat_new</code></td>
+        <td>expanded matrix</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+<code><a href="trimZeros.html">trimZeros</a></code>, <code><a href="resize.html">resize</a></code>
+
+</div></body></html>

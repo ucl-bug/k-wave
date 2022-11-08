@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>gradientSpect :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>gradientSpect</h1>
+<p class="purpose">Calculate the gradient using a Fourier spectral method.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+fx = gradient(f, dx)
+fx = gradient(f, dx, [], deriv_order)
+fn = gradient(f, dn, dim)
+fn = gradient(f, dn, dim, deriv_order)
+[fx, fy] = gradient(f, dn)
+[fx, fy] = gradient(f, dn, [], deriv_order)
+[fx, fy, fz, ...] = gradient(f, dn)
+[fx, fy, fz, ...] = gradient(f, dn, [], deriv_order)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>gradientSpect</code> calculates the gradient of an n-dimensional input matrix using the Fourier collocation spectral method. The gradient for singleton dimensions is returned as 0. </p>
+
+<p>A 1D example:</p>
+
+<pre class="codeinput">
+<span class="comment">% compute gradient of a 2 period sinusoid</span>
+x = pi/20:pi/20:4*pi;
+y = sin(x);
+dydx = gradientSpect(y, pi/20);
+
+<span class="comment">% plot gradient and error compared to analytical solution</span>
+subplot(2, 1, 1);
+plot(x, cos(x), 'k-', x, dydx, 'bx');
+axis tight;
+title('dy/dx');
+subplot(2, 1, 2);
+plot(x, cos(x) - dydx, 'k-');
+axis tight;
+title('Relative Error');
+</pre>
+
+<img vspace="5" hspace="5" src="images/gradientSpect_01.png" style="width:560px;height:420px;" alt="">
+
+<p>A modification of the example given with the MATLAB <code><a href="matlab: doc gradient">gradient</a></code> function (x and y are reversed):</p>
+
+<pre class="codeinput">
+<span class="comment">% generate input and compute gradient</span>
+[x, y] = meshgrid(-2:.2:2, -2:.2:2);
+z = x .* exp(-x.^2 - y.^2);
+[px, py] = gradientSpect(z, [.2, .2]);
+
+<span class="comment">% plot</span>
+figure;
+contour(z)
+hold on;
+quiver(py, px);
+hold off;
+</pre>
+
+<img vspace="5" hspace="5" src="images/gradientSpect_02.png" style="width:560px;height:420px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td><code>f</code></td>
+        <td>matrix or vector to find the gradient of</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>dn</code></td>
+        <td>array of values for the grid point spacing in each dimension. If a value for <code>dim</code> is given, <code>dn</code> is the spacing in dimension <code>dim</code>.</td>
+    </tr>
+</table>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>dim</code></td>
+        <td>optional input to specify a single dimension over which to compute the gradient for n-dimension input functions</td>
+    </tr>
+	<tr valign="top">
+        <td width = "150"><code>deriv_order</code></td>
+        <td>order of the derivative to compute, e.g., use 1 to compute df/dx, 2 to compute df^2/dx^2, etc. (default = 1)</td>
+    </tr>    
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>fx, fy, ...</code></td>
+        <td>gradient in the each dimension, where x corresponds to dim = 1, y corresponds to dim = 2 etc.</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="getFDMatrix.html">getFDMatrix</a></code>, <code><a href="matlab: doc gradient">gradient</a></code>, <code><a href="gradientFD.html">gradientFD</a></code>
+
+</div></body></html>

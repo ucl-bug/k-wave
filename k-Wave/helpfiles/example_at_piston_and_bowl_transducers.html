@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Modelling Plane Piston And Focused Bowl Transducers Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Modelling Plane Piston And Focused Bowl Transducers Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Modelling Plane Piston And Focused Bowl Transducers Example</h1>
+
+<p>This example shows how to model plane piston and focused bowl transducers using the <code><a href="kWaveArray.html">kWaveArray</a></code> class. It builds on the <a href="example_at_array_as_source.html">Defining A Source Using An Array Transducer Example</a>.</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Overview</a></li>
+        <li><a href="#heading3">Modelling A Circular Plane Piston Transducer In 3D</a></li>
+        <li><a href="#heading4">Modelling A Circular Plane Piston Transducer Assuming Axisymmetry</a></li>
+        <li><a href="#heading5">Modelling A Focused Bowl Transducer In 3D</a></li>
+        <li><a href="#heading6">Modelling A Focused Bowl Transducer Assuming Axisymmetry</a></li>
+        <li><a href="#heading7">Modelling An Focused Annular Array Transducer In 3D</a></li>
+        <li><a href="#heading8">References</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Overview</h2>
+
+<p>As outlined in the <a href="example_at_array_as_source.html">Defining A Source Using An Array Transducer Example</a>, the <code><a href="kWaveArray.html">kWaveArray</a></code> class allows transducer geometries to be accurately defined on a regular Cartesian grid without staircasing. This example gives five different demonstrations of defining a source and comparing the simulation output with an analytical solution. Each example can be run or opened by selecting the corresponding "Open the file..." and "Run the file..." links below. The examples also have the option to run on a GPU or using the compiled C++/CUDA codes.</p>
+
+<p>For each example, the transducer geometry is defined using the appropriate <code>add...Element</code> methods. For simulations in 3D, the piston and bowl elements are defined using the <code>addDiscElement</code> and <code>addBowlElement</code> methods. For axisymmetric simulations, only one radial line through the piston and bowl needs to be defined, so the <code>addLineElement</code> and <code>addArcElement</code> methods are used. The inputs for <code>source.p_mask</code> and <code>source.p</code> are then created using the <code>getArrayBinaryMask</code> and <code>getDistributedSourceSignal</code> methods as described in the <a href="example_at_array_as_source.html">Defining A Source Using An Array Transducer Example</a>.
+   
+<p>The examples use a single-frequency continuous-wave (CW) sinusoidal source defined using <code><a href="createCWSignals.html">createCWSignals</a></code>. To allow the accurate extraction of the pressure amplitude after the simulation, the time step is set to be an integer number of points per period. The pressure field is then recorded for an integer number of periods when the field has reached steady state. This allows the amplitude to be accurately extracted using the Fourier transform via <code><a href="extractAmpPhase.html">extractAmpPhase</a></code>. The grid size is automatically calculated based on the physical domain size and the desired number of points per wavelength (PPW) at the driving frequency.</p>
+
+<pre class="codeinput">
+<span class="comment">% calculate the grid spacing based on the PPW and F0</span>
+dx = c0 / (ppw * source_f0);   % [m]
+
+<span class="comment">% compute the size of the grid</span>
+Nx = roundEven(axial_size / dx);
+Ny = roundEven(lateral_size / dx);
+Nz = Ny;
+
+<span class="comment">% create the computational grid</span>
+kgrid = kWaveGrid(Nx, dx, Ny, dx, Nz, dx);
+
+<span class="comment">% compute points per temporal period</span>
+PPP = round(ppw / cfl);
+
+<span class="comment">% compute corresponding time spacing</span>
+dt = 1 / (PPP * source_f0);
+
+<span class="comment">% create the time array using an integer number of points per period</span>
+Nt = round(t_end / dt);
+kgrid.setTime(Nt, dt);
+
+...
+
+<span class="comment">% record only the final few periods when the field is in steady state</span>
+sensor.record_start_index = kgrid.Nt - record_periods * PPP + 1;
+
+...
+
+<span class="comment">% extract amplitude from the sensor data</span>
+amp = extractAmpPhase(sensor_data.p, 1/kgrid.dt, source_f0, ...
+    'Dim', 2, 'Window', 'Rectangular', 'FFTPadding', 1);
+</pre>
+
+<p>The 3D simulations are set to use 3 points per wavelength, and the axisymmetric simulations to 4 points per wavelength. Even with this very low grid sampling, there is close agreement between the simulation outputs and the corresponding analytical solutions. If higher accuracy is required, this can be achieved by:</p>
+<ul>
+    <li>Increasing the number of points per wavelength (set by <code>ppw</code>).</li>
+    <li>Decreasing the BLI tolerance (set by <code>bli_tolerance</code>). A lower BLI tolerance increases the size of the corresponding source mask.</li>
+    <li>Increasing the density of integration points (set by <code>upsampling_rate</code>). This increases the number of off-grid points used to represent the source geometry.</li>
+</ul>
+
+<p>Convergence plots for each of these parameters are given in [2].</p>
+
+<a name="heading3"></a>
+<h2>Modelling A Circular Plane Piston Transducer In 3D</h2>
+
+<p>This example models a circular piston transducer in 3D. The on-axis pressure is compared with the analytical expression from [1].</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_at_circular_piston_3D.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_at_circular_piston_3D']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<img vspace="5" hspace="5" src="images/example_at_piston_and_bowl_transducers_01.png" style="width:350px;height:263px;" alt="">
+<img vspace="5" hspace="5" src="images/example_at_piston_and_bowl_transducers_02.png" style="width:350px;height:263px;" alt="">
+
+<a name="heading4"></a>
+<h2>Modelling A Circular Plane Piston Transducer Assuming Axisymmetry</h2>
+
+<p>This example models a circular piston transducer assuming axisymmetry. The on-axis pressure is compared with the analytical expression from [1]. Compared to the 3D simulation, a lower CFL (which gives a smaller time step) is used, as the k-space correction for the axisymmetric code is not exact in the radial direction.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_at_circular_piston_AS.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_at_circular_piston_AS']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<img vspace="5" hspace="5" src="images/example_at_piston_and_bowl_transducers_03.png" style="width:350px;height:263px;" alt="">
+<img vspace="5" hspace="5" src="images/example_at_piston_and_bowl_transducers_04.png" style="width:350px;height:263px;" alt="">
+
+<a name="heading5"></a>
+<h2>Modelling A Focused Bowl Transducer In 3D</h2>
+
+<p>This example models a focused bowl transducer in 3D. The on-axis pressure is compared with the exact solution calculated using <code><a href="focusedBowlONeil.html">focusedBowlONeil</a></code>.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_at_focused_bowl_3D.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_at_focused_bowl_3D']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<img vspace="5" hspace="5" src="images/example_at_piston_and_bowl_transducers_05.png" style="width:350px;height:263px;" alt="">
+<img vspace="5" hspace="5" src="images/example_at_piston_and_bowl_transducers_06.png" style="width:350px;height:263px;" alt="">
+
+<a name="heading6"></a>
+<h2>Modelling A Focused Bowl Transducer Assuming Axisymmetry</h2>
+
+<p>This example models a focused bowl transducer assuming axisymmetry. The on-axis pressure is compared with the exact solution calculated using <code><a href="focusedBowlONeil.html">focusedBowlONeil</a></code>.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_at_focused_bowl_AS.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_at_focused_bowl_AS']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<img vspace="5" hspace="5" src="images/example_at_piston_and_bowl_transducers_07.png" style="width:350px;height:263px;" alt="">
+<img vspace="5" hspace="5" src="images/example_at_piston_and_bowl_transducers_08.png" style="width:350px;height:263px;" alt="">
+
+<a name="heading7"></a>
+<h2>Modelling A Focused Annular Array Transducer In 3D</h2>
+
+<p>This example models a focused annular array transducer in 3D. The on-axis pressure is compared with the exact solution calculated using <code><a href="focusedAnnulusONeil.html">focusedAnnulusONeil</a></code>.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_at_focused_annular_array_3D.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_at_focused_annular_array_3D']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<img vspace="5" hspace="5" src="images/example_at_piston_and_bowl_transducers_09.png" style="width:350px;height:263px;" alt="">
+<img vspace="5" hspace="5" src="images/example_at_piston_and_bowl_transducers_10.png" style="width:350px;height:263px;" alt="">
+
+<a name="heading8"></a>
+<h2>References</h2>
+
+<p>[1] A. D. Pierce, Acoustics: An Introduction to its Physical Principles and Applications. New York: Acoustical Society of America, 1989.<br>
+[2] E. S. Wise, B. T. Cox, J. Jaros, & B. E. Treeby (2019). Representing arbitrary acoustic source and sensor distributions in Fourier collocation methods. <em>The Journal of the Acoustical Society of America</em>, 146(1), 278-288. <a href="https://doi.org/10.1121/1.5116132">https://doi.org/10.1121/1.5116132</a>.</p>
+
+</div></body></html>

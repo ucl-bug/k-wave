@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>overlayPlot :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>overlayPlot</h1>
+<p class="purpose">Overlay two images.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+overlayPlot(bg, fg)
+overlayPlot(bg, fg, ...)
+overlayPlot(x, y, bg, fg)
+overlayPlot(x, y, bg, fg, ...)
+</pre>
+
+<h2>Description</h2>
+<p><code>overlayPlot</code> overlays two 2D images. The background image is displayed using a grayscale map. For a non-zero dynamic range, the foreground image is log compressed (discarding negative values), thresholded to a particular dynamic range, and overlaid using an alpha value of 0.5. If the dynamic range is set to zero, the foreground image is overlaid without additional processing.</p>
+
+<p>Example:</p>
+
+<pre class="codeinput">
+bg = rand(128);
+fg = peaks(128);
+overlayPlot(bg, fg);
+</pre>
+
+<img vspace="5" hspace="5" src="images/overlayPlot_01.png" style="width:560px;height:420px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>x, y</code></td>
+        <td>vectors describing the position of the pixels in the image equivalent to <code><a href="matlab: doc image">image</a></code>(x, y, c)</td>
+    </tr>    
+    <tr valign="top">
+        <td><code>bg</code></td>
+        <td>background image</td>
+    </tr> 
+    <tr valign="top">
+        <td><code>fg</code></td>
+        <td>foreground image</td>
+    </tr>     
+</table>
+
+<h2>Optional Inputs</h2>
+
+<p>Optional 'string', value pairs that may be used to modify the default computational settings.</p>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="18%"><col width="18%"><col width="18%"><col width="46%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Input</th>
+            <th bgcolor="#B2B2B2">Valid Settings</th>
+            <th bgcolor="#B2B2B2">Default</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+    
+    	<tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'ColorBar'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>
+            <td bgcolor="#F2F2F2">Boolean controlling whether a colorbar is displayed.</td>
+        </tr>
+    
+		<tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'ColorBarTitle'</code></td>
+            <td bgcolor="#F2F2F2"><em>(string)</em></td>
+            <td bgcolor="#F2F2F2"><code>'dB'</code> with log compression<br/><code>''</code> otherwise </td>            
+            <td bgcolor="#F2F2F2">String defining the title used for the colorbar.</td>
+        </tr>
+        
+		<tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'ColorMap'</code></td>
+            <td bgcolor="#F2F2F2"><em>(string)</em></td>
+            <td bgcolor="#F2F2F2"><code>'jet'</code></td>            
+            <td bgcolor="#F2F2F2">String defining the colormap used for the overlay.</td>
+        </tr>        
+    
+    	<tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'LogComp'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>true</code></td>
+            <td bgcolor="#F2F2F2">Boolean controlling whether the forergound image is log compressed before display.</td>
+        </tr>
+    
+		<tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'LogCompRef'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>max(fg(:))</code></td>            
+            <td bgcolor="#F2F2F2">Reference value used in the log compression, where <code>fg_compressed = 20 * log10(fg ./ fg_ref)</code>.</td>
+        </tr>      
+    
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'NumColors'</code></td>
+            <td bgcolor="#F2F2F2"><em>(integer scalar)</em></td>
+            <td bgcolor="#F2F2F2"><em>256</em></td>            
+            <td bgcolor="#F2F2F2">Number of colors used in the colormaps.</td>
+        </tr>   
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'PlotScale'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric two element vector)</em></td>
+            <td bgcolor="#F2F2F2"><code>[-30, 0]</code> with log compression<br/> <code>[min(fg(:)), max(fg(:))]</code> otherwise</td>
+            <td bgcolor="#F2F2F2">Plot scale used to display the foreground image.</td>
+        </tr>
+            
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Transparency'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>0.5</code></td>
+            <td bgcolor="#F2F2F2">Transparency used for the foreground image, between 0 and 1.</td>
+        </tr>
+
+    </tbody>
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="beamPlot.html">beamPlot</a></code>, <code><a href="voxelPlot.html">voxelPlot</a></code>
+
+</div></body></html>

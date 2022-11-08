@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>beamPlot :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>beamPlot</h1>
+<p class="purpose">Plot volumetric data using intersecting planes.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+beamPlot(mat)
+beamPlot(mat, plot_yz)
+beamPlot(xy_slice, xz_slice)
+</pre>
+
+<h2>Description</h2>
+<p><code>beamPlot</code> plots 3D volumetric data as intersecting planes using
+<code><a href="matlab: doc slice">slice</a></code>. The data is assumed to be indexed as (x, y, z). The central x-y and x-z planes are extracted and plotted as intersecting planes. The first y-z plane can also be plotted by setting the optional input <code>plot_yz</code> to true. This orientation is useful for plotting the beam patterns produced by ultrasound transducers facing in the x-direction.</p>
+
+<p><code>beamPlot</code> can alternatively be called with two 2D slices which are plotted as intersecting planes indexed as (x, y) and (x, z). The slices must have the same size in the x-direction.</p>
+
+<p>Examples:</p>
+
+<pre class="codeinput">
+beamPlot(makeBall(30, 30, 30, 15, 15, 15, 12));
+beamPlot(makeDisc(40, 30, 20, 15, 10), makeDisc(40, 20, 20, 10, 5)); 
+</pre>
+
+<img vspace="5" hspace="5" src="images/beamPlot_01.png" style="width:560px;height:420px;" alt="">
+
+<h2>Inputs</h2>
+
+<table>
+    <tr valign="top">
+        <td  width = "150"><code>mat</code></td>
+        <td>3D matrix to plot</td>
+    </tr>    
+    <tr valign="top">
+        <td><code>plot_yz</code></td>
+        <td>Boolean controlling whether the first y-z plane is displayed</td>
+    </tr> 
+    <tr valign="top">
+        <td><code>xy_slice</code></td>
+        <td>slice to plot in the x-y plane</td>
+    </tr> 
+    <tr valign="top">
+        <td><code>xz_slice</code></td>
+        <td>slice to plot in the x-z plane</td>
+    </tr> 
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="matlab: doc slice">slice</a></code>
+
+</div></body></html>

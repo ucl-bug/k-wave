@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Heating By A Focused Ultrasound Transducer (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Heating By A Focused Ultrasound Transducer.">
+</head>
+
+<body><div class="content">
+
+<h1>Heating By A Focused Ultrasound Transducer</h1>
+
+<p>This example demonstrates how to combine acoustic and thermal simulations in k-Wave to calculate the heating by a focused ultrasound transducer. It builds on the <a href="example_tvsp_transducer_field_patterns.html">Simulating Transducer Field Patterns</a> and <a href="example_diff_binary_sensor_mask.html">Using A Binary Sensor Mask</a> examples.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_diff_focused_ultrasound_heating.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_diff_focused_ultrasound_heating']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Running the acoustic simulation</a></li>
+		<li><a href="#heading3">Running the thermal simulation</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Running the acoustic simulation</h2>
+
+<p>In the previous examples, the temperature and heat source are defined using a Gaussian distribution. In this example, an acoustic simulation is first performed using <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code> to calculate the volume rate of heating from a focused ultrasound transducer in 2D. This is then used as an input to a thermal simulation to calculate the temperature map and ablated tissue volume. The volume rate of heat deposition can be approximated using the plane wave relationship <code>Q = alpha * p^2 / (c0 * rho0)</code>. For nonlinear simulations, <code>alpha</code> and <code>p</code> correspond to the absorption coefficient and pressure amplitude at each frequency harmonic.</p>
+
+<p>For a linear simulation, the pressure amplitude <code>p</code> can be approximated by recording the maximum pressure once the simulation has reached steady state, i.e., by setting <code>sensor.record = {'p_max_all'}</code>, and <code>sensor.record_start_index</code> to a time step after the simulation has reached steady state. A more accurate estimate of the pressure amplitude can be obtained by setting the time step to give an integer number of time steps per period, and then recording the acoustic pressure over an integer number of periods in steady state. This allows the pressure amplitude at the driving frequency (and the harmonics if the simulation is nonlinear) to be obtained from the amplitude spectrum of the pressure time signals.</p>
+
+<pre class="codeinput">
+<span class="comment">% calculate the time step using an integer number of points per period</span>
+ppw = medium.sound_speed / (freq * dx); <span class="comment">% points per wavelength</span>
+cfl = 0.3;                              <span class="comment">% cfl number</span>
+ppp = ceil(ppw / cfl);                  <span class="comment">% points per period</span>
+T   = 1 / freq;                         <span class="comment">% period [s]</span>
+dt  = T / ppp;                          <span class="comment">% time step [s]</span>
+</pre>
+
+<p>Here, the acoustic source is defined to be a focused transducer driven by a continuous wave sinusoid at 1 MHz with a surface pressure of 500 kPa. Note, the surface pressure is relatively high to achieve the required focal pressure to ablate the tissue. This is because the simulation is in 2D, and thus the focusing gain is much less than an equivalent simulation in 3D using a focused bowl transducer of the same radius and diameter.</p>
+
+<a name="heading3"></a>
+<h2>Running the thermal simulation</h2>
+
+<p>After the acoustic simulation, the acoustic pressure amplitude in steady state is extracted from the recorded pressure signals using <code><a href="extractAmpPhase.html">extractAmpPhase</a></code>. This extracts the amplitude from the frequency spectrum at the specified frequency. After calculating the acoustic pressure amplitude, the volume rate of heat deposition is calculated.</p>
+
+<pre class="codeinput">
+<span class="comment">% convert the absorption coefficient to nepers/m</span>
+alpha_np = db2neper(medium.alpha_coeff, medium.alpha_power) * ...
+    (2 * pi * freq).^medium.alpha_power;
+
+<span class="comment">% extract the pressure amplitude at each position</span>
+p = extractAmpPhase(sensor_data.p, 1/kgrid.dt, freq);
+
+<span class="comment">% reshape the data, and calculate the volume rate of heat deposition</span>
+p = reshape(p, Nx, Ny);
+Q = alpha_np .* p.^2 ./ (medium.density .* medium.sound_speed);
+</pre>
+
+<p>The volume rate of heat deposition is assigned to <code>source.Q</code>, and <code><a href="kWaveDiffusion.html">kWaveDiffusion</a></code> is used to simulate the temperature distribution and thermal dose with 10 seconds of heating, and 20 seconds of cooling. The resulting pressure, volume rate of heat deposition, temperature field, thermal dose, and ablation volume are shown below. Many extensions to this example are possible, for example, extending it to 3D, using heterogenous acoustic and thermal properties, and including perfusion (both background values and thermally significant individual vessels).</p>
+
+<img vspace="5" hspace="5" src="images/example_diff_focused_ultrasound_heating_01.png" style="width:840px;height:420px;" alt="">
+
+</div></body></html>

@@ -1,0 +1,9 @@
+# git files
+.gitattributes export-ignore
+.gitignore export-ignore
+k-Wave/binaries/.gitignore export-ignore
+k-Wave/examples/.gitignore export-ignore
+.gitlab export-ignore
+
+# testing files
+k-Wave/testing export-ignore

@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>vesselFilter :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>vesselFilter</h1>
+<p class="purpose">Frangi's 3D vessel filter.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+I_out = vesselFilter(I_in, grid_spacing, scales)
+I_out = vesselFilter(I_in, grid_spacing, scales, ...)
+</pre>
+
+<h2>Description</h2>
+<p><code>vesselFilter</code> filters a 3D image using Frangi's vessel filtering algorithm [1-3]. The algorithm works by calculating the Hessian matrix (containing second order gradients) at each image voxel. The eigenvalues of this matrix are then ordered and used to classify whether the voxel is part of a vessel. The algorithm is performed over multiple scales by convolving the input image with a Gaussian of the given input scales. The final output is taken as the maximum of the vessel filtered image across all scales.</p>
+
+<p>An example of applying the vessel filter to a photoacoustic image of blood filled tubes is given below [3].</p>
+
+<img vspace="5" hspace="5" src="images/vesselFilter_01.png" style="width:647px;height:427px;" alt="">
+
+<p>References:<br/>[1] A. F. Frangi, W. J. Niessen, K. L. Vincken, M. A. Viergever (1998) "Multiscale vessel enhancement filtering," MICCAI, pp. 130-137. <br/>[2] R. Manniesing, M.A. Viergever, W.J. Niessen (2006) "Vessel enhancing diffusion: A scale space representation of vessel structures," Med. Image Anal. 10, pp. 815-25. <br/>[3] T. Oruganti, J. Laufer, B. E. Treeby (2013) "Vessel filtering of photoacoustic images," Proc. of SPIE, vol. 8581, p. 85811W-1.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>I_in</code></td>
+        <td>3D image data to filter</td>
+    </tr>
+    <tr valign="top">
+        <td><code>grid_spacing</code></td>
+        <td>[dx, dy, dz] in [m]</td>        
+    </tr>  
+    <tr valign="top">
+        <td><code>scales</code></td>
+        <td>array of scales to use [m]</td>        
+    </tr> 
+</table>
+
+<h2>Optional Inputs</h2>
+
+<p>Optional 'string', value pairs that may be used to modify the default computational settings.</p>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="18%"><col width="18%"><col width="18%"><col width="46%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Input</th>
+            <th bgcolor="#B2B2B2">Valid Settings</th>
+            <th bgcolor="#B2B2B2">Default</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'alpha'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>0.5</code></td>            
+            <td bgcolor="#F2F2F2">Value of sensitivity parameter for metric that distinguishes between plate-like and other structures (vessel-like or ball-like).</td>
+        </tr>     
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'beta'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>0.5</code></td>            
+            <td bgcolor="#F2F2F2">Value of sensitivity parameter for metric that distinguishes between ball-like and other structures (vessel-like or plate-like).</td>
+        </tr>   
+
+		<tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'c'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>1</code></td>            
+            <td bgcolor="#F2F2F2">Value used to scale the sensitivity parameter for the noise metric (the sensitivity parameter itself is calculated automatically based on the magnitudes of the eigenvalues).</td>
+        </tr>   
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'gamma'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>0</code></td>            
+            <td bgcolor="#F2F2F2">Normalisation factor for scale-space derivatives.</td>
+        </tr>   
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'DisplayUpdates'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>true</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether command line updates are displayed.</td>
+        </tr> 
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Plot'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether a maximum intensity projection of the vessel filtered image at each scale is displayed.</td>
+        </tr> 
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'ColorMap'</code></td>
+            <td bgcolor="#F2F2F2"><em>(MATLAB colormap)</em></td>
+            <td bgcolor="#F2F2F2"><code>flipud(gray)</code></td>            
+            <td bgcolor="#F2F2F2">Colour map to use if <code>'Plot'</code> is set to <code>true</code>.</td>
+        </tr>             
+    </tbody>
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>I_out</code></td>
+        <td>vessel filtered image</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="interpftn.html">interpftn</a></code>, <code><a href="smooth.html">smooth</a></code>
+
+
+
+
+</div></body></html>

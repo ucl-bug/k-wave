@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>findClosest :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>findClosest</h1>
+<p class="purpose">Return the closest value in a matrix.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+value = findClosest(A, a)
+[value, index] = findClosest(A, a)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>findClosest</code> returns the value and index of the item in A
+ that is closest to the value a. For vectors, value and index correspond to the closest element in A. For matrices, value and index are row vectors corresponding to the closest element from each column. For N-D arrays, the function finds the closest value along the first non-singleton dimension. If there is more than one element with the closest value, the index of the first one is returned.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>A</code></td>
+        <td>matrix to search</td>
+    </tr>    
+
+    <tr valign="top">
+        <td width = "150"><code>a</code></td>
+        <td>value to find</td>
+    </tr>  
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>value</code></td>
+        <td>value in A that is closest to a</td>
+    </tr>
+
+    <tr valign="top">
+        <td width = "150"><code>index</code></td>
+        <td>the index of a within A</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="matlab: doc find">find</a></code>, <code><a href="matlab: doc min">min</a></code>
+
+
+
+
+</div></body></html>

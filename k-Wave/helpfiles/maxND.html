@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>maxND :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>maxND</h1>
+<p class="purpose">Return the value and indices of the largest value in an N-D array.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+max_val = maxND(mat)
+[max_val, ind] = maxND(mat)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>maxND</code> returns the largest value in the N-D array given by <code>mat</code>. The indices of the largest value within the array can also be returned, where <code>ind = [ind_dim_1, ind_dim_2, ... , ind_dim_N]</code>. The indices can be used to directly address the largest value, i.e., <code>max_val = mat(ind)</code>. </p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>mat</code></td>
+        <td>input array</td>
+    </tr>  
+</table>
+    
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>max_val</code></td>
+        <td>largest value in <code>mat</code></td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>ind</code></td>
+        <td>array of indices corresponding to the location of the largest value in <code>mat</code></td>
+    </tr>    
+</table>
+
+</div></body></html>

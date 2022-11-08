@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>kspaceFirstOrder3DG :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>kspaceFirstOrder3DG</h1>
+<p class="purpose">3D time-domain simulation of wave propagation on a GPU using C++ CUDA code.</p>
+
+<h2>Syntax</h2>
+
+<p>See <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> and <code><a href="kspaceFirstOrder3DC.html">kspaceFirstOrder3DC</a></code>.</p>
+
+<h2>Description</h2>
+<p><code>kspaceFirstOrder3DG</code> provides a blind interface to the C++/CUDA version of <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> (called <code>kspaceFirstOrder-CUDA</code>) in the same way as <code><a href="kspaceFirstOrder3DC.html">kspaceFirstOrder3DC</a></code>. Note, the C++ code does not support all input options, and all display options are ignored (only command line outputs are given). See the k-Wave user manual for more information.</p>
+
+<p>The function works by appending the optional input <code>'SaveToDisk'</code> to the user inputs and then calling <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> to save the input files to disk. The contents of <code>sensor.record</code> (if set) are  parsed as input flags, and the C++ code is run using the <code><a href="matlab: doc system">system</a></code> command. The output files are then automatically loaded from disk and returned in the same fashion as <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>. The input and output files are saved to the temporary directory native to the operating system, and are deleted after the function runs.</p>
+
+<p>This function requires the C++ binary/executable of <code>kspaceFirstOrder-CUDA</code> to be downloaded from <a href="http://www.k-wave.org/download.php">www.k-wave.org/download.php</a> and placed in the "binaries" directory of the k-Wave toolbox. Alternatively, the name and location of the binary can be specified using the optional input parameters <code>'BinaryName'</code> and <code>'BinariesPath'</code>.</p>
+
+<h2>See Also</h2>
+<code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>, <code><a href="kspaceFirstOrder3DC.html">kspaceFirstOrder3DC</a></code>
+
+</div></body></html>

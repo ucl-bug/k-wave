@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>waterAbsorption :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>waterAbsorption</h1>
+<p class="purpose">Calculate ultrasound absorption in distilled water.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+abs = waterAbsorption(f, T)
+</pre>
+
+<h2>Description</h2>
+<p><code>waterAbsorption</code> calculates the ultrasonic absorption in distilled water at a given temperature and frequency using a 7th order polynomial fitted to the data given by Pinkerton (1949, The Absorption of Ultrasonic Waves in Liquids and its Relation to Molecular Constitution, Proceedings of the Physical Society. Section B, 2, 129-141). A plot of the absorption at 20degC returned by <code>waterAbsorption</code> along with the absorption calculated by the corresponding power law given by Szabo (2004, Diagnostic Ultrasound Imaging) is given below.</p>
+
+<pre class="codeinput">
+<span class="comment">% calculate absorption between 0 and 50 MHz</span>
+f = 0:2:50;                     <span class="comment">% [MHz]</span>
+abs = waterAbsorption(f, 20);  <span class="comment">% [dB/cm]</span>
+
+<span class="comment">% plot absorption and power law</span>
+figure;
+plot(f, abs, 'k-', f, 2.17e-3 * f.^2, 'bx');
+xlabel('Frequency [MHz]');
+ylabel('Absorption Coefficient [dB/cm]');
+</pre>
+
+<img vspace="5" hspace="5" src="images/waterAbsorption_01.png" style="width:560px;height:420px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td><code>f</code></td>
+        <td>array of frequency values [MHz]</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>T</code></td>
+        <td>array of water temperature values [degC]</td>        
+    </tr>         
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>abs</code></td>
+        <td>absorption [dB/cm]</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="waterDensity.html">waterDensity</a></code>, <code><a href="waterNonlinearity.html">waterNonlinearity</a></code>, <code><a href="waterSoundSpeed.html">waterSoundSpeed</a></code>
+
+</div></body></html>

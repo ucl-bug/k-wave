@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>acousticFieldPropagator :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>acousticFieldPropagator</h1>
+<p class="purpose">Calculate acoustic field for CW source.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+pressure = acousticFieldPropagator(amp_in, phase_in, dx, f0, c0)
+pressure = acousticFieldPropagator(amp_in, phase_in, dx, f0, c0, ...)
+[amp_out, phase_out] = acousticFieldPropagator(amp_in, phase_in, dx, f0, c0)
+[amp_out, phase_out] = acousticFieldPropagator(amp_in, phase_in, dx, f0, c0, ...)
+[pressure, amp_out, phase_out] = acousticFieldPropagator(amp_in, phase_in, dx, f0, c0)
+[pressure, amp_out, phase_out] = acousticFieldPropagator(amp_in, phase_in, dx, f0, c0, ...)
+</pre>
+
+<h2>Description</h2>
+<p><code>acousticFieldPropagator</code> calculates the steady state field pattern (complex pressure or amplitude and phase) from an arbitrary phased array (or other acoustic source) driven by a single frequency continuous wave sinusoid in a homogeneous and lossless medium. The phased array is defined in completely general form as a matrix of amplitude and phase. This allows arrays of arbitrary geometry and numbers of elements to be defined.</p>
+
+<p>The solution is based on the Green's function for the homogeneous wave equation expressed in the spatial frequency domain or k-space as outlined in [1]. The temporal convolution integral is solved analytically, and the remaining integrals are expressed in the form of the spatial Fourier transform. This allows the acoustic pressure for all spatial positions at any time t > 0 to be calculated in a single step without numerical quadrature. To avoid wave wrapping, the domain size used for calculation is automatically expanded to a suitable dimension size with small prime factors.</p>
+
+<p>A simple example of computing the field from a line source in 2D is given below.</p>
+
+<pre class="codeinput">
+<span class="comment">% define grid properties</span>
+Nx = 128; 		<span class="comment">% [grid points]</span>
+Ny = 64;		<span class="comment">% [grid points]</span>
+dx = 1e-4;		<span class="comment">% [m]</span>
+
+<span class="comment">% define input amplitude [Pa] and phase [rad] for a line source</span>
+amp_in = zeros(Nx, Ny);
+amp_in(1, Ny/4:3*Ny/4) = 1;
+phase_in = 0;
+
+<span class="comment">% define medium and source properties</span>
+f0 = 2e6;		<span class="comment">% [Hz]</span>
+c0 = 1500;		<span class="comment">% [m/s]</span>
+
+<span class="comment">% compute pressure field</span>
+[amp_out, phase_out] = acousticFieldPropagator(amp_in, phase_in, dx, f0, c0);
+
+<span class="comment">% create plot axis</span>
+x_vec = 1e3 * (0:Nx-1) * dx;
+y_vec = 1e3 * (-Ny/2:Ny/2 - 1) * dx;
+
+<span class="comment">% plot amplitude</span>
+figure;
+subplot(1, 2, 1);
+imagesc(y_vec, x_vec, amp_out);
+axis image;
+xlabel('Lateral Distance [mm]');
+ylabel('Axial Distance [mm]');
+title('Phase');
+
+<span class="comment">% plot phase</span>
+subplot(1, 2, 2);
+imagesc(y_vec, x_vec, phase_out);
+axis image;
+xlabel('Lateral Distance [mm]');
+ylabel('Axial Distance [mm]');
+title('Phase');
+</pre>
+
+<img vspace="5" hspace="5" src="images/acousticFieldPropagator_01.png" style="width:560px;height:420px;" alt="">
+
+<p>[1] Treeby, B. E., Budisky, J., Wise, E. S., Jaros, J., & Cox, B. T. (2018). Rapid calculation of acoustic fields from arbitrary continuous-wave sources. <em>The Journal of the Acoustical Society of America</em>, 143(1), 529-537.
+</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>amp_in</code></td>
+        <td>matrix of the source amplitude at each grid point [Pa]</td>
+    </tr>
+    <tr valign="top">
+        <td><code>phase_in</code></td>
+        <td>matrix of the source phase at each grid point [rad]</td>
+    </tr>
+    <tr valign="top">
+        <td><code>dx</code></td>
+        <td>grid spacing (assumed to be isotropic) [m]</td>
+    </tr>
+	<tr valign="top">
+        <td><code>f0</code></td>
+        <td>source frequency [Hz]</td>
+    </tr>
+	<tr valign="top">
+        <td><code>c0</code></td>
+        <td>medium sound speed [m/s]</td>
+    </tr>
+</table>
+
+<h2>Optional Inputs</h2>
+
+<p>Optional 'string', value pairs that may be used to modify the default computational settings.</p>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="18%"><col width="18%"><col width="18%"><col width="46%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Input</th>
+            <th bgcolor="#B2B2B2">Valid Settings</th>
+            <th bgcolor="#B2B2B2">Default</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'ExpandedGridSize'</code></td>
+            <td bgcolor="#F2F2F2"><em>(one, two, or three element vector)</em> or <code>'auto'</code></td>
+            <td bgcolor="#F2F2F2"><code>'auto'</code></td>            
+            <td bgcolor="#F2F2F2">Option to specify the size of the grid after expansion used to avoid wave wrapping.</td>
+        </tr>     
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'GridExpansionFactor'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>1.1</code></td>            
+            <td bgcolor="#F2F2F2">Option to specify the multiplicative factor used to calculate the minimum expanded grid size to avoid wave wrapping based on time t. Note, setting a value for the optional input <code>'ExpandedGridSize'</code> will override this value.</td>
+        </tr>   
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'GridSearchRange'</code></td>
+            <td bgcolor="#F2F2F2"><em>(integer)</em></td>
+            <td bgcolor="#F2F2F2"><code>50</code></td>            
+            <td bgcolor="#F2F2F2">Option to set the search range used to find the expanded grid size with the smallest prime factors. Note, setting a value for the optional input <code>'ExpandedGridSize'</code> will override this value.</td>
+        </tr> 
+		
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'SaveToDisk'</code></td>
+            <td bgcolor="#F2F2F2"><em>(string)</em></td>
+            <td bgcolor="#F2F2F2"><code>''</code></td>            
+            <td bgcolor="#F2F2F2">String containing a filename (including pathname if required). If set, after the precomputation phase, the input variables used in the time loop are saved the specified location in HDF5 format. The simulation then exits. The saved variables can be used to run simulations using the C++ code.</td>
+        </tr>		
+		
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Time'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em> or <code>'auto'</code></td>
+            <td bgcolor="#F2F2F2"><code>'auto'</code></td>            
+            <td bgcolor="#F2F2F2">Option to specify the time t at which the wavefield is calculated to extract the amplitude and phase.</td>
+        </tr>
+		
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'TimeExpansionFactor'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>1.5</code></td>            
+            <td bgcolor="#F2F2F2">Option to specify the multiplicative factor used to calculate t based on the time taken to propagate across the longest grid diagonal. Note, setting a value for the optional input <code>'Time'</code> will override this value.</td>
+        </tr>
+		
+		<tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'UseRamp'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>true</code></td>            
+            <td bgcolor="#F2F2F2"> Option to use a smooth ramp to avoid start-up transients.</td>
+        </tr>  
+    </tbody>
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>pressure</code></td>
+        <td>matrix of the complex pressure field at each grid point in steady state, where the real part corresponds to the pressure field for a cosine excitation, and the imaginary part corresponds to the pressure field for a sine excitation [Pa]</td>
+    </tr>  
+
+    <tr valign="top">
+        <td><code>amp_out</code></td>
+        <td>matrix of the output amplitude at each grid point in steady state [Pa]</td>
+    </tr>
+	
+<tr valign="top">
+        <td><code>phase_out</code></td>
+        <td>matrix of the output phase at each grid point in steady state [rad]</td>
+    </tr>	
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="acousticFieldPropagatorC.html">acousticFieldPropagatorC</a></code>, <code><a href="kspaceFirstOrder1D.html">kspaceFirstOrder1D</a></code>, <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>, <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>
+
+</div></body></html>

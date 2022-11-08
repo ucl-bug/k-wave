@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>hounsfield2density :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>hounsfield2density</h1>
+<p class="purpose">Convert Hounsfield units to density.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+density = hounsfield2density(ct_data)
+density = hounsfield2density(ct_data, plot_fitting)
+[density, sound_speed] = hounsfield2density(ct_data)
+[density, sound_speed] = hounsfield2density(ct_data, plot_fitting)
+</pre>
+
+<h2>Description</h2>
+<p><code>hounsfield2density</code> converts Hounsfield units to units of density [kg/m^3] based on the experimental data given by Schneider, U., Pedroni, E., and Lomax A., "The calibration of CT Hounsfield units for radiotherapy treatment planning," Phys. Med. Biol., 41, pp. 111-124 (1996). The conversion is made using a four-part piece-wise linear fit to the data (see figure below). For soft-tissue, the approximate sound speed can also be returned using the empirical relationship given by Mast, T. D., "Empirical relationships between acoustic parameters in human soft tissues," Acoust. Res. Lett. Online, 1(2), pp. 37-42 (2000).</p>
+
+<img vspace="5" hspace="5" src="images/hounsfield2density_01.png" style="width:560px;height:420px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>ct_data</code></td>
+        <td>CT data in Hounsfield units to convert to density</td>
+    </tr>    
+</table>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>plot_fitting</code></td>
+        <td>Boolean controlling whether the original data points and fitting is plotted (default = false)</td>        
+    </tr>     
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>density</code></td>
+        <td>density in kg/m^3</td>
+    </tr>
+    <tr valign="top">
+        <td><code>sound_speed</code></td>
+        <td>sound speed in m/s</td>
+    </tr>	
+</table>
+
+</div></body></html>

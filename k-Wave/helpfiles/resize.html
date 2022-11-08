@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>resize :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>resize</h1>
+<p class="purpose">Resize a matrix.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+mat_rs = resize(mat, new_size)
+mat_rs = resize(mat, new_size, interp_mode)
+</pre>
+
+<h2>Description</h2>
+<p><code>resize</code> resamples a matrix to a given size using <code><a href="matlab: doc interp1">interp1</a></code> (1D), <code><a href="matlab: doc interp2">interp2</a></code> (2D), or <code><a href="matlab: doc interp3">interp3</a></code> (3D).</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td   width = "150"><p><code>mat</code></td>
+        <td>matrix to resize</td>
+    </tr>
+    <tr valign="top">
+        <td><code>new_size</code></td>
+        <td>desired matrix size in elements given by [N] in 1D (a single number is used for both row and column vectors), [Nx, Ny] in 2D and [Nx, Ny, Nz] in 3D.</td> 
+    </tr>         
+</table>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>interp</code></td>
+        <td>interpolation mode used by <code><a href="matlab: doc interp1">interp1</a></code>, <code><a href="matlab: doc interp2">interp2</a></code>, and <code><a href="matlab: doc interp3">interp3</a></code> (default = <code>'*linear'</code>)</td>        
+    </tr>     
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>mat_rs</code></td>
+        <td>resized matrix</td>
+    </tr>
+</table>
+
+<h2>Examples</h2>
+<ul>
+<li><a href="example_ivp_loading_external_image.html">Loading External Image Maps</a></li> 
+<li><a href="example_pr_2D_tr_circular_sensor.html">2D Time Reversal For A Circular Sensor</a></li>
+<li><a href="example_na_optimising_performance.html">Optimising k-Wave Performance</a></li> 
+</ul>
+
+<h2>See Also</h2>
+
+<code><a href="matlab: doc interp1">interp1</a></code>, <code><a href="matlab: doc interp2">interp2</a></code>, <code><a href="matlab: doc interp3">interp3</a></code>
+
+</div></body></html>

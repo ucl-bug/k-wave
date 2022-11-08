@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>fitPowerLawParams :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>fitPowerLawParams</h1>
+<p class="purpose">Fit power law absorption parameters for highly absorbing media.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+[a0_fit, y_fit] = fitPowerLawParams(a0, y, c0, f_min, f_max)
+[a0_fit, y_fit] = fitPowerLawParams(a0, y, c0, f_min, f_max, plot_fit)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>fitPowerLawParams</code> calculates the absorption parameters that
+should be defined in the simulation functions given the desired power law absorption behaviour defined by <code>a0</code> and <code>y</code>. This takes into account the actual absorption behaviour exhibited by the fractional Laplacian wave equation.</p>
+
+<p>This fitting is required when using large absorption values or high frequencies, as the fractional Laplacian wave equation solved in <code><a href="kspaceFirstOrder1D.html">kspaceFirstOrder1D</a></code>, <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>, <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>, and <code><a href="kspaceSecondOrder.html">kspaceSecondOrder</a></code> no longer encapsulates absorption of the form a = a0*f^y.</p>
+
+<p>The returned values should be used to define the <code>medium.alpha_coeff</code> and <code>medium.alpha_power</code> within the simulation functions. The absorption behaviour over the frequency range <code>f_min:f_max</code> will then follow the power law defined by <code>a0</code> and <code>y</code>.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>a0</code></td>
+        <td>desired power law absorption prefactor [dB/(MHz^y cm)]</code></td>
+    </tr>    
+
+    <tr valign="top">
+        <td width = "150"><code>y</code></td>
+        <td>desired power law exponent</td>
+    </tr> 
+	
+	<tr valign="top">
+        <td width = "150"><code>c0</code></td>
+        <td>medium sound speed [m/s]</td>
+    </tr>  
+	
+	<tr valign="top">
+        <td width = "150"><code>f_min</code></td>
+        <td>minimum frequency of interest [Hz]</td>
+    </tr>  
+    
+	<tr valign="top">
+        <td width = "150"><code>f_max</code></td>
+        <td>maximum frequency of interest [Hz]</td>
+    </tr>    
+</table>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>plot_fit</code></td>
+        <td>Boolean controlling whether the final fit is displayed (default = false)</td>
+    </tr>    
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>a0_fit</code></td>
+        <td>power law absorption prefactor that should be used to define <code>medium.alpha_coeff</code> in the simulation functions</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>y_fit</code></td>
+        <td>power law exponent that should be used to define <code>medium.alpha_power</code> in the simulation functions</td>
+    </tr>    
+</table>		
+
+<h2>See Also</h2>
+
+<p><code><a href="kspaceFirstOrder1D.html">kspaceFirstOrder1D</a></code>, <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>, <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code></p>
+
+
+
+
+</div></body></html>

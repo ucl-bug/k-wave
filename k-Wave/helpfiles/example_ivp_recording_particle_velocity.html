@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Recording The Particle Velocity Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Recording The Particle Velocity Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Recording The Particle Velocity Example</h1>
+
+<p>This example demonstrates how to record the particle velocity using a Cartesian or binary sensor mask. It builds on the <a href="example_ivp_homogeneous_medium.html">Homogeneous Propagation Medium</a> and <a href="example_ivp_heterogeneous_medium.html">Heterogeneous Propagation Medium</a> examples.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_ivp_recording_particle_velocity.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_ivp_recording_particle_velocity']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Setting the acoustic variables that are recorded</a></li>
+		<li><a href="#heading3">Defining the time array</a></li>
+		<li><a href="#heading4">Running the simulation</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Setting the acoustic variables that are recorded</h2>
+
+<p>By default, the first-order simulation functions in k-Wave return the pressure field recorded at each time step at the positions specified by <code>sensor.mask</code>. This data is assigned directly to the output argument <code>sensor_data</code> (unless using a <a href="example_ivp_opposing_corners_sensor_mask.html">sensor mask defined by opposing corners</a>). It is also possible to control the acoustic variables that are recorded by the sensor mask by setting the value of <code>sensor.record</code>. The desired field parameters are listed as strings within a cell array. For example, to record both the acoustic pressure and the particle velocity, <code>sensor.record</code> should be set to <code>{'p', 'u'}</code>. If a value for <code>sensor.record</code> is set, the output <code>sensor_data</code> returned from the simulation is defined as a structure, with the recorded acoustic variables appended as structure fields. For example, if <code>sensor.record = {'p', 'p_max', 'u'}</code>, then the individual output variables are accessed as <code>sensor_data.p</code>, <code>sensor_data.p_max</code>, <code>sensor_data.ux</code>, <code>sensor_data.uy</code> (similarly for other dimensions). A full list of other <code>sensor.record</code> options is given in <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>.</p>
+
+<a name="heading3"></a>
+<h2>Defining the time array</h2>
+
+<p>In the previous examples, <code><a href="kWaveGrid.html">kWaveGrid</a></code> is used to define the properties of the spatial discretisation. After the <code><a href="kWaveGrid.html">kWaveGrid</a></code> object is created, the only parameters that can be modified by the user are the number and size of the time steps used for the simulation. These are defined by the parameters <code>kgrid.Nt</code> and <code>kgrid.dt</code>. If either of these are set to <code>'auto'</code> (the default), the time array is automatically calculated within <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code> by calling the <code>makeTime</code> method of the <code><a href="kWaveGrid.html">kWaveGrid</a></code> class. This sets the total time to the time it would take for an acoustic wave to travel across the longest grid diagonal at the minimum sound speed. The time step is based on a Courant-Friedrichs-Lewy (CFL) number of 0.3 and the maximum sound speed in the medium, where <code>kgrid.dt = CFL * dx_min / c0_max</code> (see the k-Wave manual for a detailed discussion on the relationship between the CFL number and accuracy and stability).</p>
+
+<p>Instead of leaving <code>kgrid.Nt</code> and <code>kgrid.dt</code> set to <code>'auto'</code>, it is also possible to set the time array manually. There are two methods of the <code><a href="kWaveGrid.html">kWaveGrid</a></code> class that can be used: (1) <code>makeTime</code>, which sets the time parameters based on the sound speed and CFL as described above, and (2) <code>setTime</code>, which is used to set <code>Nt</code> and <code>dt</code> directly. Here the time array is defined using <code>makeTime</code> using the default CFL and a simulation time of 6 us.</p>
+
+<pre class="codeinput">
+<span class="comment">% create time array</span>
+t_end = 6e-6;       % [s]
+kgrid.makeTime(kgrid, medium.sound_speed, [], t_end);
+</pre>
+
+<p>After creation, the number of time points and the size of the time step can be queried using <code>kgrid.Nt</code> and <code>kgrid.dt</code>, and the complete time array can be return using <code>kgrid.t_array</code>. Note, the time array is always evenly spaced and monotonically increasing.</p>
+
+<a name="heading4"></a>
+<h2>Running the simulation</h2>
+
+<p>The simulation is run in the same way as in previous examples. In this example, four sensor points are defined centered about the position of a small circular source, and the sensor is set to record both the acoustic pressure and the particle velocity. A plot of the initial pressure distribution and the sensor mask is given below.</p>
+
+<pre class="codeinput">
+<span class="comment">% define four sensor points centered about source.p0</span>
+sensor_radius = 40; <span class="comment">% [grid points]</span>
+sensor.mask = zeros(Nx, Ny);
+sensor.mask(Nx/2 + sensor_radius, Ny/2) = 1;
+sensor.mask(Nx/2 - sensor_radius, Ny/2) = 1;
+sensor.mask(Nx/2, Ny/2 + sensor_radius) = 1;
+sensor.mask(Nx/2, Ny/2 - sensor_radius) = 1;
+
+<span class="comment">% set the acoustic variables that are recorded</span>
+sensor.record = {'p', 'u'};
+
+<span class="comment">% run the simulation</span>
+sensor_data = kspaceFirstOrder2D(kgrid, medium, source, sensor);
+</pre>
+
+<img vspace="5" hspace="5" src="images/example_ivp_recording_particle_velocity_01.png" style="width:560px;height:420px;" alt="">
+
+<p>The pressure and velocity signals recorded at the four sensor positions are shown below (these are indexed top to bottom, left to right). The recorded pressure signals are shown in the left column. As the sensor points are all equidistance from the center of the source, the signals appear the same. The recorded particle velocity signals in the x-direction are shown in the central column. The signals from the second and third sensor points are mirrored as the wave at these points  is travelling in opposite directions. The signals at the first and fourth sensor points are almost zero because the wave at these positions is travelling largely in the y-direction. The recorded particle velocity signals in the y-direction are shown in the right column. The signals from the first and fourth sensor points are mirrored as the wave at these points is travelling in opposite directions. The signals at the second and third sensor points are almost zero because the wave at these positions is travelling largely in the x-direction. </p>
+
+<img vspace="5" hspace="5" src="images/example_ivp_recording_particle_velocity_02.png" style="width:560px;height:630px;" alt="">
+
+<p>Note, the first-order simulation functions use both spatially and temporally staggered grids. This means the output pressure and velocity values are offset from each other. For example, <code>sensor_data.ux</code> is obtained at grid points staggered in the x-direction by <code>+kgrid.dx/2</code> and in the temporal direction by <code>-kgrid.dt/2</code>. More information is given in the k-Wave Manual.</p>
+
+</div></body></html>

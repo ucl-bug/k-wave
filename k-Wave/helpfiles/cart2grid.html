@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>cart2grid :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>cart2grid</h1>
+<p class="purpose">Interpolate a set of Cartesian points onto a binary grid.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+[grid_data, order_index, reorder_index] = cart2grid(kgrid, cart_data)
+</pre>
+
+<h2>Description</h2>
+<p><code>cart2grid</code> interpolates the set of Cartesian points defined by <code>cart_data</code> onto a binary matrix defined by the k-Wave grid object <code>kgrid</code> using nearest neighbour interpolation. An error is returned if the Cartesian points are outside the computational domain defined by kgrid.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td><code>kgrid</code></td>
+        <td>k-Wave grid object returned by <code><a href="kWaveGrid.html">kWaveGrid</a></code></td>
+    </tr>    
+    
+    <tr valign="top">
+        <td width = "150"><code>cart_data</code></td>
+        <td>1 x N, 2 x N, or 3 x N (for 1, 2, and 3 dimensions) array of Cartesian sensor points </td>
+    </tr>
+</table>
+    
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>grid_data</code></td>
+        <td>binary grid with the same dimensions as <code>kgrid</code></td>
+    </tr>
+
+    <tr valign="top">
+        <td><code>order_index</code></td>
+        <td>the order that the Cartesian points appear in <code>grid_data</code> according to MATLAB's standard column-wise linear matrix index ordering</td>
+    </tr>  
+    
+    <tr valign="top">
+        <td><code>reorder_index</code></td>
+        <td>the order that the binary points in <code>grid_data</code> (according to MATLAB's standard column-wise linear matrix index ordering) appear in the original Cartesian data</td>
+    </tr>    
+    
+</table>
+
+<h2>Examples</h2>
+<ul>
+<li><a href="example_ivp_homogeneous_medium.html">Homogenous Propagation Medium</a></li>
+<li><a href="example_ivp_loading_external_image.html">Loading External Image Maps</a></li> 
+<li><a href="example_ivp_comparison_modelling_functions.html">Comparison Of Modelling Functions</a></li> 
+<li><a href="example_ivp_3D_simulation.html">Simulations In Three Dimensions</a></li>      
+<li><a href="example_sd_directivity_modelling_2D.html">Modelling Sensor Directivity in 2D</a></li>
+<li><a href="example_sd_directivity_modelling_3D.html">Modelling Sensor Directivity in 3D</a></li> 
+<li><a href="example_pr_2D_tr_circular_sensor.html">2D Time Reversal For A Circular Sensor</a></li>
+<li><a href="example_pr_3D_tr_spherical_sensor.html">3D Time Reversal For A Spherical Sensor</a></li>
+<li><a href="example_tvsp_3D_simulation.html">Simulations In Three Dimensions</a></li>
+<li><a href="example_na_optimising_performance.html">Optimising k-Wave Performance</a></li>
+</ul>
+
+<h2>See Also</h2>
+
+<code><a href="grid2cart.html">grid2cart</a></code>, <code><a href="interpCartData.html">interpCartData</a></code>, <code><a href="kWaveGrid.html">kWaveGrid</a></code>
+
+</div></body></html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>writeMatrix :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>writeMatrix</h1>
+<p class="purpose">Write MATLAB matrix to a k-Wave HDF5 file.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+writeMatrix(filename, matrix, matrix_name)
+</pre>
+
+<h2>Description</h2>
+<p><code>writeMatrix</code> writes a MATLAB matrix to an existing HDF5 file. If the HDF5 file specified by filename doesn't exist, it is automatically created. Matrix attributes required by the k-Wave C++ code are automatically added. All variables are stored as 3D matrices (with the size of unused dimensions set to 1), and complex matrices are reorganised to C++ format before storing.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>filename</code></td>
+        <td>name of HDF5 file to write matrix to</td>
+    </tr>  
+    <tr valign="top">
+        <td><code>matrix</code></td>
+        <td>data to write</td>
+    </tr> 
+    <tr valign="top">
+        <td><code>matrix_filename</code></td>
+        <td>string containing the name of the matrix</td>
+    </tr>  
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="matlab: doc h5write">h5write</a></code>, <code><a href="writeAttributes.html">writeAttributes</a></code>, <code><a href="writeFlags.html">writeFlags</a></code>, <code><a href="writeGrid.html">writeGrid</a></code>
+
+</div></body></html>

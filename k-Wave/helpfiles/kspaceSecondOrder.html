@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>kspaceSecondOrder :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>kspaceSecondOrder</h1>
+<p class="purpose">Fast time-domain simulation of wave propagation for homogeneous media.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+sensor_data = kspaceSecondOrder(kgrid, medium, source, sensor)
+sensor_data = kspaceSecondOrder(kgrid, medium, source, sensor, ...) 
+
+[sensor_data, field_data] = kspaceSecondOrder(kgrid, medium, source, sensor)
+[sensor_data, field_data] = kspaceSecondOrder(kgrid, medium, source, sensor, ...) 
+</pre>
+
+<h2>Description</h2>
+<p><code>kspaceSecondOrder</code> simulates the time-domain propagation of linear compressional waves through a one, two, or three dimensional homogeneous acoustic medium given four input structures: <code>kgrid</code>, <code>medium</code>, <code>source</code>, and <code>sensor</code>. The computation is based on an exact second-order k-space model for media with power law absorption. At each time-step (defined by <code>kgrid.dt</code> and <code>kgrid.Nt</code> or <code>kgrid.t_array</code>), the pressure at the positions defined by <code>sensor.mask</code> are recorded and stored. If <code>kgrid.t_array</code> is set to <code>'auto'</code>, this array is automatically generated using the <code>makeTime</code> method of the <code><a href="kWaveGrid.html">kWaveGrid</a></code> class. To prevent wave wrapping, the computational domain can be automatically expanded by a factor of two by setting the optional input <code>'ExpandGrid'</code> to <code>true</code>.</p>
+
+<p>An initial pressure distribution can be specified by assigning a matrix (the same size as the computational grid) of arbitrary numeric values to <code>source.p0</code>. An initial pressure gradient can similarly be specified using <code>source.dp0dt</code>. The pressure is returned as an array of time series at the sensor locations defined by <code>sensor.mask</code>. This is specified as a binary matrix (i.e., a matrix of 1's and 0's the same size as the computational grid) representing the grid points within the computational grid that will collect the data. The <code>sensor_data</code> is returned using MATLAB's standard column-wise linear matrix index ordering with the recorded data indexed as <code>sensor_data(sensor_position, time)</code>. The final pressure field over the complete computational grid can also be obtained by setting <code>sensor.record</code> to <code>{'p', 'p_final'}</code>. In this case, the output <code>sensor_data</code> is returned as a structure with the outputs appended as the structure fields <code>sensor_data.p</code> and <code>sensor_data.p_final</code>. </p>
+
+<p>Compared to the first-order simulation functions <code><a href="kspaceFirstOrder1D.html">kspaceFirstOrder1D</a></code>, <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>, and <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>, <code>kspaceSecondOrder</code> is restricted to homogeneous media and has less functionality. However, it is exact for a homogenous absorbing medium, is more computationally efficient, and allows an initial pressure gradient to be specified.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+
+    <tr valign="top">
+        <td width = "150"><code>kgrid</code></td>
+        <td>k-Wave grid object returned by <code><a href="kWaveGrid.html">kWaveGrid</a></code> containing Cartesian and k-space grid fields</td>
+    </tr>    
+    
+    <tr valign="top">
+        <td width = "150"><code>kgrid.t_array</code></td>
+        <td>evenly spaced array of time values [s] (set to <code>'auto'</code> by <code><a href="kWaveGrid.html">kWaveGrid</a></code>)</td>
+    </tr>  
+    
+    <tr valign="top">
+        <td>&nbsp</td>
+        <td>&nbsp</td>
+    </tr>       
+    
+    <tr valign="top">
+        <td><code>medium.sound_speed</code></td>
+        <td>homogeneous sound speed within the acoustic medium [m/s]</td>
+    </tr>  
+   
+
+    <tr valign="top">
+        <td><code>medium.alpha_power</code></td>
+        <td>power law absorption exponent</td>
+    </tr> 
+    
+    <tr valign="top">
+        <td><code>medium.alpha_coeff</code></td>
+        <td>power law absorption coefficient [dB/(MHz^y cm)]</td>
+    </tr>     
+
+    <tr valign="top">
+        <td>&nbsp</td>
+        <td>&nbsp</td>
+    </tr>       
+    
+    <tr valign="top">
+        <td><code>source.p0</code></td>
+        <td>initial pressure within the acoustic medium</td>
+    </tr>     
+  
+    <tr valign="top">
+        <td><code>source.dp0dt</code></td>
+        <td>initial pressure gradient within the acoustic medium</td>
+    </tr>         
+
+    <tr valign="top">
+        <td>&nbsp</td>
+        <td>&nbsp</td>
+    </tr>     
+    
+    <tr valign="top">
+        <td><code>sensor.mask</code></td>
+        <td>binary grid specifying where the pressure is recorded at each time-step</td>
+    </tr>      
+    
+    <tr valign="top">
+        <td><code>sensor.record</code></td>
+        <td>cell array of the acoustic parameters to record in the form <code>sensor.record = {'p'}</code>; valid inputs are:<br/>
+        <code>&nbsp;&nbsp;'p'</code> (acoustic pressure)<br/>
+        <code>&nbsp;&nbsp;'p_final'</code> (final pressure field at all grid points)<br/>
+    </tr>
+    
+</table>
+
+<h2>Optional Inputs</h2>
+
+<p>Optional 'string', value pairs that may be used to modify the default computational settings.</p>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="18%"><col width="18%"><col width="18%"><col width="46%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Input</th>
+            <th bgcolor="#B2B2B2">Valid Settings</th>
+            <th bgcolor="#B2B2B2">Default</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>        
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'ExpandGrid'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the grid size is expanded on two sides to delay the time before wave wrapping occurs.</td>
+        </tr> 
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'MeshPlot'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether <code><a href="matlab: doc mesh">mesh</a></code> is used in place of <code><a href="matlab: doc imagesc">imagesc</a></code> to plot the pressure field.</td>
+        </tr> 
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'PlotFrames'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the pressure field for each time step is plotted in a new window.</td>
+        </tr> 
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'PlotFreq'</code></td>
+            <td bgcolor="#F2F2F2"><em>(integer numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>10</code></td>            
+            <td bgcolor="#F2F2F2">The number of iterations which must pass before the simulation plot is updated.</td>
+        </tr>              
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'PlotScale'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric two element vector)</em></td>
+            <td bgcolor="#F2F2F2"><code>[-1, 1]</code></td>            
+            <td bgcolor="#F2F2F2">[min, max] values used to control the scaling for <code><a href="matlab: doc imagesc">imagesc</a></code> (visualisation).</td>
+        </tr>           
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'PlotSim'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>true</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the simulation iterations are progressively plotted.</td>
+        </tr>            
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Smooth'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>true</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether <code>source.p0</code> is smoothed using <code><a href="smooth.html">smooth</a></code> before computation.</td>
+        </tr>          
+                
+    </tbody>
+</table>
+
+<h2>Outputs</h2>
+
+<p>If <code>sensor.record</code> is not defined by the user:</p>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>sensor_data</code></td>
+        <td>time varying pressure recorded at the sensor positions given by <code>sensor.mask</code></td>
+    </tr> 
+</table>
+
+<p>If <code>sensor.record</code> is defined by the user:</p>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>sensor_data.p</code></td>
+        <td>time varying pressure recorded at the sensor positions given by <code>sensor.mask</code> (returned if <code>'p'</code> is set)</td>
+    </tr>
+
+    <tr valign="top">
+        <td width = "150"><code>sensor_data.p_final</code></td>
+        <td>final pressure field at all grid points within the domain (returned if <code>'p_final'</code> is set)</td>
+    </tr>
+</table>
+
+<h2>Examples</h2>
+<ul>
+<li><a href="example_ivp_comparison_modelling_functions.html">Comparison Of Modelling Functions</a></li>   
+<li><a href="example_ivp_setting_initial_gradient.html">Setting An Initial Pressure Gradient</a></li>
+<li><a href="example_na_modelling_absorption.html">Modelling Power Law Absorption</a></li> 
+</ul>
+
+<h2>See Also</h2>
+
+<code><a href="kspaceFirstOrder1D.html">kspaceFirstOrder1D</a></code>, <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>, <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>, <code><a href="kWaveGrid.html">kWaveGrid</a></code>, <code><a href="smooth.html">smooth</a></code>
+
+</div></body></html>

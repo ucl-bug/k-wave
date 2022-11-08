@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Image Reconstruction With Bandlimited Sensors Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Image Reconstruction With Bandlimited Sensors Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Image Reconstruction With Bandlimited Sensors Example</h1>
+
+<p> This example demonstrates how the bandwidth of sensor elements can give rise to artefacts in time reversal photoacoustic image reconstruction. 
+It builds on the previous 2D time reversal examples.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_pr_2D_TR_bandlimited_sensors.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_pr_2D_TR_bandlimited_sensors']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Running the simulation and image reconstruction</a></li>
+		<li><a href="#heading3">Applying a high-pass filter</a></li>
+		<li><a href="#heading4">Applying a low-pass filter</a></li>
+		<li><a href="#heading5">Modelling the sensor frequency response</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Running the simulation and image reconstruction</h2>
+
+<p>The sensor data is simulated using <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code> in the same way as previous examples. In this example, the initial pressure distribution is set to be three disks created using <code><a href="makeDisc.html">makeDisc</a></code> with different magnitudes and diameters. A continuous circular binary sensor mask created using <code><a href="makeCircle.html">makeCircle</a></code> is used to avoid additional limited view artifacts. The smoothed initial pressure distribution is reproduced after time reversal image reconstruction by passing the simulated sensor data directly to <code>sensor.time_reversal_boundary_data</code> (in this case committing the inverse crime in which computations are run forwards and backwards using the same parameters).</p>
+
+<img vspace="5" hspace="5" src="images/example_pr_2D_tr_bandlimited_sensors_01.png" style="width:560px;height:420px;" alt="">
+
+<a name="heading3"></a>
+<h2>Applying a high-pass filter</h2>
+
+<p>To illustrate the effect of removing the low frequency data, a high pass filter is applied to the simulated sensor data using <code><a href="applyFilter.html">applyFilter</a></code>. By default, this uses a causal FIR filter designed using the Kaiser windowing method. The causal nature of the filter means that the temporal signals will become offset from their original position. This offset is avoided by using a zero phase filter by setting the optional input <code>'ZeroPhase'</code> to <code>true</code>. The filter type is set to <code>'HighPass'</code> and the cutoff frequency to 1 MHz.</p>
+
+<pre class="codeinput">
+<span class="comment">% filter the sensor data using a high pass filter</span>
+Fs = 1/kgrid.dt;        <span class="comment">% [Hz]</span>
+cutoff_freq = 1e6;      <span class="comment">% [Hz]</span>
+sensor_data_high_pass = zeros(size(sensor_data));
+for index = 1:sum(sensor.mask(:))
+    sensor_data_high_pass(index, :) = applyFilter(sensor_data(index, :), Fs, cutoff_freq, 'HighPass', 'ZeroPhase', true);
+end
+</pre>
+
+<p>If the initial pressure is reconstructed using the filtered sensor data, only the edges of the discs are reconstructed. This is due to the missing low frequency data.</p>
+
+<img vspace="5" hspace="5" src="images/example_pr_2D_tr_bandlimited_sensors_02.png" style="width:560px;height:420px;" alt="">
+
+<a name="heading4"></a>
+<h2>Applying a low-pass filter</h2>
+
+<p>To illustrate the effect of removing the high frequency data, a low pass filter is applied to the simulated sensor data, again using <code><a href="applyFilter.html">applyFilter</a></code>. The filter type is set to <code>'LowPass'</code>, the cutoff frequency to 1 MHz, and the optional input <code>'ZeroPhase'</code> is again set to <code>true</code>.</p>
+
+<pre class="codeinput">
+<span class="comment">% filter the sensor data using a low pass filter</span>
+Fs = 1/kgrid.dt;        <span class="comment">% [Hz]</span>
+cutoff_freq = 1e6;      <span class="comment">% [Hz]</span>
+sensor_data_low_pass = zeros(size(sensor_data));
+for index = 1:sum(sensor.mask(:))
+    sensor_data_low_pass(index, :) = applyFilter(sensor_data(index, :), Fs, cutoff_freq, 'LowPass', 'ZeroPhase', true);
+end
+</pre>
+
+<p>If the initial pressure is reconstructed using the filtered sensor data, the edges of the disc become blurred. This is due to the missing high frequency data.</p>
+
+<img vspace="5" hspace="5" src="images/example_pr_2D_tr_bandlimited_sensors_03.png" style="width:560px;height:420px;" alt="">
+
+<a name="heading5"></a>
+<h2>Modelling the sensor frequency response</h2>
+<p>The construction of many conventional ultrasound transducers results in a reduction in sensitivity at both low and high frequencies about some centre frequency. This type of response can be approximated by applying a frequency domain Gaussian filter to the recorded sensor data using the centre frequency and percentage bandwidth of the transducer (the latter corresponds to the full width at half maximum of the frequency response as a percentage of the centre frequency). This can be applied using <code><a href="gaussianFilter.html">gaussianFilter</a></code> (this function is used by the simulation functions when <code>sensor.frequency_response</code> is defined). Here, a transducer with a centre frequency of 3 MHz and a bandwidth of 100% is modelled.</p>
+
+<pre class="codeinput">
+<span class="comment">% filter the sensor data using a Gaussian filter</span>
+Fs = 1/kgrid.dt;        <span class="comment">% [Hz]</span>
+center_freq = 3e6;      <span class="comment">% [Hz]</span>
+bandwidth = 100;        <span class="comment">% [%]</span>
+sensor_data_gaussian = gaussianFilter(sensor_data, Fs, center_freq, bandwidth);
+</pre>
+
+<p>If the initial pressure is reconstructed using the Gaussian filtered sensor data, again the edges of the discs are reconstructed more prominently. Because the bandwidth of this filter is quite wide, not all the low frequency data is removed and thus some of the information from the middle of the discs can still be seen.</p>
+
+<img vspace="5" hspace="5" src="images/example_pr_2D_tr_bandlimited_sensors_04.png" style="width:560px;height:420px;" alt="">
+
+<p>A profile through the centre of the largest disc for the different reconstructions is shown below for comparison.</p>
+
+<img vspace="5" hspace="5" src="images/example_pr_2D_tr_bandlimited_sensors_05.png" style="width:560px;height:420px;" alt="">
+
+</div></body></html>

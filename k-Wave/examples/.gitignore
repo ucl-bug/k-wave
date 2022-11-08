@@ -1,0 +1,3 @@
+# ignore the .mat files
+example_us_bmode_scan_lines.mat
+example_us_phased_array_scan_lines.mat

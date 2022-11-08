@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>neper2db :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>neper2db</h1>
+<p class="purpose">Convert nepers to decibels.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+alpha = neper2db(alpha)
+alpha = neper2db(alpha, y)
+</pre>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>alpha</code></td>
+        <td>attenuation in Nepers/((rad/s)^y m)</td>
+    </tr>    
+</table>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>y</code></td>
+        <td>power law exponent (default = 1)</td>        
+    </tr>     
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>alpha</code></td>
+        <td>attenuation in dB/(MHz^y cm)</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="db2neper.html">db2neper</a></code>
+
+</div></body></html>

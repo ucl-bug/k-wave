@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>grid2cart :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>grid2cart</h1>
+<p class="purpose">Return the Cartesian coordinates of the non-zero points of a binary grid.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+[cart_data, order_index] = grid2cart(kgrid, grid_data)
+</pre>
+
+<h2>Description</h2>
+<p><code>grid2cart</code> returns the set of Cartesian coordinates corresponding to the non-zero elements in the binary matrix <code>grid_data</code>, in the 
+coordinate framework defined in <code>kgrid</code>.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td><code>kgrid</code></td>
+        <td>k-Wave grid object returned by <code><a href="kWaveGrid.html">kWaveGrid</a></code></td>
+    </tr>    
+    
+    <tr valign="top">
+        <td width = "150"><code>grid_data</code></td>
+        <td>binary grid with the same dimensions as the k-Wave grid <code>kgrid</code></td>
+    </tr>
+</table>
+    
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>cart_data</code></td>
+        <td>1 x N, 2 x N, or 3 x N (for 1, 2, and 3 dimensions) array of Cartesian sensor points</td>
+    </tr>
+
+    <tr valign="top">
+        <td><code>order_index</code></td>
+        <td>the order that the Cartesian points appear in <code>grid_data</code> according to MATLAB's standard column-wise linear matrix index ordering</td>
+    </tr>   
+    
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="cart2grid.html">cart2grid</a></code>, <code><a href="interpCartData.html">interpCartData</a></code>, <code><a href="kWaveGrid.html">kWaveGrid</a></code>
+
+</div></body></html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>extractAmpPhase :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>extractAmpPhase</h1>
+<p class="purpose">Extract amplitude and phase from CW signals.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+amp = extractAmpPhase(data, Fs, source_freq)
+amp = extractAmpPhase(data, Fs, source_freq, ...)
+[amp, phase] = extractAmpPhase(data, Fs, source_freq)
+[amp, phase] = extractAmpPhase(data, Fs, source_freq, ...)
+[amp, phase, freq] = extractAmpPhase(data, Fs, source_freq)
+[amp, phase, freq] = extractAmpPhase(data, Fs, source_freq, ...)
+</pre>
+
+<h2>Description</h2>
+<p><code>extractAmpPhse</code> extracts the amplitude and phase information at a specified frequency from a vector or matrix of time series data. By default the time dimension is set to the highest non-singleton dimension. The amplitude and phase are extracted from the frequency spectrum, which is calculated using a windowed and zero padded FFT. The values are extracted at the frequency closest to <code>source_freq</code>.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>data</code></td>
+        <td>matrix of time signals [s]</td>
+    </tr>     
+    
+    <tr valign="top">
+        <td><code>Fs</code></td>
+        <td>sampling frequency [Hz]</td>
+    </tr>  
+    
+    <tr valign="top">
+        <td><code>source_freq</code></td>
+        <td>frequency at which the amplitude and phase should be extracted [Hz]</td>
+    </tr>      
+</table>
+
+<h2>Optional Inputs</h2>
+
+<p>Optional 'string', value pairs that may be used to modify the default computational settings.</p>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="18%"><col width="18%"><col width="18%"><col width="46%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Input</th>
+            <th bgcolor="#B2B2B2">Valid Settings</th>
+            <th bgcolor="#B2B2B2">Default</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+		<tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Dim'</code></td>
+            <td bgcolor="#F2F2F2"><em>(integer scalar)</em></td>
+            <td bgcolor="#F2F2F2"><em>first non-singleton dimension</em></td>            
+            <td bgcolor="#F2F2F2">Dimension over which the signals vary in time.</td>
+        </tr>      
+    
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'FFTPadding'</code></td>
+            <td bgcolor="#F2F2F2"><em>(scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>3</code></td>            
+            <td bgcolor="#F2F2F2">Scaling parameter used to zero pad the FFT, where the FFT length = FFTPadding * Nt.</td>
+        </tr>   
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Window'</code></td>
+            <td bgcolor="#F2F2F2"><em>(string)</em></td>
+            <td bgcolor="#F2F2F2"><code>'Rectangular'</code></td>            
+            <td bgcolor="#F2F2F2">Parameter string controlling the window type used to filter the signal before the FFT is taken. Any valid input types for <code><a href="getWin.html">getWin</a></code> may be used.</td>
+        </tr>        
+    </tbody>
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>amp</code></td>
+        <td>amplitude [au]</td>
+    </tr>
+    
+    <tr valign="top">
+        <td><code>phase</code></td>
+        <td>phase between 0 and 2*pi [rad]</td>
+    </tr>    
+    
+    <tr valign="top">
+        <td><code>freq</code></td>
+        <td>closest frequency to <code>source_freq</code> at which amplitude and phase are extracted [Hz]</td>
+    </tr>      
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="createCWSignals.html">createCWSignals</a></code>, <code><a href="toneBurst.html">toneBurst</a></code>
+
+
+
+
+</div></body></html>

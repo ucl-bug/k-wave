@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>addNoise :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>addNoise</h1>
+<p class="purpose">Add Gaussian noise to a signal for a given SNR.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+signal = addNoise(signal, snr)
+signal = addNoise(signal, snr, mode)
+[signal, snr] = addNoise(signal, snr)
+[signal, snr] = addNoise(signal, snr, mode)
+</pre>
+
+<h2>Description</h2>
+<p><code>addNoise</code> adds Gaussian random noise to a one dimensional input signal given the desired signal snr (signal to noise ratio) in decibels. By default, the magnitude of the added noise is calculated based on the RMS level of the input signal. For impulsive signals, the optional input mode should be set to <code>'peak'</code> so the magnitude of the added noise is calculated based on the peak level of the input signal. An example of adding noise to a sinusoidal signal is given below.</p>
+
+<pre class="codeinput">
+<span class="comment">% specify signal properties</span>
+Fs = 50e6;          <span class="comment">% [Hz]</span>
+dt = 1 / Fs;        <span class="comment">% [s]</span>
+t = 0:dt:200 * dt;  <span class="comment">% [s]</span>
+
+<span class="comment">% create signal</span>
+signal = sin(0.5e6 * 2 * pi * t);
+
+<span class="comment">% add noise to give an snr of 20 dB and 10 dB</span>
+noisy_signal_a = addNoise(signal, 20);
+noisy_signal_b = addNoise(signal, 10);
+
+<span class="comment">% plot</span>
+figure;
+plot(t * 1e6, noisy_signal_a, 'r-', t * 1e6, noisy_signal_b, 'b-', t * 1e6, signal, 'k-');
+xlabel('Time [\mus]');
+ylabel('Signal [au]');
+legend('20dB SNR', '10dB SNR', 'Original Signal');
+</pre>
+
+<img vspace="5" hspace="5" src="images/addNoise_01.png" style="width:560px;height:420px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td  width = "150"><code>signal</code></td>
+        <td>input signal</td>
+    </tr>
+    <tr valign="top">
+        <td><code>snr</code></td>
+        <td>desired signal snr (signal to noise ratio) in decibels after adding noise</td>        
+    </tr>         
+</table>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>mode</code></td>
+        <td><code>'rms'</code> (default) or <code>'peak'</code></td>        
+    </tr>         
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>signal</code></td>
+        <td>signal with added noise</td>
+    </tr>
+    <tr valign="top">
+        <td><code>snr</code></td>
+        <td>snr of output signal</td>
+    </tr>
+</table>
+
+<h2>Examples</h2>
+<ul>
+<li><a href="example_pr_2D_tr_circular_sensor.html">2D Time Reversal For A Circular Sensor</a></li>
+<li><a href="example_pr_2D_tr_absorption_compensation.html">Attenuation Compensation Using Time Reversal</a></li>      
+<li><a href="example_pr_2D_tr_time_variant_filtering.html">Attenuation Compensation Using Time Variant Filtering</a></li> 
+</ul>
+
+<h2>See Also</h2>
+
+<code><a href="matlab: doc randn">randn</a></code>
+
+</div></body></html>

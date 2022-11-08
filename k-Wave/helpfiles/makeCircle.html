@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>makeCircle :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body><div class="content">
+
+<a name="top_of_page"></a>
+<h1>makeCircle</h1>
+<p class="purpose">Create a binary map of a circle within a 2D grid.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+circle = makeCircle(Nx, Ny, cx, cy, radius)
+circle = makeCircle(Nx, Ny, cx, cy, radius, arc_angle)
+circle = makeCircle(Nx, Ny, cx, cy, radius, arc_angle, plot_circle)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>makeCircle</code> creates a binary map of a circle or arc (using the midpoint circle algorithm) within a two-dimensional grid (the circle position is denoted by 1's in the matrix with 0's elsewhere). A single grid point is taken as the circle centre thus the total diameter will always be an odd number of grid points. The plot that is displayed after calling <code>makeCircle(128, 128, 64, 64, 30, (215/180)*pi, true);</code> is given below.</p>
+
+<img vspace="5" hspace="5" src="images/makeCircle_01.png" style="width:560px;height:420px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>Nx, Ny</code></td>
+        <td>size of the 2D grid [grid points]</td>
+    </tr>     
+    
+    <tr valign="top">
+        <td width = "150"><code>cx, cy</code></td>
+        <td>centre of the circle [grid points], if set to 0, the centre of the grid is used</td>
+    </tr>     
+
+    <tr valign="top">
+        <td width = "150"><code>radius</code></td>
+        <td>circle radius [grid points]</td>
+    </tr>     
+</table>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>arc_angle</code></td>
+        <td>arc angle for incomplete circle [radians] (default = <code>2*pi</code>)</td>
+    </tr>     
+    <tr valign="top">
+        <td width = "150"><code>plot_circle</code></td>
+        <td>Boolean controlling whether the circle is plotted using <code><a href="matlab: doc imagesc">imagesc</a></code> (default = false)</td>
+    </tr>  
+    
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>circle</code></td>
+        <td>2D binary map of a circle</td>
+    </tr>
+</table>
+
+<h2>Examples</h2>
+<ul>
+<li><a href="example_ivp_binary_sensor_mask.html">Using A Binary Sensor Mask</a></li>    
+<li><a href="example_tvsp_transducer_field_patterns.html">Simulating Transducer Field Patterns</a></li> 
+<li><a href="example_sd_focussed_detector_2D.html">Focussed Detector in 2D</a></li>
+<li><a href="example_sd_directional_array_elements.html">Focussed 2D Array with Directional Elements</a></li> 
+<li><a href="example_pr_2D_tr_circular_sensor.html">2D Time Reversal For A Circular Sensor</a></li>
+<li><a href="example_pr_2D_tr_bandlimited_sensors.html">Image Reconstruction With Bandlimited Sensors</a></li>
+<li><a href="example_pr_2D_tr_absorption_compensation.html">Image Reconstruction With Compensation For Acoustic Absorption</a></li> 
+</ul>
+
+<h2>See Also</h2>
+
+<code><a href="makeCartCircle.html">makeCartCircle</a></code>, <code><a href="makeDisc.html">makeDisc</a></code>
+
+
+
+
+</div></body></html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Comparison Of Modelling Functions Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Comparison Of Modelling Functions Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Comparison Of Modelling Functions Example</h1>
+
+<p>This example provides a short comparison between the simulation functions <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code> and <code><a href="kspaceSecondOrder.html">kspaceSecondOrder</a></code>. It builds on the <a href="example_ivp_homogeneous_medium.html">Homogeneous Propagation Medium</a> and <a href="example_ivp_binary_sensor_mask.html">Using A Binary Sensor Mask</a> examples.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_ivp_comparison_modelling_functions.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_ivp_comparison_modelling_functions']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<p>For a more detailed discussion of the second order model used in k-Wave, see Treeby, B. E. and Cox, B. T., "A k-space Green's function solution for acoustic initial value problems in homogeneous media with power law absorption," <em>J. Acoust. Soc. Am.</em>, vol. 129, no. 6, pp. 3652-3660, 2011.</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+        <li><a href="#heading2">About the modelling functions</a></li>
+        <li><a href="#heading3">Running the simulation</a></li>
+        <li><a href="#heading4">Numerical comparison</a></li>
+    </ul>
+</div>
+
+<a name="heading2"></a>
+<h2>About the modelling functions</h2>
+
+<p>In the previous examples, the acoustic simulations are all performed using  <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>. This function is based on the sequential calculation of the particle velocity,  acoustic density, and acoustic pressure using three coupled first-order partial differential equations (conservation of mass, conservation of momentum, and a pressure-density relation). For a homogeneous medium, these equations can also be combined into a single second-order acoustic wave equation and solved using Green's function methods. The function <code><a href="kspaceSecondOrder.html">kspaceSecondOrder</a></code> is an efficient numerical implementation of a Green's function solution specifically for initial value problems. For homogeneous media, the two approaches give the same results.</p>
+
+<p>Compared to <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>, the function <code><a href="kspaceSecondOrder.html">kspaceSecondOrder</a></code> has greater computational efficiency and the time steps can be arbitrarily large (as the solution is exact). It also allows both an initial pressure and an initial pressure gradient to be defined (see the <a href="example_ivp_setting_initial_gradient.html">Setting An Initial Pressure Gradient Example</a>). Power law absorption is also more accurately encoded (see the <a href="example_na_modelling_absorption.html">Modelling Power Law Absorption Example</a>). However, <code><a href="kspaceSecondOrder.html">kspaceSecondOrder</a></code> has slightly less functionality than its first-order counterparts (<code><a href="kspaceFirstOrder1D.html">kspaceFirstOrder1D</a></code>, <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>, and <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>). For example, it only supports homogeneous media and binary sensor masks, and does not support time varying sources or the full range of visualisation options.</p>
+
+<p>The second-order code does not implement an absorbing boundary layer (see <a href="example_na_controlling_the_pml.html">Controlling The Absorbing Boundary Layer Example</a> for more details on the perfectly matched layer used in <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>). Instead, to delay the appearance of wave wrapping, it extends the size of the computational grid. Although this reduces the computational efficiency, it allows the exactness of the solution to be maintained. The grid extension is controlled by setting the optional input parameter <code>'ExpandGrid'</code> to <code>true</code>. Note, the wrapped waves will still appear if the simulation time is longer than the time it takes for the waves to propagate through the grid extension.</p>
+
+<a name="heading3"></a>
+<h2>Running the simulation</h2>
+
+<p>The function <code><a href="kspaceSecondOrder.html">kspaceSecondOrder</a></code> (this is used for all dimensions) takes the same input structures as the first-order simulation functions. For example, to run the <a href="example_ivp_homogeneous_medium.html">Homogeneous Propagation Medium Example</a>, the Cartesian sensor mask is first converted to a binary sensor mask using <code><a href="cart2grid.html">cart2grid</a></code>, and then <code><a href="kspaceSecondOrder.html">kspaceSecondOrder</a></code> is called with <code>'ExpandGrid'</code> set to <code>true</code>.</p>
+
+<pre class="codeinput">
+<span class="comment">% convert the cartesian sensor mask to a binary sensor mask</span>
+sensor.mask = cart2grid(kgrid, sensor.mask);
+
+<span class="comment">% run the simulation using the second order code</span>
+sensor_data = kspaceSecondOrder(kgrid, medium, source, sensor, 'ExpandGrid', true);
+</pre>
+
+<a name="heading4"></a>
+<h2>Numerical comparison</h2>
+
+<p>When the medium is not absorbing and no compensation for wave wrapping is used, the two simulation functions give identical results to machine precision. A plot of the signals recorded at the first sensor position and the difference between them is given below (set <code>example_number = 1</code> within the example m-file).</p>
+
+<img vspace="5" hspace="5" src="images/example_ivp_comparison_modelling_functions_01.png" style="width:560px;height:420px;" alt="">
+
+<p>When the medium is absorbing and wave wrapping is mitigated using a perfectly matched layer, there is a small error in the numerical result computed using <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>. This error is largely due to the calculation of the power law absorption term (see the <a href="example_na_modelling_absorption.html">Modelling Power Law Absorption Example</a>). A plot of the signals recorded at the first sensor position and the difference between them is given below (set <code>example_number = 4</code> within the example m-file).
+
+<img vspace="5" hspace="5" src="images/example_ivp_comparison_modelling_functions_02.png" style="width:560px;height:420px;" alt="">
+
+</div></body></html>

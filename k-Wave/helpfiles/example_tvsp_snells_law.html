@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Snell's Law And Critical Angle Reflection Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Snell's Law And Critical Angle Reflection Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Snell's Law And Critical Angle Reflection Example</h1>
+
+<p>This example illustrates Snell's law by steering a tone burst from a 
+linear array transducer within a layered heterogeneous medium. It builds on the <a href="example_tvsp_transducer_field_patterns.html">Simulating Transducer Field Patterns Example</a>.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_tvsp_snells_law.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_tvsp_snells_law']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+        <li><a href="#heading2">Snell's Law</a></li>
+        <li><a href="#heading3">Critical Angle Reflection</a></li>
+    </ul>
+</div>	
+
+<a name="heading2"></a>
+<h2>Snell's law</h2>
+
+<p>It is well known that when a plane wave interacts with a planar interface, the reflected and 
+transmitted waves will obey Snell's law.</p>
+
+<img vspace="5" hspace="5" src="images/example_tvsp_snells_law_01.png" style="width:286px;height:205px;" alt=""> 
+
+<p>The angle of the incident and reflected waves will be identical, and the angle of the transmitted wave 
+will vary according to</p>
+
+<p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<img src="images/example_tvsp_snells_law_eq_01.gif" style="width:90px;height:46px;" alt="">.</p>
+
+<p>This is simulated here by steering a tone burst from a linear transducer onto 
+a layered medium heterogeneity. For c1 = 1500 m/s, c2 = 3000 m/s, and an incidence angle of 
+20 degrees, the transmission angle will be 43 degrees.</p>
+
+<img vspace="5" hspace="5" src="images/example_tvsp_snells_law_02.png" style="width:560px;height:420px;" alt=""> 
+        
+<a name="heading3"></a>
+<h2>Critical Angle Reflection</h2>
+    
+<p>When the incidence angle exceeds</p>
+
+<p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<img src="images/example_tvsp_snells_law_eq_02.gif" style="width:140px;height:23px;" alt=""></p>
+
+<p>the incident wave will be completely reflected. For the parameters used here, this corresponds to 
+30 degrees. The interaction of the plane wave with the interface for a incidence angle of 
+35 degrees is shown below. An evanescent wave component that decays quickly further from the 
+interface is visible, but the planar component of the incident wave has been completely reflected.</p>
+
+<img vspace="5" hspace="5" src="images/example_tvsp_snells_law_03.png" style="width:560px;height:420px;" alt=""> 
+
+</div></body></html>

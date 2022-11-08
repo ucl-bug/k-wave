@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>logCompression :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>logCompression</h1>
+<p class="purpose">Log compress an input signal.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+signal = logCompression(signal, a)
+signal = logCompression(signal, a, normalise)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>logCompression</code> compresses the input signal using the expression <code>signal = log10(1 + a * signal) ./ log10(1 + a)</code>.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>signal</code></td>
+        <td>input signal</td>
+    </tr>    
+
+    <tr valign="top">
+        <td width = "150"><code>a</code></td>
+        <td>compression factor</td>
+    </tr>  
+</table>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>normalise</code></td>
+        <td>Boolean controlling whether the maximum of the input signal is normalised to unity before compression (default = false). If set to true, the original magnitude is restored after compression.</td>
+    </tr>    
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>signal</code></td>
+        <td>log compressed signal</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="matlab: doc log10">log10</a></code>
+
+</div></body></html>

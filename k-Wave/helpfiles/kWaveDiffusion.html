@@ -1,0 +1,400 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>kWaveDiffusion :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body><div class="content">
+
+<a name="top_of_page"></a>
+<h1>kWaveDiffusion</h1>
+<p class="purpose">Time-domain simulation of heat diffusion and perfusion.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+kdiff = kWaveDiffusion(kgrid, medium, source)
+kdiff = kWaveDiffusion(kgrid, medium, source, sensor)
+kdiff = kWaveDiffusion(kgrid, medium, source, sensor, ...)
+kdiff = kWaveDiffusion(kgrid, medium, source, [], ...)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>kWaveDiffusion</code> is a class definition for the time-domain solution of the diffusion equation or Pennes' bioheat equation in 1D, 2D, and 3D. In addition to heat diffusion, Pennes' bioheat equation accounts for advective heat loss due to tissue perfusion (the flow of blood through tissue), and heat deposition (e.g., due to ultrasound absorption) [1]. The computation is based on a k-space pseudospectral scheme in which spatial gradients are calculated using the Fourier collocation spectral method, and temporal gradients are calculated using a k-space corrected finite difference scheme. For a homogeneous medium, the formulation is exact and unconditionally stable. For a heterogeneous medium, the time scheme allows larger time-steps to be taken for the same level of accuracy compared to conventional pseudospectral time-domain methods.</p>
+
+<p>The most general partial differential equation solved by the <code>kWaveDiffusion</code> class is given by</p>
+
+<pre class="codeinput">
+A * dT/dt = div(Kt * grad(T)) - B * (T - Ta) + Q
+</pre>
+
+<p>where</p>
+
+<pre class="codeinput">
+A  = density [kg/m^3] * specific heat capacity [J/(kg.K)]
+Kt = thermal conductivity [W/(m.K)]
+B  = blood density [kg/m^3] * blood specific heat [J/(kg.K)] * blood perfusion rate [1/s]    
+Ta = arterial temperature (blood ambient temperature) [degC]
+Q  = volume rate of heat deposition [W/m^3]
+</pre>
+
+<p>In a homogeneous medium, the thermal coefficients are related to the diffusion coefficient (or thermal diffusivity) by</p>
+
+<pre class="codeinput">
+diffusion coefficient [m^2/s] = Kt / A
+</pre>
+
+<p>Note, when the diffusion coefficient is specified instead of the individual thermal coefficients, the equation that is solved is</p>
+
+<pre class="codeinput">
+dT/dt = div(D * grad(T))
+</pre>
+
+<p>For non-constant coefficients, this differs from the conventional heat equation (where the diffusion coefficient is taken outside the divergence operator). For convenience, the thermal coefficients related to perfusion can also be combined to give a single "perfusion coefficient" given by</p>
+
+<pre class="codeinput">
+perfusion coefficient [1/s] = B / A
+</pre>
+
+<p>The input parameters are assigned as fields to four input structures (<code>kgrid</code>, <code>medium</code>, <code>source</code>, and <code>sensor</code>) in the same way as the other models in the k-Wave toolbox. These structures define the properties of the computational grid, the distribution of medium properties, source terms, and the locations of the sensor points used to record the evolution of the temperature field over time.</p>
+
+<p>The medium parameters can each be specified as a single scalar values in SI units (for homogeneous coefficients), or as  matrices the same size as the computational grid (for heterogeneous coefficients).</p>
+
+<p>The initial temperature distribution is specified by assigning a single scalar value or a matrix (the same size as the computational grid) to <code>source.T0</code>. A heat source can also be specified in the same way by defining <code>source.Q</code> (the volume rate of heat deposition).</p>
+
+<p>The time history of the temperature field can be recorded automatically by specifying a series of sensor locations using sensor.mask. This is defined as a binary matrix (i.e., a matrix of 1's and 0's with the same dimensions as the computational grid) representing the grid points within the computational grid that will record the temperature field at each time step. The current sensor data can be queried at any point using the property <code>kdiff.sensor_data</code> (where <code>kdiff</code> is the name of the <code>kWaveDiffusion</code> object). The <code>sensor_data</code> is returned using MATLAB's standard column-wise linear matrix index ordering, indexed as <code>sensor_data(sensor_point_index, time_index)</code>. If no time dependent output is required, the sensor input can be replaced with an empty array <code>[]</code>.</p>
+
+<p>After an object of the <code>kWaveDiffusion</code> class is created, the simulation is run by calling the method <code>kdiff.takeTimeStep(Nt, dt)</code>, where <code>kdiff</code> is the object name, <code>Nt</code> is the number of time steps to take, and <code>dt</code> is the size of the time step. During the simulation, a visualisation of the temperature field is displayed. The current temperature can be queried (or modified) at any point using the property <code>kdiff.T</code>.</p>
+
+<p>[1] Pennes, H. H. (1948). Analysis of tissue and arterial blood temperatures in the resting human forearm. Journal of Applied Physiology, 1(2), 93-122.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>kgrid</code></td>
+        <td>grid object returned by <code><a href="kWaveGrid.html">kWaveGrid</a><code></td>
+    </tr>    
+    
+    <tr valign="top">
+        <td>&nbsp</td>
+        <td>&nbsp</td>
+    </tr>    
+    
+    <tr valign="top">
+        <td><code>medium.diffusion_coeff</code></td>
+        <td>diffusion coefficient [m^2/s]</td>        
+    </tr> 
+    <tr valign="top">
+        <td><code>&nbsp</td>
+        <td>OR</td>        
+    </tr> 
+    <tr valign="top">
+        <td><code>medium.density</td>
+        <td>tissue mass density [kg/m^3]</td>        
+    </tr>     
+    <tr valign="top">
+        <td><code>medium.specific_heat</td>
+        <td>tissue specific heat capacity [J/(kg.K)]</td>        
+    </tr>
+        <tr valign="top">
+        <td><code>medium.thermal_conductivity</td>
+        <td>tissue thermal conductivity [W/(m.K)]</td>        
+    </tr>   
+    
+    <tr valign="top">
+        <td>&nbsp</td>
+        <td>&nbsp</td>
+    </tr>    
+    
+    <tr valign="top">
+        <td><code>medium.perfusion_coeff</code></td>
+        <td>perfusion coefficient [1/s]</td>        
+    </tr> 
+    <tr valign="top">
+        <td><code>&nbsp</td>
+        <td>OR</td>        
+    </tr> 
+    <tr valign="top">
+        <td><code>medium.blood_density</td>
+        <td>blood mass density [kg/m^3]</td>        
+    </tr>     
+    <tr valign="top">
+        <td><code>medium.blood_specific_heat</td>
+        <td>blood specific heat capacity [J/(kg.K)]</td>        
+    </tr>
+        <tr valign="top">
+        <td><code>medium.blood_perfusion_rate</td>
+        <td>blood perfusion rate [1/s] (volumetric flow rate per unit volume)</td>        
+    </tr>     
+    
+    <tr valign="top">
+        <td>&nbsp</td>
+        <td>&nbsp</td>
+    </tr>    
+    
+    <tr valign="top">
+        <td><code>medium.blood_ambient_temperature</code></td>
+        <td>ambient blood temperature within perfused tissue regions [degC]</td>        
+    </tr>     
+    
+    <tr valign="top">
+        <td>&nbsp</td>
+        <td>&nbsp</td>
+    </tr>     
+    
+    <tr valign="top">
+        <td><code>medium.diffusion_coeff_ref</code></td>
+        <td>reference diffusion coefficient used within the k-space operator (default = 'max')</td>        
+    </tr>  
+    
+    <tr valign="top">
+        <td><code>medium.perfusion_coeff_ref</code></td>
+        <td>reference perfusion coefficient used within the k-space operator (default = 'max')</td>        
+    </tr>    
+    
+    <tr valign="top">
+        <td>&nbsp</td>
+        <td>&nbsp</td>
+    </tr>     
+    
+    <tr valign="top">
+        <td><code>source.T0</code></td>
+        <td>initial temperature distribution [degC]</td>        
+    </tr>  
+    
+    <tr valign="top">
+        <td><code>source.Q</code></td>
+        <td>volume rate of heat deposition [W/m^3]<br/>(note, <code>medium.density</code> and <code>medium.specific_heat</code> must be defined when using <code>source.Q</code>)</td>        
+    </tr>     
+    
+    <tr valign="top">
+        <td>&nbsp</td>
+        <td>&nbsp</td>
+    </tr>     
+    
+    <tr valign="top">
+        <td><code>sensor.mask</code></td>
+        <td>binary grid specifying where the temperature is recorded at each time step</td>        
+    </tr>     
+    
+</table>
+
+<h2>Optional Inputs</h2>
+
+<p>Optional 'string', value pairs that may be used to modify the default computational settings.</p>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="18%"><col width="18%"><col width="18%"><col width="46%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Input</th>
+            <th bgcolor="#B2B2B2">Valid Settings</th>
+            <th bgcolor="#B2B2B2">Default</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'DisplayUpdates'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>true</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether details of the simulation are printed to the MATLAB command line.</td>
+        </tr> 
+		
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'MovieArgs'</code></td>
+            <td bgcolor="#F2F2F2"><em>(string cell array)</em></td>
+            <td bgcolor="#F2F2F2"><code>{}</code></td>            
+            <td bgcolor="#F2F2F2">Settings for <code><a href="matlab: doc VideoWriter">VideoWriter</a></code>. Parameters must be given as {'param', value, ...} pairs within a cell array (default = {}), where 'param' corresponds to a writable property of a VideoWriter object.</td>
+        </tr>
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'MovieName'</code></td>
+            <td bgcolor="#F2F2F2"><em>(string)</em></td>
+            <td bgcolor="#F2F2F2"><code>'date-time-kWaveDiffusion'</code></td>            
+            <td bgcolor="#F2F2F2">Name of the movie produced when <code>'RecordMovie'</code> is set to <code>true</code>.</td>
+        </tr>            
+        
+		<tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'MovieProfile'</code></td>
+            <td bgcolor="#F2F2F2"><em>(string)</em></td>
+            <td bgcolor="#F2F2F2"><code>'Uncompressed AVI'</code></td>            
+            <td bgcolor="#F2F2F2">Profile input passed to <code><a href="matlab: doc VideoWriter">VideoWriter</a></code>.</td>
+        </tr>                
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'PlotFreq'</code></td>
+            <td bgcolor="#F2F2F2"><em>(integer numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>10</code></td>            
+            <td bgcolor="#F2F2F2">The number of iterations which must pass before the simulation plot is updated.</td>
+        </tr>        
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'PlotScale'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric two element vector)</em> or<br><code>'auto'</code></td>
+            <td bgcolor="#F2F2F2"><code>'auto'</code></td>            
+            <td bgcolor="#F2F2F2">[min, max] values used to control the scaling for <code><a href="matlab: doc imagesc">imagesc</a></code> (visualisation). If set to <code>'auto'</code>, a symmetric plot scale is chosen automatically for each plot frame.</td>
+        </tr>            
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'PlotSim'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>true</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the simulation iterations are progressively plotted.</td>
+        </tr>            
+               
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'RecordMovie'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the displayed image frames are captured and stored as a movie using <code><a href="matlab: doc VideoWriter">VideoWriter</a></code>.</td>
+        </tr>          
+                
+    </tbody>
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>kdiff</code></td>
+        <td><code>kWaveDiffusion</code> object which can be used to run thermal simulations using the diffusion equation or Pennes bioheat equation</td>
+    </tr>
+</table>
+
+<h2>Dynamic Properties</h1>
+
+<p>Properties which can be queried or modified after the object is created.</p>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="25%"><col width="75%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Fieldname</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>cem43</code></td>
+            <td bgcolor="#F2F2F2">thermal dose given in cumulative equivalent minutes (cem) relative to T = 43 degC [mins]</td>
+        </tr>
+    </tbody>
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>T</code></td>
+            <td bgcolor="#F2F2F2">current temperature field [degC]</td>
+        </tr>
+    </tbody>      
+
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>Q</code></td>
+            <td bgcolor="#F2F2F2">volume rate of heat deposition [W/m^3]</td>
+        </tr>
+    </tbody>   
+    
+</table>
+
+<h2>Static Properties</h1>
+
+<p>Properties which can be queried, but not modified, after the object is created.</p>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="25%"><col width="75%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Fieldname</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>dt_limit</code></td>
+            <td bgcolor="#F2F2F2">maximum time step for which the simulation remains stable [s]</td>
+        </tr>
+    </tbody>
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>lesion_map</code></td>
+            <td bgcolor="#F2F2F2">binary matrix of <code>cem43 >= 240</code> mins</td>
+        </tr>
+    </tbody>      
+   	
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>lesion_size</code></td>
+            <td bgcolor="#F2F2F2">total size of <code>lesion_map</code> (distance in 1D [m], area in 2D [m^2], volume in 3D [m^3])</td>
+        </tr>
+    </tbody>  
+	
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>sensor_data</code></td>
+            <td bgcolor="#F2F2F2">time varying temperature recorded at the sensor positions given by <code>sensor.mask</code> [degC]</td>
+        </tr>
+    </tbody>	
+    
+</table>
+
+<h2>Methods</h1>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="25%"><col width="75%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Methodname</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>plotTemp</code></td>
+            <td bgcolor="#F2F2F2">plot current temperature field in current figure window</td>
+        </tr>
+    </tbody>  
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>setOptionalInputs('string', value, ...)</code></td>
+            <td bgcolor="#F2F2F2">modify the optional inputs after the object is created</td>
+        </tr>
+    </tbody>       
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>takeTimeStep(Nt, dt)</code></td>
+            <td bgcolor="#F2F2F2">calculate the given number of time steps of the temperature field</td>
+        </tr>
+    </tbody>
+       	    
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="bioheatExact.html">bioheatExact</a></code>
+
+</div></body></html>

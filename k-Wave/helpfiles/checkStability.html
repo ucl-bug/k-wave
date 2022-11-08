@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>checkStability :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>checkStability</h1>
+<p class="purpose">Compute maximum stable time step for k-space fluid models.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+dt_stability_limit = checkStability(kgrid, medium)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>checkStability</code> calculates the maximum time step for which the k-space propagation models <code><a href="kspaceFirstOrder1D.html">kspaceFirstOrder1D</a></code>, <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code> and <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> are stable. These models are unconditionally stable when the reference sound speed is equal to or greater than the maximum sound speed in the medium and there is no absorption. However, when the reference sound speed is less than the maximum sound speed the model is only stable for sufficiently small time steps. The criterion is more stringent (the time step is smaller) in the absorbing case. The time steps given are accurate when the medium properties are homogeneous. For a heterogeneous media they give a useful, but not exact, estimate. </p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>kgrid</code></td>
+        <td>k-Wave grid object returned by <code><a href="kWaveGrid.html">kWaveGrid</a></code></td>
+    </tr>     
+    <tr valign="top">
+        <td width = "150"><code>medium</code></td>
+        <td>Structure containing the medium properties</td>        
+    </tr>           
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>dt_stability_limit</code></td>
+        <td>The maximum time step for which the models are stable. This is set to <code>Inf</code> when the model is unconditionally stable.</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="kWaveGrid.html">kWaveGrid</a></code>, <code><a href="kspaceFirstOrder1D.html">kspaceFirstOrder1D</a></code>, <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>, <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>
+
+</div></body></html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>kspaceFirstOrderASC :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>kspaceFirstOrderASC</h1>
+<p class="purpose">Axisymmetric time-domain simulation of wave propagation using C++ code.</p>
+
+<h2>Syntax</h2>
+
+<p>See <code><a href="kspaceFirstOrderAS.html">kspaceFirstOrderAS</a></code> and <code><a href="kspaceFirstOrder3DC.html">kspaceFirstOrder3DC</a></code>.</p>
+
+<h2>Description</h2>
+<p><code>kspaceFirstOrderASC</code> provides a blind interface to the C++ version of <code><a href="kspaceFirstOrderAS.html">kspaceFirstOrderAS</a></code> (called <code>kspaceFirstOrder-OMP</code>) in the same way as <code><a href="kspaceFirstOrder3DC.html">kspaceFirstOrder3DC</a></code>. Note, the C++ code does not support all input options, and all display options are ignored (only command line outputs are given). See the k-Wave user manual for more information.</p>
+
+<p>The function works by appending the optional input <code>'SaveToDisk'</code> to the user inputs and then calling <code><a href="kspaceFirstOrderAS.html">kspaceFirstOrderAS</a></code> to save the input files to disk. The contents of <code>sensor.record</code> (if set) are  parsed as input flags, and the C++ code is run using the <code><a href="matlab: doc system">system</a></code> command. The output files are then automatically loaded from disk and returned in the same fashion as <code><a href="kspaceFirstOrderAS.html">kspaceFirstOrderAS</a></code>. The input and output files are saved to the temporary directory native to the operating system, and are deleted after the function runs.</p>
+
+<p>For small simulations, running the simulation on a smaller number of cores can improve performance as the matrices are often small enough to fit within cache. It is recommended to adjust the value of <code>'NumThreads'</code> to optimise performance for a given simulation size and computer hardware. By default, simulations smaller than 128^2 are set to run using a single thread (this behaviour can be over-ridden using the <code>'NumThreads'</code> option). In some circumstances, for very small simulations, the C++ code can be slower than the MATLAB code.</p>
+
+<p>This function requires the C++ binary/executable of <code>kspaceFirstOrder-OMP</code> to be downloaded from <a href="http://www.k-wave.org/download.php">www.k-wave.org/download.php</a> and placed in the "binaries" directory of the k-Wave toolbox (the same binary is used for simulations in 2D, 3D, and axisymmetric coordinates). Alternatively, the name and location of the binary can be specified using the optional input parameters <code>'BinaryName'</code> and <code>'BinariesPath'</code>.</p>
+
+<h2>See Also</h2>
+<code><a href="kspaceFirstOrderAS.html">kspaceFirstOrderAS</a></code>, <code><a href="kspaceFirstOrder3DC.html">kspaceFirstOrder3DC</a></code>
+
+</div></body></html>

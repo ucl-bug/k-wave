@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>calculateMassSourceCW :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>calculateMassSourceCW</h1>
+<p class="purpose">Compute k-Wave input plane from measured CW data.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+source_estimate = calculateMassSourceCW(measured_data, dx, freq, c0, source_offset)
+source_estimate = calculateMassSourceCW(measured_data, dx, freq, c0, source_offset, grid_expansion)
+source_estimate = calculateMassSourceCW(measured_data, dx, freq, c0, source_offset, [], ...)
+source_estimate = calculateMassSourceCW(measured_data, dx, freq, c0, source_offset, grid_expansion, ...)
+[source_estimate, output] = calculateMassSourceCW(measured_data, dx, freq, c0, source_offset)
+...
+</pre>
+
+<h2>Description</h2>
+<p><code>calculateMassSourceCW</code> takes a measured 2D plane of complex pressure values (e.g., measured using a hydrophone in a scanning tank under steady state conditions) and calculates an equivalent CW additive pressure source positioned a given distance away that recreates the measured data when used as an input to k-Wave (i.e., by assigning the equivalent source as an input to <code><a href="acousticFieldPropagator.html">acousticFieldPropagator</a></code>, or by generating a time-varying input signal using <code><a href="createCWSignals.html">createCWSignals</a></code> and assigning this to <code>source.p</code> with <code>source.p_mode = 'additive'</code>). The measured data is assumed to be for a single-frequency continuous wave source, specified by <code>freq</code>, and is given as a complex 2D matrix.
+
+<p>The equivalent source is calculated using an iterative optimisation based on gradient descent, where functional gradients are calculated using the adjoint. Both the forward and adjoint operators are computed using <code><a href="acousticFieldPropagator.html">acousticFieldPropagator</a></code>. The calculation assumes the propagation is linear and the medium is lossless. The algorithm and approach are described in detail in [1].</p>
+
+<p>If the source is larger than the measured input plane, for example, if measuring a focused bowl transducer, a suitable value should be specified for the value of <code>grid_expansion</code>. Note, the value of <code>source_offset</code> does not need to match the position of the real source in the experiment.</p>
+
+<p>An alternative approach to project measured data using k-Wave is to directly use the measured data as a pressure source with a Dirichlet boundary condition (i.e., by generating a time-varying input signal from the measured data using <code><a href="createCWSignals.html">createCWSignals</a></code> and assigning this to <code>source.p</code> and setting <code>source.p_mode = 'dirichlet'</code>). However, this approach leads to errors in the imposed spatial gradient, which manifests as errors in the projected field. Thus, for accurate holographic projections using k-Wave, it is recommended to use <code>calculateMassSourceCW</code> to first calculate the input data (see [1] for a comparison).</p>
+
+<p>[1] Treeby, B., Lucka, F., Martin, E., & Cox, B. T. (2018). Equivalent-Source Acoustic Holography for Projecting Measured Ultrasound Fields Through Complex Media. IEEE Transactions on Ultrasonics, Ferroelectrics, and Frequency Control, 65(10), 1857-1864.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>measured_data</code></td>
+        <td>2D matrix of complex pressure values [Pa].</td>
+    </tr>
+    <tr valign="top">
+        <td><code>dx</code></td>
+        <td>Spatial step between grid points in the input plane [m].</td>
+    </tr>
+    <tr valign="top">
+        <td><code>freq</code></td>
+        <td>Source frequency [Hz].</td>
+    </tr>
+	<tr valign="top">
+        <td><code>c0</code></td>
+        <td>Speed of sound in the medium [m/s].</td>
+    </tr>
+	<tr valign="top">
+        <td><code>source_offset</code></td>
+        <td>Offset between the measured input plane and the source plane [grid points]. For example, if <code>source_offset = 1</code>, the input plane and source plane are on adjacent grid points.</td>
+    </tr>
+	<tr valign="top">
+        <td><code>grid_expansion</code></td>
+        <td>Number of grid points used to expand the size of the estimated source plane in each lateral dimension relative to the measured input plane (set to 0 if not defined).</td>
+    </tr>	
+</table>
+
+<h2>Optional Inputs</h2>
+
+<p>Optional 'string', value pairs that may be used to modify the default computational settings.</p>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="18%"><col width="18%"><col width="18%"><col width="46%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Input</th>
+            <th bgcolor="#B2B2B2">Valid Settings</th>
+            <th bgcolor="#B2B2B2">Default</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'NumSteps'</code></td>
+            <td bgcolor="#F2F2F2"><em>(integer)</em></td>
+            <td bgcolor="#F2F2F2"><code>20</code></td>            
+            <td bgcolor="#F2F2F2">Number of gradient descent steps.</td>
+        </tr>     
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'StepSize'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>0.5</code></td>            
+            <td bgcolor="#F2F2F2">Starting size of gradient descent step.</td>
+        </tr>   
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'StepSizeIncrement'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>1.1</code></td>            
+            <td bgcolor="#F2F2F2">Multiplicative factor used to increase the step size when the error is reduced.</td>
+        </tr> 
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'StepSizeDecrement'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>0.5</code></td>            
+            <td bgcolor="#F2F2F2">Multiplicative factor used to decrease the step size when the error is increased.</td>
+        </tr> 
+		
+		<tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Plot'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>true</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the update steps are displayed.</td>
+        </tr> 
+		
+		<tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'ReturnIterations'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the source estimate at each gradient descent step is returned. If set to <code>true</code>, the <code>source_estimate</code> output is given as a 3D matrix, each x-y plane corresponds to the source estimate at each step.</td>
+        </tr> 
+		
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'UseCpp'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the simulations are run using the C++ implementation of <code><a href="acousticFieldPropagator.html">acousticFieldPropagator</a></code>.</td>
+        </tr>     		
+    </tbody>
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>source_estimate</code></td>
+        <td>If <code>'ReturnIterations'</code> is <code>false</code> (the default), <code>source_estimate</code> is given as a 2D matrix of complex pressure values [Pa]. If <code>'ReturnIterations'</code> is <code>true</code>, <code>source_estimate</code> is given as a 3D matrix containing the source estimate after each iteration, indexed as (x, y, iteration).</td>
+    </tr>  
+
+    <tr valign="top">
+        <td><code>output</code></td>
+        <td>Structure containing details of the optimisation with the following fields:</td>
+    </tr>
+	
+	<tr valign="top">
+        <td></td>
+        <td><code>.linf_error</code></td>
+    </tr>     
+	
+	<tr valign="top">
+        <td></td>
+        <td><code>.l2_error</code></td>
+    </tr>     
+	
+	<tr valign="top">
+        <td></td>
+        <td><code>.step_size</code></td>
+    </tr>     
+	
+	<tr valign="top">
+        <td></td>
+        <td><code>.number_steps</code></td>
+    </tr>     
+	
+	<tr valign="top">
+        <td></td>
+        <td><code>.number_function_calls</code></td>
+    </tr>     
+	
+	<tr valign="top">
+        <td></td>
+        <td><code>.modelled_data</code></td>
+    </tr>     
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="acousticFieldPropagator.html">acousticFieldPropagator</a></code>, <code><a href="calculateMassSource.html">calculateMassSource</a></code>
+
+</div></body></html>

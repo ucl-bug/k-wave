@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Sensor Element Directivity In 2D Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Sensor Element Directivity In 2D Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Sensor Element Directivity In 2D Example</h1>
+
+<p>This example shows how to attribute a directional response to a single-element sensor, or to individual elements of a multi-element sensor array. Directionality can be included without a separate function through explicit averaging, as shown in the examples <a href="example_sd_directivity_modelling_2D.html">Modelling Sensor Directivity In 2D</a> and <a href="example_sd_focussed_detector_2D.html">Focussed Detector In 2D</a>, but the functionality described here allows greater flexibility. Note, that directivity defined in this way is currently only supported in 2D. This example builds on the <a href="example_ivp_homogeneous_medium.html">Homogeneous Propagation Medium</a> and <a href="example_ivp_binary_sensor_mask.html">Using A Binary Sensor Mask</a> examples.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_sd_sensor_directivity_2D.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_sd_sensor_directivity_2D']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Defining directional detectors</a></li>
+		<li><a href="#heading3">Running the simulation (initial value problem)</a></li>
+		<li><a href="#heading4">Running the simulation (time-varying source)</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Defining directional detectors</h2>
+
+<p>When using a binary sensor mask, the directionality of each sensor element (defined by the 1's within <code>sensor.mask</code>) can be set by assigning a directivity angle to the corresponding elements within an <code>Nx</code> by <code>Ny</code> matrix assigned to <code>sensor.directivity_angle</code>. This angle defines the direction of greatest sensitivity for each element. For waves incident from other angles, the sensitivity will be reduced. In this example, a line of spaced sensor points is assigned to a binary sensor mask with each given a different directionality. A directivity angle of 0 (or pi) results in the element being most sensitive to waves travelling in the x (up/down) direction. A directivity of pi/2 (or -pi/2) results in the element being most sensitive to waves travelling in the y (left/right) direction. Figure-of-eight (cos(theta)) directionality can be selected by setting <code>sensor.directivity_pattern = 'gradient'</code>. With this setting, waves incident at right angles to the sensor element will not be detected. Alternatively, the directionality can be chosen to be equivalent to spatial averaging by setting <code>sensor.directivity_pattern = 'pressure'</code>. In this case, it is also necessary to set the sensor element size using <code>sensor.directivity_size</code>. For a plane wave incident on a parallel linear detector, this value is equivalent to the size of sensor that each element averages across. If this field is not set, it defaults to <code>10 * kgrid.dx</code> (i.e., 10 times the width of the spacing between grid points).</p>
+
+<pre class="codeinput">
+<span class="comment">% define a line of sensor points</span>
+sensor.mask = zeros(Nx, Ny);
+sensor.mask(24, 2:2:63) = 1;
+
+<span class="comment">% define the angle of max directivity for each sensor point:
+%    0             = max sensitivity in x direction (up/down)
+%    pi/2 or -pi/2 = max sensitivity in y direction (left/right)</span>
+dir_angles = (-1:1/15:1).' * pi/2;
+
+<span class="comment">% assign to the directivity mask</span>
+sensor.directivity_angle = zeros(Nx, Ny);
+sensor.directivity_angle(sensor.mask == 1) = dir_angles;
+
+<span class="comment">% define the directivity pattern</span>
+sensor.directivity_pattern = 'pressure';
+
+<span class="comment">% define the directivity size</span>
+sensor.directivity_size = 16 * kgrid.dx;
+</pre>
+
+<p>A visualisation of the sensor mask showing the directivity of each element is shown below, superimposed over an image of the source. Note that having many different directivity angles in a single simulation can increase the computation time. However, arrays in which all the elements have the same directionality will run almost as fast as the default omni-directional case.</p>
+
+<img vspace="5" hspace="5" src="images/example_sd_sensor_directivity_2D_01.png" style="width:502px;height:253px;" alt="">
+
+<a name="heading3"></a>
+<h2>Running the simulation (initial value problem)</h2>
+
+<p> The initial pressure distribution is set up in the usual way and the computation is invoked by calling <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code> with the inputs defined above. To ensure the plane wave source is not distorted by the perfectly matched layer, the part of the PML perpendicular to the propagation direction is turned off by setting the optional input <code>'PMLAlpha'</code> to <code>[2, 0]</code> (see <a href="example_na_controlling_the_pml.html">Controlling The Absorbing Boundary Layer</a>).</p>
+    
+<pre class="codeinput">
+<span class="comment">% define the initial pressure distribution</span>
+source.p0 = zeros(Nx, Ny);
+source.p0(39:41, :) = 2;
+ 
+<span class="comment">% turn off the PML in the y-direction</span>
+input_args = {'PMLAlpha', [2, 0]};
+
+<span class="comment">% run the simulation</span>
+sensor_data1 = kspaceFirstOrder2D(kgrid, medium, source, sensor, input_args{:});
+</pre>
+
+<p>The maxima of the time series recorded by each sensor element are plotted below. It is clear that the elements with their directivity aligned to the plane wave exhibit greater sensitivity.</p>
+
+<img vspace="5" hspace="5" src="images/example_sd_sensor_directivity_2D_02.png" style="width:560px;height:420px;" alt="">
+
+<a name="heading4"></a>
+<h2>Running the simulation (time-varying source)</h2>
+
+<p>It is interesting to run this example with a single frequency source, rather than the broadband source produced by the initial pressure distribution. A single frequency time-varying source plane wave source can defined as:</p>
+
+<pre class="codeinput">
+<span class="comment">% define a time varying sinusoidal source (instead of an initial pressure)</span>
+source_freq = 12e6;     <span class="comment">% [Hz]</span>
+source_mag = 0.25;      <span class="comment">% [Pa]</span>
+source.p = source_mag * sin(2 * pi * source_freq * kgrid.t_array);
+
+<span class="comment">% define source mask and force to be binary</span>
+source.p_mask = source.p0;
+source.p_mask(source.p_mask ~= 0) = 1; 
+
+<span class="comment">% remove initial pressure field</span>
+source = rmfield(source, 'p0');
+</pre>
+    
+<p>The computation is invoked by calling <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code> with the inputs defined above. As above, to ensure the source remains as a plane wave, is is necessary to turn off the PML along the sides perpendicular to the wavefront. The maxima of the time series recorded by each sensor element are plotted below on Cartesian and polar plots. Because this example uses a single frequency, the characteristic side lobes associated with spatial averaging detectors can be seen.</p>
+
+<img vspace="5" hspace="5" src="images/example_sd_sensor_directivity_2D_03.png" style="width:560px;height:420px;" alt="">
+<img vspace="5" hspace="5" src="images/example_sd_sensor_directivity_2D_04.png" style="width:560px;height:420px;" alt="">
+
+</div></body></html>

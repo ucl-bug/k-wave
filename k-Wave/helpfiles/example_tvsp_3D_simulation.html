@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Simulations In Three Dimensions Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Simulations In Three Dimensions Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Simulations In Three Dimensions Example</h1>
+
+<p>This example provides a simple demonstration of using k-Wave for the simulation and detection of a time varying pressure source within a three-dimensional heterogeneous propagation medium. It builds on the <a href="example_tvsp_homogeneous_medium_monopole.html">Monopole Point Source In A Homogeneous Propagation Medium Example</a>  and <a href="example_ivp_3D_simulation.html">Simulations In Three Dimensions</a> examples.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_tvsp_3D_simulation.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_tvsp_3D_simulation']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Defining the time varying pressure source</a></li>
+        <li><a href="#heading3">Running the simulation</a></li>
+    </ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Defining the time varying pressure source</h2>
+
+<p>As in one and two dimensions, a time varying pressure source is defined by assigning a binary matrix (i.e., a matrix of 1's and 0's with the same dimensions as the computational grid) to <code>source.p_mask</code>, where the 1's represent the grid points that form part of the source. The time varying input signal is then assigned to <code>source.p</code>. This can have any number of time points (it doesn't need to match <code>kgrid.Nt</code>) and can be defined as either a single time series (in which case it is applied to all of the source points), or a matrix of time series following the source points using MATLAB's standard column-wise linear matrix index ordering. Here a sinusoidal input is assigned to a square source element. To remove frequencies not supported by the spatial grid, the input should first be filtered using <code><a href="filterTimeSeries.html">filterTimeSeries</a></code> (see the <a href="example_na_filtering.html">Filtering A Delta Function Input Signal Example</a> for more information).</p>
+
+<pre class="codeinput">
+<span class="comment">% define a square source element</span>
+source_radius = 5;  <span class="comment">% [grid points]</span>
+source.p_mask = zeros(Nx, Ny, Nz);
+source.p_mask(Nx/4, Ny/2 - source_radius:Ny/2 + source_radius, Nz/2 - source_radius:Nz/2 + source_radius) = 1;
+
+<span class="comment">% define a time varying sinusoidal source</span>
+source_freq = 2e6;  <span class="comment">% [Hz]</span>
+source_mag = 1;     <span class="comment">% [Pa]</span>
+source.p = source_mag * sin(2 * pi * source_freq * kgrid.t_array);
+
+<span class="comment">% smooth the source</span>
+source.p = filterTimeSeries(kgrid, medium, source.p);
+</pre>
+
+<p>A plot of the source and sensor masks using <code><a href="voxelPlot.html">voxelPlot</a></code> is shown below.</p>
+
+<img vspace="5" hspace="5" src="images/example_tvsp_3D_simulation_01.png" style="width:560px;height:420px;" alt="">
+
+<a name="heading3"></a>
+<h2>Running the simulation</h2>
+
+<p>To allow visualisation of the source elements within the grid, the source mask is assigned to the optional input parameter <code>'DisplayMask'</code>. This mask is overlaid onto the plot during the simulation. The optional input <code>'DataCast'</code> is also set to <code>'single'</code> to reduce the computation time.</p>
+
+<pre class="codeinput">
+<span class="comment">% input arguments</span>
+input_args = {'DisplayMask', source.p_mask, 'DataCast', 'single'};
+
+<span class="comment">% run the simulation</span>
+sensor_data = kspaceFirstOrder3D(kgrid, medium, source, sensor, input_args{:});
+</pre>
+
+<p>A plot of the display during simulation is shown below.</p>
+
+<img vspace="5" hspace="5" src="images/example_tvsp_3D_simulation_02.png" style="width:560px;height:420px;" alt="">
+
+<p>An animated slice-by-slice visualisation of the final pressure field can be viewed using <code><a href="flyThrough.html">flyThrough</a></code>.</p>
+
+<pre class="codeinput">
+<span class="comment">% view final pressure field slice by slice</span>
+flyThrough(p_final);
+</pre>
+
+</div></body></html>

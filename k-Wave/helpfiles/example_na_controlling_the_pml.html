@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Controlling The Absorbing Boundary Layer Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Controlling The Absorbing Boundary Layer Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Controlling The Absorbing Boundary Layer Example</h1>
+
+<p>The first-order simulation codes included within the k-Wave Toolbox (<code><a href="kspaceFirstOrder1D.html">kspaceFirstOrder1D</a></code>, <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>, and <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>) use a special type of anisotropic absorbing boundary layer known as a <em>perfectly matched layer</em> (PML) to absorb acoustic waves when they reach the edge of the computational domain. By default, this layer occupies a strip around the edge of the domain of 20 grid points in 1D and 2D, and 10 grid points in 3D. Without this boundary layer, the computation of the spatial derivates via the FFT causes waves leaving one side of the domain to reappear at the opposite side. The use of the PML thus facilitates infinite domain simulations without the need to increase in the size of the computational grid. This example demonstrates how to control the parameters of the PML within k-Wave via optional input parameters.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_na_controlling_the_PML.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_na_controlling_the_PML']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Controlling the properties of the absorbing boundary layer</a></li>
+		<li><a href="#heading3">Switching off the PML</a></li>
+		<li><a href="#heading4">A partially effective PML</a></li>
+		<li><a href="#heading5">Setting the PML to be outside the computational grid</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Controlling the properties of the absorbing boundary layer</h2>
+
+<p>The PML has four properties, each of which can be controlled via optional input parameters:</p>
+<ol>
+<li><b>Size:</b> The size of the layer on each edge of the domain is set by <code>'PMLSize'</code> in units of grid points. The default setting is 20 grid points in 1D and 2D, and 10 grid points in 3D. If the size is specified as a single number, this is used for all Cartesian directions. Alternatively, the size for each direction can be set individually by setting <code>'PMLSize'</code> to  <code>[PML_X_SIZE, PML_Y_SIZE]</code> in 2D, and <code>[PML_X_SIZE, PML_Y_SIZE, PML_Z_SIZE]</code> in 3D.</li>
+<li><b>Absorption:</b> The absorption within the layer is set by <code>'PMLAlpha'</code> in units of Nepers per grid point. The default setting is 2 for all dimensions. Again, if the absorption is specified as a single number, this is used for all Cartesian directions. Alternatively, the absorption for each direction can be set individually by setting <code>'PMLAlpha'</code> to  <code>[PML_X_ALPHA, PML_Y_ALPHA]</code> in 2D, and <code>[PML_X_ALPHA, PML_Y_ALPHA, PML_Z_ALPHA]</code> in 3D.</li>
+<li><b>Location:</b> The location of the layer can be set to be <em>inside</em> or <em>outside</em> the computational grid created by the user by changing the value of the Boolean flag <code>'PMLInside'</code> (the default setting is <code>true</code>). If <code>'PMLInside'</code> is set to <code>false</code>, the input grids are enlarged on each edge by the size given by <code>'PMLSize'</code>.</li>
+<li><b>Visibility:</b> The visibility of the absorbing layer within the animations displayed during the simulation is controlled by the Boolean input parameter <code>'PlotPML'</code> (the default setting is <code>true</code>).</li>
+</ol>
+
+<p>For accurate simulations, care must be taken that the initial pressure distribution and the sensor mask don't lie within the PML. This can be avoided by setting <code>'PMLInside'</code> to <code>false</code>. However, the computational time will still be dependent on the <em>total</em> size of the grid including the PML (i.e., computations will be fastest for grids where the total number of grid points in each dimension is given by a power of two).</p>
+
+<a name="heading3"></a>
+<h2>Switching off the PML</h2>
+
+<p>The effect of the PML can be illustrated most clearly by switching it completely off by setting the optional input <code>'PMLAlpha'</code> to <code>0</code> (set <code>example_number = 1</code> within the example m-file). This sets the absorption within the layer to zero, thus the waves leaving one side of the domain reappear at the opposite side. A visualisation of the recorded time-series is given below.</p>
+
+<img vspace="5" hspace="5" src="images/example_na_controlling_the_pml_01.png" style="width:560px;height:420px;" alt="">
+
+<p>A similar effect is seen if the value for <code>'PMLAlpha'</code> is set too high (set <code>example_number = 2</code> within the example m-file). This causes the waves to be reflected from the layer.</p>
+
+<a name="heading4"></a>
+<h2>A partially effective PML</h2>
+
+<p>The effectiveness of the PML depends on its size and absorption, but also on the time step used in the simulation (the more time steps the wave spends in the layer, the more it will be absorbed). A partially effective PML can be illustrated by reducing the size of the PML by setting the optional input <code>'PMLSize'</code> to <code>2</code> (set <code>example_number = 3</code> within the example m-file). The layer absorbs some (but not all) of the waves approaching the boundaries, and some of the wave wrapping seen in the previous example is still visible.<p>
+
+<img vspace="5" hspace="5" src="images/example_na_controlling_the_pml_02.png" style="width:560px;height:420px;" alt="">
+
+<a name="heading5"></a>
+<h2>Setting the PML to be outside the computational grid</h2>
+
+<p>By default, the PML will be <em>inside</em> the grid defined by the user, so care must be taken that the source and sensor are not defined within this region. This can be avoided by setting the optional input <code>'PMLInside'</code> to <code>false</code> (set <code>example_number = 4</code> within the example m-file). In this case, the computational grid and input variables are automatically expanded by the size of the PML. This setting gives several additional command line status readouts, including feedback on expanding the input grids and the total size of the computational grid (in this case 168 by 168 grid points).</p>
+
+<pre class="codeinput">
+Running k-Wave simulation...
+  start time: 04-Jun-2017 13:10:18
+  reference sound speed: 1500m/s
+  dt: 20ns, t_end: 12.06us, time steps: 604
+  input grid size: 128 by 128 grid points (12.8 by 12.8mm)
+  maximum supported frequency: 7.5MHz
+  smoothing p0 distribution...
+  expanding computational grid...
+  computational grid size: 168 by 168 grid points
+  calculating Delaunay triangulation...
+  precomputation completed in 0.29097s
+  starting time loop...
+  estimated simulation time 2.718s...
+  simulation completed in 3.0234s
+  total computation time 3.355s
+</pre>
+
+<p>As the inner part of the computation grid is identical to that in the <a href="example_ivp_homogeneous_medium.html">Homogeneous Propagation Medium Example</a>, the recorded time-series (shown below) is also identical. In this case, the default size and absorption for the PML are adequate to prevent any visible wave wrapping. For any particular example, if the performance of the PML is not sufficient, increasing the size of the PML, optimising the value of <code>PMLAlpha</code>, or reducing the time-step will give improvements.</p>
+
+<img vspace="5" hspace="5" src="images/example_na_controlling_the_pml_03.png" style="width:560px;height:420px;" alt="">
+
+</div></body></html>

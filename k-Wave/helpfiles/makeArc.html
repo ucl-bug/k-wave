@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>makeArc :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>makeArc</h1>
+<p class="purpose">Create a binary map of an arc within a 2D grid.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+arc = makeArc(grid_size, arc_pos, radius, diameter, focus_pos)
+arc = makeArc(grid_size, arc_pos, radius, diameter, focus_pos, ...)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>makeArc</code> creates a binary map of an arc within a two-dimensional grid. The arc position is denoted by 1's in the matrix with 0's elsewhere. The arc is found using the mid-point circle algorithm, and is simply connected so that any grid point on the arc will have at most 2 neighbours.</p>
+
+<p>The midpoint of the arc is set by <code>arc_pos</code>. The orientation of the arc is set by <code>focus_pos</code>, which corresponds to any point on the axis of the arc (note, this must not be equal to <code>arc_pos</code>). It is assumed that the arc angle is equal to or less than pi radians. If the radius is set to <code>inf</code>, a line is generated.</p>
+
+<h2>Examples</h2>
+
+<pre class="codeinput">
+<span class="comment">% define parameters</span>
+grid_size = [128, 128];
+arc_pos   = [32, 32];
+radius    = 60;
+diameter  = 61;
+focus_pos = grid_size;
+
+<span class="comment">% create arc</span>
+arc = makeArc(grid_size, arc_pos, radius, diameter, focus_pos, 'Plot', true);
+</pre>
+
+<img vspace="5" hspace="5" src="images/makeArc_01.png" style="width:560px;height:420px;" alt="">
+
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>grid_size</code></td>
+        <td>size of the 2D grid given as a three element vector [Nx, Ny] [grid points] </td>
+    </tr>
+    
+    <tr valign="top">
+        <td width = "150"><code>bowl_pos</code></td>
+        <td>midpoint of the arc given as a two element vector [ax, ay] [grid points]</td>
+    </tr>
+
+    <tr valign="top">
+        <td width = "150"><code>radius</code></td>
+        <td>radius of curvature of the arc [grid points]</td>
+    </tr>
+    
+    <tr valign="top">
+        <td width = "150"><code>diameter</code></td>
+        <td>aperture diameter (length of line connecting arc endpoints) [grid points] </td>
+    </tr>
+    
+	<tr valign="top">
+        <td width = "150"><code>focus_pos</code></td>
+        <td>any point on the beam axis of the arc given as a two element vector [fx, fy] [grid points]</td>
+    </tr>    
+    
+</table>
+    
+<h2>Optional Inputs</h2>
+
+<p>Optional 'string', value pairs that may be used to modify the default computational settings.</p>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="18%"><col width="18%"><col width="18%"><col width="46%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Input</th>
+            <th bgcolor="#B2B2B2">Valid Settings</th>
+            <th bgcolor="#B2B2B2">Default</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+    	
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Plot'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the arc is plotted using <code><a href="matlab: doc imagesc">imagesc</a></code>.</td>
+        </tr>     
+                
+    </tbody>
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>arcs</code></td>
+        <td>2D binary map of arcs</td>
+    </tr>
+    
+    <tr valign="top">
+        <td width = "150"><code>arc</code></td>
+        <td>2D labelled matrix of arcs</td>
+    </tr>    
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="makeBowl.html">makeBowl</a></code>, <code><a href="makeCartArc.html">makeCartArc</a></code>, <code><a href="makeLine.html">makeLine</a></code>, <code><a href="makeMultiArc.html">makeMultiArc</a></code>
+
+</div></body></html>

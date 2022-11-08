@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>voxelPlot :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>voxelPlot</h1>
+<p class="purpose">3D plot of voxels in a binary matrix.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+voxelPlot(mat)
+voxelPlot(mat, ...)
+</pre>
+
+<h2>Description</h2>
+<p><code>voxelPlot</code> produces a 3D plot of a binary matrix, where filled voxels are displayed at the positions of the 1's. The colormap, transparency, and axis limits can be controlled through optional inputs. For example running</p>
+
+<pre class="codeinput">
+voxelPlot(makeBall(20, 20, 20, 10, 10, 10, 4), 'AxisTight', true, 'Color', [1 0 0], 'Transparency', 0.5);
+view([50, 15]);
+</pre>
+
+<p>will produce a semi-transparent image of a red ball.</p>
+
+<img vspace="5" hspace="5" src="images/voxelPlot_01.png" style="width:560px;height:420px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>mat</code></td>
+        <td>binary 3D matrix</td>
+    </tr>       
+</table>
+
+<h2>Optional Inputs</h2>
+
+<p>Optional 'string', value pairs that may be used to modify the default computational settings.</p>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="18%"><col width="18%"><col width="18%"><col width="46%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Input</th>
+            <th bgcolor="#B2B2B2">Valid Settings</th>
+            <th bgcolor="#B2B2B2">Default</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'AxisTight'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether axis limits are set to only display the filled voxels.</td>
+        </tr>     
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Color'</code></td>
+            <td bgcolor="#F2F2F2"><em>(three element numeric vector)</em></td>
+            <td bgcolor="#F2F2F2"><code>[1, 1, 0.4] (yellow)</code></td>            
+            <td bgcolor="#F2F2F2">Three element vector specifying rgb color.</td>
+        </tr>         
+               
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Transparency'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>0.8</code></td>            
+            <td bgcolor="#F2F2F2">value between 0 and 1 specifying transparency (1 gives no transparency).</td>
+        </tr>         
+            
+    </tbody>
+</table>
+
+<h2>Examples</h2>
+<ul>
+	<li><a href="example_ivp_3D_simulation.html">Simulations In Three Dimensions</a></li>
+	<li><a href="example_sd_focussed_detector_3D.html">Focussed Detector in 3D</a></li>
+	<li><a href="example_sd_directivity_modelling_3D.html">Modelling Sensor Directivity in 3D</a></li>
+	<li><a href="example_pr_3D_fft_planar_sensor.html">3D FFT Reconstruction For A Planar Sensor</a></li>
+	<li><a href="example_pr_3D_tr_spherical_sensor.html">3D Time Reversal For A Spherical Sensor</a></li> 
+</ul>
+
+<h2>See Also</h2>
+
+<code><a href="matlab: doc patch">patch</a></code>
+
+</div></body></html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Setting An Initial Pressure Gradient Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Setting An Initial Pressure Gradient Example">
+</head>
+
+<body><div class="content">
+
+<h1>Setting An Initial Pressure Gradient Example</h1>
+
+<p>This example demonstrates how to set an initial pressure gradient using <code><a href="kspaceSecondOrder.html">kspaceSecondOrder</a></code>. It builds on the <a href="example_ivp_comparison_modelling_functions.html">Comparison Of Modelling Functions Example</a>.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_ivp_setting_initial_gradient.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_ivp_setting_initial_gradient']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+        <li><a href="#heading2">Defining the source properties</a></li>
+    </ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Defining the source properties</h2>
+
+<p>The function <code><a href="kspaceSecondOrder.html">kspaceSecondOrder</a></code> allows initial conditions for both the initial pressure and its temporal gradient to be  defined. The initial conditions are defined as a matrix of numeric values the same size as the computational grid. The initial pressure is assigned to <code>source.p0</code>, while the initial pressure gradient is assigned to <code>source.dp0dt</code>.</p> 
+
+<p>In this example, <code><a href="makeDisc.html">makeDisc</a></code> is used to create an initial source distribution of two small discs with different diameters. This is first assigned to the <code>p0</code> field of the <code>source</code> structure, then to the <code>dp0dt</code> field, and then to both fields. The optional input <code>'MeshPlot'</code> is set to <code>true</code> to allow a 3D visualisation of the pressure field. If <code>'PlotFrames'</code> is set to <code>true</code> the individual frames are spawned in new figures. A plot of the pressure field at two different values of t is shown below.</p>
+
+<p><img src="images/example_ivp_setting_initial_gradient_01.png" height="433" width="620"></p>
+
+</div></body></html>

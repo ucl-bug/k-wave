@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Defining A Source Using An Array Transducer Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Defining A Source Using An Array Transducer Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Defining A Source Using An Array Transducer Example</h1>
+
+<p>This example provides a demonstration of using the <code><a href="kWaveArray.html">kWaveArray</a></code> class to define an array transducer with three arc-shaped elements without staircasing errors.</p>
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_at_array_as_source.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_at_array_as_source']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<p>For a more detailed discussion of this example and the underlying techniques, see  E. S. Wise, B. T. Cox, J. Jaros, & B. E. Treeby (2019). Representing arbitrary acoustic source and sensor distributions in Fourier collocation methods. <em>The Journal of the Acoustical Society of America</em>, 146(1), 278-288. <a href="https://doi.org/10.1121/1.5116132">https://doi.org/10.1121/1.5116132</a>.</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Using the kWaveArray class</a></li>
+        <li><a href="#heading3">Generating the source mask</a></li>
+        <li><a href="#heading4">Generating the source signal</a></li>
+        <li><a href="#heading5">Running the simulation</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Using the kWaveArray class</h2>
+
+<p>When using sources and sensors within k-Wave, the masks are confined to the grid points that form part of the spatial grid. When modelling physical geometries that aren't aligned with the grid points, this can lead to staircasing errors. For example, imagine modelling a piston transducer using <code><a href="makeDisc.html">makeDisc</a></code>. The outside of the resulting mask is not smooth but jagged like a set of stairs. This can lead to errors in the acoustic field, particularly at lower grid resolutions. To avoid these errors, k-Wave provides the <code><a href="kWaveArray.html">kWaveArray</a></code> class. This is a general class for defining array transducers in physical space, and then rendering them on a grid for simulations without staircasing.</p>
+
+<p>To create the transducer array, first an object of the <code><a href="kWaveArray.html">kWaveArray</a></code> class is created. Elements are then added to the array using the add functions (for example, <code>addArcElement</code>, <code>addDiscElement</code> and so on). These elements are defined by their physical properties and coordinates, not by the grid. In fact, the array object doesn't store any grid information at all, so can be re-used for simulations with different discretisations.</p>
+
+<p>In this example, three arc-shaped elements are added to the array using the <code>addArcElement</code> method. This takes the position of the element in Cartesian space, the radius of curvature, the aperture diameter, and a point on the beam axis which defines the angle of element (specified by the <code>focus_pos</code> variable in the code snippet).</p>
+
+<pre class="codeinput">
+<span class="comment">% create empty array</span>
+karray = kWaveArray;
+
+<span class="comment">% define arc properties</span>
+radius    = 50e-3;              <span class="comment">% [m]</span>
+diameter  = 30e-3;              <span class="comment">% [m]</span>
+focus_pos = [-20e-3, 0];        <span class="comment">% [m]</span>
+
+<span class="comment">% add arc shaped element</span>
+elem_pos  = [10e-3, -40e-3];    <span class="comment">% [m]</span>
+karray.addArcElement(elem_pos, radius, diameter, focus_pos);
+
+<span class="comment">% add arc shaped element</span>
+elem_pos  = [20e-3, 0];         <span class="comment">% [m]</span>
+karray.addArcElement(elem_pos, radius, diameter, focus_pos);
+
+<span class="comment">% add arc shaped element</span>
+elem_pos  = [10e-3, 40e-3];     <span class="comment">% [m]</span>
+karray.addArcElement(elem_pos, radius, diameter, focus_pos);
+</pre>
+
+<p>The array defines the positions of the elements relative to the k-Wave Cartesian coordinate system, which defines the origin centered on the grid. After defining the element positions, it is possible to move the entire array to a different position in space by defining a transformation. The position can be defined using <code>setArrayPosition</code> which takes the translation and rotation of the array, or alternatively using <code>setAffineTransform</code> which directly sets the array transform.</p>
+
+<pre class="codeinput">
+<span class="comment">% move the array down 10 mm, and rotate by 10 degrees (this moves all the</span>
+<span class="comment">% elements together)</span>
+karray.setArrayPosition([10e-3, 0], 10);
+</pre>
+
+<a name="heading3"></a>
+<h2>Generating the source mask</h2>
+
+<p>To use a time-varying source in k-Wave, two things are required: a source mask (which defines which grid points form part of the source) and the source signal. To use arrays defined using <code><a href="kWaveArray.html">kWaveArray</a></code> with the simulation functions, the array must be converted to these two inputs. To create the source mask, the <code>getArrayBinaryMask</code> method is used as shown below. This takes the <code><a href="kWaveGrid.html">kWaveGrid</a></code> object that will be used for the simulation, and returns a binary mask that can be used with the simulation functions.</p>
+
+<pre class="codeinput">
+<span class="comment">% assign binary mask from karray to the source mask</span>
+source.p_mask = karray.getArrayBinaryMask(kgrid);
+</pre>
+
+<p>The binary source mask is shown in black below, with the physical transducer elements overlaid in blue. The perfectly matched layer (PML) is shown as the black band around the outside of the domain. A key point to note is that the source mask is <em>non-local</em>. That is, it is bigger than the blue lines (or the equivalent source mask created using <code><a href="makeArc.html">makeArc</a></code> for example). This is because the source mask is created by convolving the band-limited interpolant (BLI) with the physical source geometry (in this case, the arc defined by the blue line). By default, a truncated BLI is used, and the truncation level (defined by the <code>'BLITolerance'</code> optional input for <code><a href="kWaveArray.html">kWaveArray</a></code>) defines how far the non-locality will extend. This approach allows source geometries to be defined without staircasing errors.</p>
+
+<p>One practical point of having a larger source mask is that care must be taken that the mask doesn't overlap with the PML or heterogeneities in the domain. The masks from different elements <em>can</em> overlap however - this is accounted for when generating the source signals.</p>
+
+<img vspace="5" hspace="5" src="images/example_at_array_as_source_01.png" style="width:525px;height:394px;" alt="">
+
+<a name="heading4"></a>
+<h2>Generating the source signal</h2>
+
+<p>The other ingredient for time varying sources in k-Wave is the source signal, for example, <code>source.p</code>. This defines the signal that is used to drive each grid point that forms part of the mask as explained in <a href="k-wave_time_varying_source_problems.html">Time Varying Source Problems</a>. When using an array defined using <code><a href="kWaveArray.html">kWaveArray</a></code>, the source signals are first defined <em>per physical transducer element</em>. In this example, there are three arc-shaped transducer elements, so three source signals are needed. These are defined using <code><a href="toneBurst.html">toneBurst</a></code>, where the tone-burst for each element has a different driving frequency. The signals are then combined into a single matrix of size <code>[number_transducer_elements, number_time_points]</code>. To account for the three tone-bursts having a different length, the signals are padded with zeros.</p>
+
+<pre class="codeinput">
+<span class="comment">% set source signals, one for each physical array element</span>
+f1 = 100e3;
+f2 = 200e3;
+f3 = 500e3;
+sig1 = toneBurst(1/kgrid.dt, f1, 3);
+sig2 = toneBurst(1/kgrid.dt, f2, 5);
+sig3 = toneBurst(1/kgrid.dt, f3, 5);
+
+<span class="comment">% combine source signals into one array</span>
+source_signal = zeros(2, max(length(sig1), length(sig2)));
+source_signal(1, 1:length(sig1)) = sig1;
+source_signal(2, 1:length(sig2)) = sig2;
+source_signal(3, 1:length(sig3)) = sig3;
+</pre>
+
+<p>The driving signal for each grid point in the source mask, which is required as an input to k-Wave, can be generated automatically using the <code>getDistributedSourceSignal</code> method of the <code><a href="kWaveArray.html">kWaveArray</a></code> class as shown below. This takes the source signal for each physical transducer element, and calculates the required source signal for each grid point in the source mask using knowledge of physical source geometry and the BLI. One downside of the current implementation is that the source matrices can become quite large, particularly if the source mask is large and the driving signals contain many time steps.</p>
+
+<pre class="codeinput">
+<span class="comment">% get distributed source signals (this automatically returns a weighted</span>
+<span class="comment">% source signal for each grid point that forms part of the source)</span>
+source.p = karray.getDistributedSourceSignal(kgrid, source_signal);
+</pre>
+
+<a name="heading5"></a>
+<h2>Running the simulation</h2>
+
+<p>The simulation is run in the normal way, passing the grid, medium, and source inputs to <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>. A snapshot of the simulation is shown below. The different frequency used to derive the three elements is clearly visible.</p>
+
+<img vspace="5" hspace="5" src="images/example_at_array_as_source_02.png" style="width:525px;height:394px;" alt="">
+
+</div></body></html>

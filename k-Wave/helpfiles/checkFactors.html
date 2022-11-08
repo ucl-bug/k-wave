@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>checkFactors :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>checkFactors</h1>
+<p class="purpose">Return the maximum prime factor for a range of numbers.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+checkFactors(min_number, max_number)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>checkFactors</code> loops through the given range of numbers and finds the numbers with the smallest maximum prime factors. This allows suitable grid sizes to be selected to maximise the speed of the FFT (this is fastest for FFT lengths with small prime factors). The output is printed to the command line, and a plot of the factors is generated.</p>
+
+<p>For example, running the code <code>checkFactors(100, 200)</code> produces the folling output.</p>
+
+<pre class="codeinput">
+Numbers with a maximum prime factor of 2
+128
+Numbers with a maximum prime factor of 3
+108  144  162  192
+Numbers with a maximum prime factor of 5
+100  120  125  135  150  160  180  200
+Numbers with a maximum prime factor of 7
+105  112  126  140  147  168  175  189  196
+Numbers to avoid (prime numbers)
+101  103  107  109  113  127  131  137  139  149  151  157  163  167  173  179  181  191  193  197  199
+</pre>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>min_number</code></td>
+        <td>integer specifying the lower bound of values to test</td>
+    </tr>    
+    
+    <tr valign="top">
+        <td><code>max_number</code></td>
+        <td>integer specifying the upper bound of values to test</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+<code><a href="matlab: doc fft">fft</a></code>, <code><a href="matlab: doc factor">factor</a></code>
+
+</div></body></html>

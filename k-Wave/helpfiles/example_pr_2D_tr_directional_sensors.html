@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Image Reconstruction With Directional Sensors Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Image Reconstruction With Directional Sensors Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Image Reconstruction With Directional Sensors Example</h1>
+
+<p> This example demonstrates how the directionality of sensor elements can give rise to artefacts in time reversal photoacoustic image reconstruction. 
+It builds on the <a href="example_sd_sensor_directivity_2D.html">Sensor Element Directivity in 2D</a> and <a href="example_pr_2D_tr_line_sensor.html">2D Time Reversal Reconstruction For A Line Sensor</a> examples.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_pr_2D_TR_directional_sensors.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_pr_2D_TR_directional_sensors']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<p>For a more detailed discussion of this example and the underlying techniques, see B. T. Cox and B. E. Treeby, "Effect of sensor directionality on photoacoustic imaging: A study using the k-Wave toolbox," in <em>Proc. SPIE</em>, vol. 7564, p. 75640I, 2010.</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Running the simulation</a></li>
+		<li><a href="#heading3">Time-reversal image reconstruction</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Running the simulation</h2>
+
+<p>The simulation is first invoked using a rectangular binary sensor mask with omnidirectional elements in the same way as previous examples. Directionality is then added to the sensor elements by assigning an angle to the corresponding elements in an Nx by Ny matrix passed to <code>sensor.directivity_angle</code>. These are assigned such that the maximum sensitivity of each sensor face faces inward.</p>
+
+<pre class="codeinput">
+<span class="comment">% define a four-sided, square sensor</span>
+sensor.mask = zeros(kgrid.Nx, kgrid.Ny);
+sensor.mask(1, :) = 1;
+sensor.mask(end, :) = 1;
+sensor.mask(:, 1) = 1;
+sensor.mask(:, end) = 1;
+
+<span class="comment">% run the simulation for omnidirectional detector elements</span>
+sensor_data = kspaceFirstOrder2D(kgrid, medium, source, sensor, input_args{:});
+
+<span class="comment">% define the directionality of the sensor elements</span>
+sensor.directivity_angle = zeros(kgrid.Nx, kgrid.Ny);
+sensor.directivity_angle(1, :) = 0;      <span class="comment">% max sensitivity in x direction</span>
+sensor.directivity_angle(end, :) = 0;    <span class="comment">% max sensitivity in x direction</span>
+sensor.directivity_angle(:, 1) = pi/2;   <span class="comment">% max sensitivity in y direction</span>
+sensor.directivity_angle(:, end) = pi/2; <span class="comment">% max sensitivity in y direction</span>
+
+<span class="comment">% define the directivity size</span>
+sensor.directivity_size = 20 * kgrid.dx;
+
+<span class="comment">% run the simulation with directional elements</span>
+sensor_data_directional = kspaceFirstOrder2D(kgrid, medium, source, sensor, input_args{:});
+</pre>
+
+<a name="heading3"></a>
+<h2>Time-reversal image reconstruction</h2>
+
+<p>To examine the effect of sensor directionality on time reversal image reconstruction, the sensor data recorded from both the omni-directional and directional sensor elements is used to reconstruct the initial photoacoustic pressure distribution. The reconstructed pressure distributions are shown below. For the omni-directional sensor, the initial pressure is reconstructed almost exactly (note, the inverse crime in which the same simulation parameters are used in both simulation and reconstruction has been committed). However, when using the directional sensor, image artefacts are introduced into the reconstruction.</p>
+
+<img vspace="5" hspace="5" src="images/example_pr_2D_tr_directional_sensors_01.png" style="width:560px;height:273px;" alt="">
+<img vspace="5" hspace="5" src="images/example_pr_2D_tr_directional_sensors_02.png" style="width:560px;height:273px;" alt="">
+<img vspace="5" hspace="5" src="images/example_pr_2D_tr_directional_sensors_03.png" style="width:560px;height:420px;" alt="">
+
+</div></body></html>

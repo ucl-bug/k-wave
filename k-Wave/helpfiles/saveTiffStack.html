@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>saveTiffStack :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>saveTiffStack</h1>
+<p class="purpose">Save volume data as a tiff stack.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+saveTiffStack(M)
+saveTiffStack(M, filename)
+saveTiffStack(M, filename, bit_depth)
+saveTiffStack(M, [], bit_depth)
+</pre>
+
+<h2>Description</h2>
+<p><code>saveTiffStack</code> saves 3D volume data in matrix form as a stacked tiff image. If the data is indexed as [x, y, z], each image corresponds to an [y, z] slice of the data. If no filename is given, a dialog box is invoked.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td><code>M</code></td>
+        <td>the volume data to save</td>
+    </tr>    
+ 
+    <tr valign="top">
+        <td width = "150"><code>filename</code></td>
+        <td>filename string</td>
+    </tr>
+
+    <tr valign="top">
+        <td width = "150"><code>bit_depth </code></td>
+        <td>bit depth of the tiff image (set to 8 or 16; default = 8)</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="matlab: doc imwrite">imwrite</a></code>
+
+</div></body></html>

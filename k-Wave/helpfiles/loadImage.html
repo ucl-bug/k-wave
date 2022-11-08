@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>loadImage :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body><div class="content">
+
+<a name="top_of_page"></a>
+<h1>loadImage</h1>
+<p class="purpose">Load an image file.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+im = loadImage()
+im = loadImage(filename)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>loadImage</code> loads an external image file using <code><a href="matlab: doc imread">imread</a></code> and returns a two-dimensional image matrix scaled between 0 and 1. If a colour image is loaded, the colour channels are summed before scaling. If no input is given for <code>filename</code>, a selection dialog is invoked.</p>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>filename</code></td>
+        <td> filename (and pathname if not in the same directory) of the image to load</td>
+    </tr>     
+    
+</table>
+    
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>im</code></td>
+        <td>scaled image matrix</td>
+    </tr>
+</table>
+
+<h2>Examples</h2>
+<ul>
+<li><a href="example_ivp_loading_external_image.html">Loading External Image Maps</a></li> 
+<li><a href="example_pr_2D_tr_circular_sensor.html">2D Time Reversal For A Circular Sensor</a></li>
+<li><a href="example_na_optimising_performance.html">Optimising k-Wave Performance</a></li> 
+</ul>
+<h2>See Also</h2>
+
+<code><a href="matlab: doc imread">imread</a></code>, <code><a href="resize.html">resize</a></code>
+
+</div></body></html>

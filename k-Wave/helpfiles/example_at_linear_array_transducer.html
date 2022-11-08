@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Modelling A Linear Array Transducer Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Modelling A Linear Array Transducer Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Modelling A Linear Array Transducer Example</h1>
+
+<p>This example provides a demonstration of using the <code><a href="kWaveArray.html">kWaveArray</a></code> class to define a linear array transducer with 15 rectangular elements. Electronic focusing is then used to transmit an ultrasound pulse. It builds on the <a href="example_at_array_as_source.html">Defining A Source Using An Array Transducer Example</a>.</p>
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_at_linear_array_transducer.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_at_linear_array_transducer']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Defining the array</a></li>
+        <li><a href="#heading3">Generating the source signal</a></li>
+        <li><a href="#heading4">Running the simulation</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Defining the array</h2>
+
+<p>The array is defined in the same way as the <a href="example_at_array_as_source.html">Defining A Source Using An Array Transducer Example</a>. Here, 15 rectangular elements are added using the <code>addRectElement</code> method of the <code><a href="kWaveArray.html">kWaveArray</a></code> class. The elements are placed in a line with a fixed element pitch to simulate a linear array. The linear array is then moved by a given translation and rotation using the <code>setArrayPosition</code> method. Note, there is a limitation in the current implementation of <code><a href="kWaveArray.html">kWaveArray</a></code> for rectangular elements which means the individual elements are not rotated when a global rotation is applied. As a work around, the element angle can be set when calling <code>addRectElement</code> to the same angle as the global array rotation.</p>
+
+<pre class="codeinput">
+<span class="comment">% create empty array</span>
+karray = kWaveArray('BLITolerance', 0.05, 'UpsamplingRate', 10);
+
+<span class="comment">% add rectangular elements facing in the z-direction</span>
+for ind = 1:element_num
+    
+    <span class="comment">% set element y position</span>
+    x_pos = 0 - (element_num * element_pitch / 2 - element_pitch / 2) + (ind - 1) * element_pitch;
+    
+    <span class="comment">% add element (set rotation angle to match the global rotation angle)</span>
+    karray.addRectElement([x_pos, 0, kgrid.z_vec(1)], element_width, element_length, rotation);
+    
+end
+
+<span class="comment">% move the array</span>
+karray.setArrayPosition(translation, rotation)
+</pre>
+
+<p>Compared to the <code><a href="kWaveTransducer.html">kWaveTransducer</a></code> class (which is used for the <a href="k-wave_ultrasound_simulation.html">Diagnostic Ultrasound Simulation</a> examples), the <code><a href="kWaveArray.html">kWaveArray</a></code> class is much more flexible. It allows the elements to have any width (not restricted to the grid spacing), the elements to be placed anywhere in 3D space (for example, to simulate curvilinear arrays), and the transducer to be moved to an arbitrary position and orientation. However, <code><a href="kWaveArray.html">kWaveArray</a></code> doesn't provide methods for calculating beamforming delays, forming scan lines, or setting an elevation focus which are possible when using the <code><a href="kWaveTransducer.html">kWaveTransducer</a></code> class.</p>
+
+<a name="heading3"></a>
+<h2>Generating the source signal</h2>
+
+<p>To drive the linear array, a source signal for each physical transducer element is created. In this example, each element is driven using the same tone burst, but with a time delay such that the beam is focused at a given position. The time delays are calculated geometrically using the known element and focus positions.</p>
+
+<pre class="codeinput">
+<span class="comment">% set indices for each element</span>
+if rem(element_num, 2)
+    ids = (1:element_num) - ceil(element_num/2);
+else
+    ids = (1:element_num) - (element_num + 1)/2;
+end
+
+<span class="comment">% set time delays for each element to focus at source_focus</span>
+time_delays = -(sqrt((ids .* element_pitch).^2 + source_focus.^2) - source_focus) ./ c0;
+time_delays = time_delays - min(time_delays);
+
+<span class="comment">% create time varying source signals (one for each physical element)</span>
+source_sig = source_amp .* toneBurst(1/kgrid.dt, source_f0, source_cycles, 'SignalOffset', round(time_delays / kgrid.dt));
+</pre>
+
+<a name="heading4"></a>
+<h2>Running the simulation</h2>
+
+<p>To use the defined array and source signals with <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>, the <code>getArrayBinaryMask</code> and <code>getDistributedSourceSignal</code> methods are used to create <code>source.p_mask</code> and <code>source.p</code>. Plots of the maximum pressure field when running the simulation at 3 PPW and 8 PPW are shown below.</p>
+
+<img vspace="5" hspace="5" src="images/example_at_linear_array_transducer_01.png" style="width:525px;height:394px;" alt="">
+<img vspace="5" hspace="5" src="images/example_at_linear_array_transducer_02.png" style="width:525px;height:394px;" alt="">
+
+</div></body></html>

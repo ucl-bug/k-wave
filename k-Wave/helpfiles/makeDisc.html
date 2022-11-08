@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>makeDisc :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>makeDisc</h1>
+<p class="purpose">Create a binary map of a filled disc within a 2D grid.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+disc = makeDisc(Nx, Ny, cx, cy, radius)
+disc = makeDisc(Nx, Ny, cx, cy, radius, plot_disc)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>makeDisc</code> creates a binary map of a filled disc within a two-dimensional grid (the disc position is denoted by 1's in the matrix with 0's elsewhere). A single grid point is taken as the disc centre thus the total diameter of the disc will always be an odd number of grid points. As the returned disc has a constant grid point radius, if used within a k-space grid where dx and dy are not equal, the disc will appear oval shaped. If part of the disc overlaps the grid edge, the rest of the disc will wrap to the grid edge on the opposite side. The plot that is displayed after calling <code>makeDisc(60, 100, 30, 50, 20, true);</code> is given below.</p>
+
+<img vspace="5" hspace="5" src="images/makeDisc_01.png" style="width:560px;height:420px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>Nx, Ny</code></td>
+        <td>size of the 2D grid [grid points]</td>
+    </tr>     
+    
+    <tr valign="top">
+        <td width = "150"><code>cx, cy</code></td>
+        <td>centre of the disc [grid points]</td>
+    </tr>     
+
+    <tr valign="top">
+        <td width = "150"><code>radius</code></td>
+        <td>disc radius [grid points]</td>
+    </tr>     
+    
+</table>
+    
+<h2>Optional Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>plot_disc</code></td>
+        <td>Boolean controlling whether the disc is plotted using <code><a href="matlab: doc imagesc">imagesc</a></code> (default = false)</td>
+    </tr>   
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>disc</code></td>
+        <td>2D binary map of a filled disc</td>
+    </tr>
+</table>
+
+<h2>Examples</h2>
+<ul>
+<li><a href="example_ivp_homogeneous_medium.html">Homogenous Propagation Medium</a></li>
+<li><a href="example_ivp_binary_sensor_mask.html">Using A Binary Sensor Mask</a></li> 
+<li><a href="example_ivp_heterogeneous_medium.html">Heterogeneous Propagation Medium</a></li> 
+<li><a href="example_ivp_saving_movie_files.html">Saving Movie Files</a></li>  
+<li><a href="example_ivp_recording_particle_velocity.html">Recording The Particle Velocity</a></li>   
+<li><a href="example_ivp_sensor_frequency_response.html">Defining A Gaussian Sensor Frequency Response</a></li> 
+<li><a href="example_ivp_comparison_modelling_functions.html">Comparison Of Modelling Functions</a></li>   
+<li><a href="example_ivp_setting_initial_gradient.html">Setting An Initial Pressure Gradient</a></li> 
+<li><a href="example_ivp_photoacoustic_waveforms.html">Photoacoustic Waveforms in 1D, 2D and 3D</a></li>
+<li><a href="example_sd_focussed_detector_2D.html">Focussed Detector in 2D</a></li>
+<li><a href="example_pr_2D_fft_line_sensor.html">2D FFT Reconstruction For A Line Sensor</a></li>  
+<li><a href="example_pr_2D_tr_line_sensor.html">2D Time Reversal For A Line Sensor</a></li>
+<li><a href="example_pr_2D_tr_directional_sensors.html">Image Reconstruction With Directional Sensors</a></li> 
+<li><a href="example_pr_2D_tr_bandlimited_sensors.html">Image Reconstruction With Bandlimited Sensors</a></li>
+<li><a href="example_pr_2D_tr_absorption_compensation.html">Image Reconstruction With Compensation For Acoustic Absorption</a></li> 
+<li><a href="example_na_controlling_the_pml.html">Controlling The Absorbing Boundary Layer</a></li>
+</ul>
+
+<h2>See Also</h2>
+
+<code><a href="makeCircle.html">makeCircle</a></code>, <code><a href="makeBall.html">makeBall</a></code>
+
+</div></body></html>

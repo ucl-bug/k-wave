@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>scanConversion :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>scanConversion</h1>
+<p class="purpose">Convert scan-lines in polar coordinates to a B-mode ultrasound image.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+b_mode = scanConversion(scan_lines, steering_angles, image_size, c0, dt)
+b_mode = scanConversion(scan_lines, steering_angles, image_size, c0, dt, resolution)
+
+</pre>
+
+<h2>Description</h2>
+<p><code>scanConversion</code> computes the remapping between a series of scan lines in polar coordinates (i.e., taken at different steering angles) to a B-mode ultrasound image in Cartesian coordinates suitable for display. The remapping is performed using bilinear interpolation via <code><a href="matlab: doc interp2">interp2</a></code>.</p>
+
+<img vspace="5" hspace="5" src="images/scanConversion_01.png" style="width:560px;height:273px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>scan_lines</code></td>
+        <td>matrix of scan lines indexed as (angle, time)</td>
+    </tr>
+	
+	<tr valign="top">
+        <td><code>steering_angles</code></td>
+        <td>array of scanning angles [degrees]</td>
+    </tr>
+	
+	<tr valign="top">
+        <td><code>image_size</code></td>
+        <td>[x, y] size of the desired output image [m]</td>
+    </tr>
+	
+	<tr valign="top">
+        <td><code>c0</code></td>
+        <td>sound speed in the medium [m/s]</td>
+    </tr>
+	
+	<tr valign="top">
+        <td><code>dt</code></td>
+        <td>time step used in the acquisition of the scan lines [s]</td>
+    </tr>
+	
+	<tr valign="top">
+        <td><code>resolution</code></td>
+        <td>optional input to set the resolution of the output images in pixels (default = [256, 256])</td>
+    </tr>
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>b_mode</code></td>
+        <td>the converted B-mode ultrasound image</td>
+    </tr>  
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="matlab: doc interp2">interp2</a></code>
+
+</div></body></html>

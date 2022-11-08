@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>getAlphaFilter :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>getAlphaFilter</h1>
+<p class="purpose">Create filter for <code>medium.alpha_filter</code>.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+alpha_filter = getAlphaFilter(kgrid, medium, filter_cutoff)
+alpha_filter = getAlphaFilter(kgrid, medium, filter_cutoff, taper_ratio)
+</pre>
+
+<h2>Description</h2>
+<p><code>getAlphaFilter</code> uses <code><a href="getWin.html">getWin</a></code> to create a Tukey window via rotation to pass to the <code>medium.alpha_filter</code> input field of the first order simulation functions (<code><a href="kspaceFirstOrder1D.html">kspaceFirstOrder1D</a></code>, <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>, and <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>). This parameter is used to regularise time reversal image reconstruction when absorption compensation is included.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>kgrid</code></td>
+        <td>k-Wave grid object returned by kWaveGrid</td>
+    </tr>  
+
+    <tr valign="top">
+        <td><code>medium</code></td>
+        <td>k-Wave medium structure</td>
+    </tr>    
+    
+    <tr valign="top">
+        <td><code>filter_cutoff</code></td>
+        <td>
+            <p>alpha_filter cutoff frequency [Hz], where</p>
+            <p><code>filter_cutoff = [f_all]</code> in 1-D<br/><code>filter_cutoff = [f_all]</code> or <code>[f_x, f_y]</code> in 2-D<br/><code>filter_cutoff = [f_all]</code> or <code>[f_x, f_y, f_z]</code> in 3-D</p>
+	    <p>Any of the filter_cutoff inputs may be set to <code>'max'</code> to set the cutoff frequency to the maximum frequency supported by the grid</p>
+        </td>
+    </tr>
+          
+</table>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>taper_ratio</code></td>
+        <td>taper ratio for Tukey Window (default = 0.5)</td>
+    </tr>     
+          
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>alpha_filter</code></td>
+        <td>filter</td>
+    </tr>      
+</table>
+
+<h2>Examples</h2>
+<ul>
+<li><a href="example_pr_2D_tr_absorption_compensation.html">Image Reconstruction With Compensation For Acoustic Absorption</a></li>              
+</ul>
+
+<h2>See Also</h2>
+
+<code><a href="getWin.html">getWin</a></code>, <code><a href="kspaceFirstOrder1D.html">kspaceFirstOrder1D</a></code>, <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>, <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>
+
+
+
+
+</div></body></html>

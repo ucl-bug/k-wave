@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>offGridPoints :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>offGridPoints</h1>
+<p class="purpose">Create a non-binary source mask from Cartesian points.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+mask = offGridPoints(kgrid, points, scale)
+mask = offGridPoints(kgrid, points, scale, ...)
+</pre>
+
+<h2>Description</h2>
+<p><code>offGridPoints</code> creates a non-binary source mask for defining source or sensor points not aligned with the Cartesian grid points defined by <code>kgrid</code>. For each point given in the input points, a band-limited interpolant (BLI) is computed corresponding to a point source at that location. The point sources are then summed to give the source mask.</p>
+    
+<p>The input scale can be used to scale the overall mask (e.g., to account for the relative density of the off-grid points compared to the density of <code>kgrid</code> grid points). If given as a vector the same length as points, it can also be used to scale the magnitude of the individual BLIs. If undefined, no scaling is used.</p>
+    
+<p>By default, the spatial extent of the BLI at each point is truncated at 10% of its maximum value. This tolerance can be controlled by using the optional input <code>'BLITolerance'</code>. If set to 0, the BLI is evaluated at all points on the grid. For low BLI tolerance values, it may be more efficient to set the value to 0, and then truncate the resulting mask.</p>
+    
+<p>The BLI is computed using a sinc function by default, but this is an approximation to the true BLI for a point source. The exact BLI can be used by setting the optional input <code>'BLIType'</code> to <code>'exact'</code> (this will also force <code>'BLITolerance'</code> to be zero).</p>
+    
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>kgrid</code></td>
+        <td>Object of the <code><a href="kWaveGrid.html">kWaveGrid</a></code> class defining the Cartesian and k-space grid fields.</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>points</code></td>
+        <td>List of Cartesian points defined by a matrix with dimensions <code>num_dims</code> by <code>num_points</code>.</td>
+    </tr>  
+    <tr valign="top">
+        <td width = "150"><code>scale</code></td>
+        <td>Scaling factor accounting for density of source points relative to the density of kgrid nodes.</td>
+    </tr>  
+</table>
+
+<h2>Optional Inputs</h2>
+
+<p>Optional 'string', value pairs that may be used to modify the default computational settings.</p>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="18%"><col width="18%"><col width="18%"><col width="46%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Input</th>
+            <th bgcolor="#B2B2B2">Valid Settings</th>
+            <th bgcolor="#B2B2B2">Default</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'BLITolerance'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>0.1</code></td>            
+            <td bgcolor="#F2F2F2">Scalar value controlling where the spatial extent of the BLI at each point is truncated as a portion of the maximum value.</td>
+        </tr>     
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'BLIType'</code></td>
+            <td bgcolor="#F2F2F2"><code>'sinc'</code><br/><code>'exact'</code></td>
+            <td bgcolor="#F2F2F2"><code>'sinc'</code></td>            
+            <td bgcolor="#F2F2F2">String controlling the BLI expression that is used for each point source. <code>'BLITolerance'</code> is ignored if <code>'exact'</code> is specified.</td>
+        </tr>   
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'MaskOnly'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether a logical mask is returned instead of the non-binary source mask, where the mask contains the extent of the off-grid source.</td>
+        </tr> 
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'SinglePrecision'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the mask is returned in single precision. If <code>'BLITolerance'</code> is greater than 0, then calculations are also performed in single precision to improve performance.</td>
+        </tr> 
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'WaitBar'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether a waitbar is displayed.</td>
+        </tr>             
+    </tbody>
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>mask</code></td>
+        <td>Non-binary source mask</td>
+    </tr>      
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="kWaveArray.html">kWaveArray</a></code>
+
+</div></body></html>

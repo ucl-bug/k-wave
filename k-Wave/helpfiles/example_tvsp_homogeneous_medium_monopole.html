@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Monopole Point Source In A Homogeneous Propagation Medium Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Monopole Point Source In A Homogeneous Propagation Medium Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Monopole Point Source In A Homogeneous Propagation Medium Example</h1>
+
+<p>This example provides a simple demonstration of using k-Wave for the simulation and detection of a time varying pressure source within a two-dimensional homogeneous propagation medium. It builds on the <a href="example_ivp_homogeneous_medium.html">Homogeneous Propagation Medium</a> and <a href="example_ivp_recording_particle_velocity.html">Recording The Particle Velocity</a> examples.</p> 
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_tvsp_homogeneous_medium_monopole.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_tvsp_homogeneous_medium_monopole']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+        <li><a href="#heading2">Defining the time varying pressure source</a></li>
+        <li><a href="#heading3">Source filtering</a></li>
+        <li><a href="#heading4">Running the simulation</a></li>
+    </ul>
+</div>			
+
+<a name="heading2"></a>
+<h2>Defining the time varying pressure source</h2>
+
+<p>In the <a href="k-wave_initial_value_problems.html">Initial Value Problem</a> examples, the initial pressure distribution is defined by assigning the source values to <code>source.p0</code>. To define a time varying pressure source, both a source mask (which defines which grid points belong to the source) and a time varying source input must be assigned. The source mask is defined by assigning a binary matrix (i.e., a matrix of 1's and 0's with the same dimensions as the computational grid) to <code>source.p_mask</code>, where the 1's represent the grid points that form part of the source. The time varying input signal is then assigned to <code>source.p</code> which is indexed as <code>source.p(source_point_index, time_index)</code>. The source can have any number of time points (it doesn't need to match <code>kgrid.Nt</code>) and can be defined as either a single time series (in which case the same time series is applied to all of the source points), or a matrix of time series following the source points using MATLAB's column-wise linear matrix index ordering. For example, if <code>source.p_mask</code> is defined as</p>
+
+<pre class="codeinput">
+source.p_mask =
+     0     1     0
+     1     0     1
+     1     0     1
+     0     1     0
+</pre>
+<p>the ordering of the source points within <code>source.p(source_point_index, time_index)</code> would follow</p>
+<pre class="codeinput">
+     0     3     0
+     1     0     5
+     2     0     6
+     0     4     0
+</pre>
+
+<p>In this example a sinusoidal input is assigned to a single source element to create an acoustic monopole.  The remaining input structures are defined in the same way as in previous examples.</p>
+
+<pre class="codeinput">
+<span class="comment">% define a single source point</span>
+source.p_mask = zeros(Nx, Ny);
+source.p_mask(end - Nx/4, Ny/2) = 1;
+
+<span class="comment">% define a time varying sinusoidal source</span>
+source_freq = 0.25e6;   <span class="comment">% [Hz]</span>
+source_mag = 2;         <span class="comment">% [Pa]</span>
+source.p = source_mag * sin(2 * pi * source_freq * kgrid.t_array);
+</pre>
+
+<a name="heading3"></a>
+<h2>Source filtering</h2>
+<p>The temporal sampling frequency of the input and output signals is dictated by the size of the time step, <code>kgrid.dt</code>. This means the highest frequency that can be represented in a time varying pressure or velocity input is the Nyquist limit of <code>1/(2*kgrid.dt)</code>. However, the highest temporal frequency that can be represented on the spatial grid is given by the Nyquist limit of <code>medium.sound_speed/(2*dx)</code> or <code>CFL/(2*kgrid.dt)</code>. For most simulations, the CFL number will be less than 1 (the <code>makeTime</code> method of the <code><a href="kWaveGrid.html">kWaveGrid</a></code> class uses a CFL of 0.3 by default). This means it is possible to define time varying pressure or velocity input signals that contain frequencies that cannot be represented on the grid, so care must be taken that maximum frequency supported by the grid is not exceeded.</p>
+
+<p>The maximum frequency supported by the grid is reported on the command line at the beginning of each simulation. Input signals can be automatically restricted to the range of supported frequencies by using the function <code><a href="filterTimeSeries.html">filterTimeSeries</a></code>. This applies a finite impulse response (FIR) filter designed using the Kaiser windowing method. The filter can be set to either zero or linear phase as required.</p>
+
+<pre class="codeinput">
+<span class="comment">% filter the source to remove high frequencies not supported by the grid</span>
+source.p = filterTimeSeries(kgrid, medium, source.p);
+</pre>
+
+<a name="heading4"></a>
+<h2>Running the simulation</h2>
+
+<p>In the <a href="example_ivp_recording_particle_velocity.html">Recording The Particle Velocity Example</a>, an input for <code>sensor.record</code> was defined to record both the pressure and velocity fields at the sensor points defined by <code>sensor.mask</code>. In this example, the final pressure field within the computational domain is also returned by setting <code>sensor.record</code> to <code>{'p', 'p_final'}</code>. Unlike the outputs for pressure and velocity, the outputs for <code>'p_final'</code> and <code>'u_final'</code> are returned over the complete computational grid. In 2D they are indexed as <code>(nx, ny)</code>. A plot of the input time series driving the source point along with the acoustic pressure recorded at the sensor point and the final pressure field is given below. </p>
+
+<pre class="codeinput">
+<span class="comment">% define the acoustic parameters to record</span>
+sensor.record = {'p', 'p_final'};
+
+<span class="comment">% run the simulation</span>
+sensor_data = kspaceFirstOrder2D(kgrid, medium, source, sensor);
+</pre>
+
+<img vspace="5" hspace="5" src="images/example_tvsp_homogeneous_medium_monopole_01.png" style="width:560px;height:420px;" alt="">
+<img vspace="5" hspace="5" src="images/example_tvsp_homogeneous_medium_monopole_02.png" style="width:560px;height:420px;" alt="">
+
+</div></body></html>

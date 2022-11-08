@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Defining An Ultrasound Transducer Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Defining An Ultrasound Transducer Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Defining An Ultrasound Transducer Example</h1>
+
+<p>In principle, simulations using diagnostic ultrasound transducers can be run following the examples given under <a href="k-wave_time_varying_source_problems.html">Time Varying Source Problems</a>. However, assigning the grid points that belong to each transducer element, and then assigning the correctly delayed input signals to each point of each element can be a laborious task. For this purpose, a special input object created using the <code><a href="kWaveTransducer.html">kWaveTransducer</a></code> class can be substituted for either the <code>source</code> or <code>sensor</code> inputs (or both). This example illustrates how this object is created and can be used to simulate the field produced by an ultrasound transducer.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_us_defining_transducer.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_us_defining_transducer']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<p>Note, transducer inputs can only be used in 3D simulations and thus these examples are inherently memory and CPU intensive. Whilst the grid sizes and source frequencies used in the examples have been scaled down for the purpose of demonstrating the capabilities of the toolbox (the inputs do not necessarily represent realistic ultrasound settings), they still require a comparatively large amount of computational resources. To reduce this load, it is advised to run the simulations in single precision by setting the optional input <code>'DataCast'</code> to <code>'single'</code>. Similarly, if you have access to a recent model GPU and the MATLAB Parallel Computing Toolbox R2012a or later, the simulation times can be significantly reduced by setting <code>'DataCast'</code> to <code>'gpuArray-single'</code>. Alternatively, the simulations can be run using the optimised C++ code. See the k-Wave Manual for more information.</p> 
+
+<p>The creation of a <code>kWaveTransducer</code> object will only work in versions of MATLAB recent enough to support user defined classes.</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Defining the input signal</a></li>
+		<li><a href="#heading3">Defining the k-Wave Transducer</a></li>
+		<li><a href="#heading4">Running the simulation</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Defining the input signal</h2>
+
+<p>If the transducer is to be used as an ultrasound source, the input signal used to drive the transducer elements must be defined before the transducer is created. A single input signal is used to drive the transducer, with the beamforming delays later calculated automatically depending on the user settings for the transducer focus distance and steering angle. The input signal can be any 1D vector. Here, this is created using <code><a href="toneBurst.html">toneBurst</a></code>. This creates a single frequency sinusoid with a given number of cycles windowed by a Gaussian. Note, the properties of the input signal are dependent on the time step used in the simulation, so <code>kgrid.t_array</code> must be defined before creating the input signal.</p>
+
+<pre class="codeinput">
+<span class="comment">% define properties of the input signal</span>
+source_strength = 1e6;          <span class="comment">% [MPa]</span>
+tone_burst_freq = 0.5e6;        <span class="comment">% [Hz]</span>
+tone_burst_cycles = 5;
+
+<span class="comment">% create the input signal using toneBurst</span>
+input_signal = toneBurst(1/kgrid.dt, tone_burst_freq, tone_burst_cycles);
+</pre>
+
+<p>In the current version of k-Wave, only linear (flat) transducers are supported. In this case, the input signal is assigned to the particle velocity in the direction the transducer is facing (<code>source.ux</code> if the input was being assigned manually). Consequently, the input signal must be scaled to be in units of velocity rather than pressure.</p>
+
+<pre class="codeinput">
+<span class="comment">% scale the source magnitude by the source_strength divided by the
+% impedance (the source is assigned to the particle velocity)</span>
+input_signal = (source_strength ./ (medium.sound_speed * medium.density)) .* input_signal;
+</pre>
+
+<p>A plot of the resulting input signal and its frequency spectrum is given below. The more cycles in the tone burst, the narrower the frequency spectrum becomes about the central frequency.</p>
+
+<img vspace="5" hspace="5" src="images/example_us_defining_transducer_01.png" style="width:560px;height:420px;" alt="">
+
+<p>Because shifted (delayed) versions of the input signal are used to control the directionality and focus of the signal from the transducer, extra zeros must be appended to the start and end of the input signal. The number of zeros is checked by k-Wave and additional zeros are prepended and appended automatically if required. It is also possible to fix the number of added zeros by defining <code>transducer.steering_angle_max</code>. In this case the number of added zeros is calculated based on the maximum steering angle. This behaviour is useful if forming an ultrasound image by steering the beam through a range of angles.</p>
+
+<a name="heading3"></a>
+<h2>Defining the k-Wave transducer</h2>
+
+<p>After the input signal has been created, the transducer can then be defined. This is accomplished by creating an object of the <code><a href="kWaveTransducer.html">kWaveTransducer</a></code> class. The characteristics of the transducer are dependent on a number of properties, some of which are fixed when the transducer is created (for example the position of the transducer and the number of elements) and some of which can be defined or modified at any time (for example the steering angle or focus distance). Because of the large number of input combinations, the user defined input properties are appended as fields to an input structure. This structure can be given any name. In this example, both the input structure and the created <code><a href="kWaveTransducer.html">kWaveTransducer</a></code> object are called <code>transducer</code>.</p> 
+
+<p>First, the physical properties of the transducer are defined, including the number of elements and their size. The sizes are all given in units of grid points which means the physical size is also dependent on the values of <code>kgrid.dx</code>, <code>kgrid.dy</code>, and <code>kgrid.dz</code>.</p>
+
+<pre class="codeinput">
+<span class="comment">% physical properties of the transducer</span>
+transducer.number_elements = 72;    <span class="comment">% total number of transducer elements</span>
+transducer.element_width = 1;       <span class="comment">% width of each element [grid points]</span>
+transducer.element_length = 12;     <span class="comment">% length of each element [grid points]</span>
+transducer.element_spacing = 0;     <span class="comment">% spacing (kerf width) between the elements [grid points]</span>
+transducer.radius = inf;            <span class="comment">% radius of curvature of the transducer [m]</span>
+</pre>
+
+<p>The <code>radius</code> input will be used in future versions of k-Wave to create curved transducers. In the current version, only linear (flat) transducers are supported, so this variable must be set to <code>inf</code> or not defined (this will default to <code>inf</code>). A schematic illustrating some of the common terminology used to describe the physical properties of ultrasound transducers is given below.</p>
+
+<img vspace="5" hspace="5" src="images/example_us_defining_transducer_02.png" style="width:688px;height:297px;" alt="">
+
+<p>The transducer is defined within the computational grid such that the front face of the transducer is pointing towards the positive x-direction. The position of the transducer within the grid is set using the <code>position</code> field which defines the position of the nearest grid point belonging to the transducer relative to the grid origin. For example, if this is set to <code>(1, 1, 1)</code>, the corner of the transducer will be positioned flush with the grid origin. In the current example, the position is defined such that the transducer is centered within the computational grid.</p>
+
+<pre class="codeinput">
+<span class="comment">% calculate the width of the transducer in grid points</span>
+transducer_width = transducer.number_elements * transducer.element_width ...
+    + (transducer.number_elements - 1) * transducer.element_spacing;
+
+<span class="comment">% use this to position the transducer in the middle of the computational grid</span>
+transducer.position = round([1, Ny/2 - transducer_width/2, Nz/2 - transducer.element_length/2]);
+</pre>
+
+<p>Next, the dynamic properties of the transducer are defined. These control the characteristics of the transducer output and can be modified at any stage after the transducer has been created. If any of these parameters are not defined by the user, they are given default values (see <code><a href="kWaveTransducer.html">kWaveTransducer</a></code> for a list of these defaults). The sound speed, focus distance, and steering angle are used to calculate the beamforming delays based on standard geometric expressions. The elevation focus distance is used to mimic the focussing behaviour of real transducers in which an acoustic lens is used to focus the beam in the out of plane (x-z) or elevation direction. Within k-Wave, this behaviour is modelled by using an additional set of beamforming delays across the grid points within each element.</p>
+
+<pre class="codeinput">
+<span class="comment">% properties used to derive the beamforming delays</span>
+transducer.sound_speed = 1540;                  <span class="comment">% sound speed [m/s]</span>
+transducer.focus_distance = 20e-3;              <span class="comment">% focus distance [m]</span>
+transducer.elevation_focus_distance = 19e-3;    <span class="comment">% focus distance in the elevation plane [m]</span>
+transducer.steering_angle = 0;                  <span class="comment">% steering angle [degrees]</span>
+</pre>
+
+<p>The apodization (this controls the relative weights assigned to the signals driving each of the active transducer elements) is defined as a string corresponding to any valid window type supported by <code><a href="getWin.html">getWin</a></code>. It can also be manually defined as a 1D vector of relative weights applied to the active transducer elements, or not defined (this defaults to <code>'Rectangular'</code>). The transmit apodization is applied when the transducer is used as a source, while the receive apodization is applied when the transducer is used as a sensor (see <a href="example_us_transducer_as_sensor.html">Using An Ultrasound Transducer As A Sensor Example</a>).</p>
+
+<pre class="codeinput">
+<span class="comment">% apodization</span>
+transducer.transmit_apodization = 'Rectangular';    
+transducer.receive_apodization = 'Rectangular';
+</pre>
+
+<p>While typical diagnostic ultrasound transducers may have 128 transducer elements, frequently only a small subset of these are used to transmit and receive ultrasound signals at any particular time. The transducer elements that are currently active can be defined using the <code>active_elements</code> field which is assigned as a 1D binary mask. In this example, the central 32 elements are set to be active.</p>
+
+<pre class="codeinput">
+<span class="comment">% define the transducer elements that are currently active</span>
+transducer.active_elements = zeros(transducer.number_elements, 1);
+transducer.active_elements(21:52) = 1;
+</pre>
+
+<p>Finally, the input signal defined in the previous section is also added to the input structure, and the transducer is created using <code><a href="kWaveTransducer.html">kWaveTransducer</a></code>. This returns an object of the <code><a href="kWaveTransducer.html">kWaveTransducer</a></code> class.</p>
+
+<pre class="codeinput">
+<span class="comment">% append input signal used to drive the transducer</span>
+transducer.input_signal = input_signal;
+
+<span class="comment">% create the transducer using the defined settings</span>
+transducer = kWaveTransducer(kgrid, transducer);
+</pre>
+
+<p>Note, in this example, both the input structure and the output object are given the same name. While they share many of the same properties, these are not the same (the former is overwritten by the latter in the final line above). The input is just a holder for all the properties that have been defined, while the output is an object of the <code><a href="kWaveTransducer.html">kWaveTransducer</a></code> class which has additional properties and methods. As an example, a summary of the properties of the transducer can be printed to the command line by calling the method <code>transducer.properties</code>. A voxel plot of the transducer can also be automatically generated by calling <code>transducer.plot</code>. A plot of the transducer created in the current example is given below.</p>
+
+<img vspace="5" hspace="5" src="images/example_us_defining_transducer_03.png" style="width:560px;height:420px;" alt="">
+
+<a name="heading4"></a>
+<h3 class="title">Running the simulation</h3>
+
+<p>Once the transducer has been defined, the simulation is run by calling <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>. In this example, the transducer is used to replace the <code>source</code> input, with the remaining inputs defined in the normal fashion. Here, a homogeneous medium is defined and the <code>sensor</code> input is given as a binary mask with three sensor positions along the transducer axis. Because the amplitude of the ultrasound waves generated by most ultrasound transducers is sufficiently high to generate nonlinear effects, a value for <code>medium.BonA</code> (the parameter of nonlinearity) should also be set. When this value is defined, k-Wave includes nonlinear effects in the governing equations. A snapshot of the simulation is given below.</p>
+
+<pre class="codeinput">
+<span class="comment">% run the simulation</span>
+[sensor_data] = kspaceFirstOrder3D(kgrid, medium, transducer, sensor, input_args{:});
+</pre>
+
+<img vspace="5" hspace="5" src="images/example_us_defining_transducer_04.png" style="width:560px;height:420px;" alt="">
+
+<p>The recorded sensor data is returned as normal. A plot of the recorded time series along with their amplitude spectrums is given below. Notice some of the energy at the source frequency has been transferred to the second harmonic due to nonlinear effects. In practice, the generation of higher frequency harmonics via nonlinearity is delicately balanced with their absorption, and thus the shape of the simulated waveforms will be dependent on the values set for these parameters.</p>
+
+<img vspace="5" hspace="5" src="images/example_us_defining_transducer_05.png" style="width:560px;height:420px;" alt="">
+<img vspace="5" hspace="5" src="images/example_us_defining_transducer_06.png" style="width:560px;height:420px;" alt="">
+
+</div></body></html>

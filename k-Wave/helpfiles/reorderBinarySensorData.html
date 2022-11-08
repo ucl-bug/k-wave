@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>reorderBinarySensorData :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>reorderBinarySensorData</h1>
+<p class="purpose">Reorder data from a binary sensor mask.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+data = reorderBinarySensorData(data, reorder_index)
+</pre>
+
+<h2>Description</h2>
+<p><code>reorderBinarySensorData</code> reorders sensor data returned by the k-Wave simulation functions (e.g., <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code> and <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>) according to a given reordering index. This is useful when using a binary sensor mask in place of a Cartesian sensor mask with nearest neighbour interpolation (Cartesian sensor masks are not supported by the C++ codes).</p>
+
+<p>Example syntax (assuming <code>sensor.record</code> is not defined)</p>
+
+<pre class="codeinput">
+<span class="comment">% convert Cartesian sensor mask to binary sensor mask</span>
+[sensor.mask, ~, reorder_index] = cart2grid(kgrid, sensor.mask);
+
+<span class="comment">% run simulation</span>
+sensor_data = kspaceFirstOrder3DC(kgrid, medium, source, sensor)
+
+<span class="comment">% reorder output to order used in Cartesian sensor mask</span>
+sensor_data = reorderBinarySensorData(sensor_data, reorder_index);
+</pre>
+
+<p>If recording multiple outputs, then pass the individual outputs (e.g., <code>sensor_data.ux</code>) to <code>reorderBinarySensorData</code>.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>data</code></td>
+        <td>sensor data returned by the k-Wave simulation functions indexed as <code>(sensor_point_index, time_index)</code></td>
+    </tr>
+	
+    <tr valign="top">
+        <td width = "150"><code>reorder_index</code></td>
+        <td>order of the Cartesian sensor points in the binary mask (this is returned by <code><a href="cart2grid.html">cart2grid</a></code>)</td>
+    </tr>   
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>data</code></td>
+        <td>reordered data according to the order of the sensor points defined in the original Cartesian sensor mask</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="reorderSensorData.html">reorderSensorData</a></code>, <code><a href="unmaskSensorData.html">unmaskSensorData</a></code>
+
+</div></body></html>

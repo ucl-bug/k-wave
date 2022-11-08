@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>fwhm :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>fwhm</h1>
+<p class="purpose">Compute the full width at half maximum.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+fwhm_val = fwhm(f, x)
+fwhm_val = fwhm(f, x, plot_fwhm)
+[fwhm_val, fwhm_pos] = fwhm(f, x)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>fwhm</code> calculates the Full Width at Half Maximum (FWHM) of a positive 1D input function f(x) with spacing given by x.</p>
+
+<p>For example, running the code</p>
+
+<pre class="codeinput">
+x = -pi/2:pi/20:pi/2;
+f = cos(x); 
+fwhm(f, x, true);
+</pre>
+
+<p>produces the output</p>
+
+<img vspace="5" hspace="5" src="images/fwhm_01.png" style="width:560px;height:420px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>f</code></td>
+        <td>f(x)</td>
+    </tr>
+
+    <tr valign="top">
+        <td width = "150"><code>x</code></td>
+        <td>x data or dx</td>
+    </tr> 
+    
+</table>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>plot_fwhm</code></td>
+        <td>Boolean controlling whether a plot of the function and FWHM is produced</td>
+    </tr>     
+    
+</table>
+    
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>fwhm_val</code></td>
+        <td>FWHM of f(x)</td>
+    </tr>
+	
+    <tr valign="top">
+        <td width = "150"><code>fwhm_pos</code></td>
+        <td>position of leading and trailing edges</td>
+    </tr>	
+</table>
+
+
+
+
+</div></body></html>

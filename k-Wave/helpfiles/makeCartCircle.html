@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>makeCartCircle :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>makeCartCircle</h1>
+<p class="purpose">Create a 2D Cartesian circle or arc.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+circle = makeCartCircle(radius, num_points)
+circle = makeCartCircle(radius, num_points, center_pos)
+circle = makeCartCircle(radius, num_points, center_pos, arc_angle)
+circle = makeCartCircle(radius, num_points, center_pos, arc_angle, plot_circle)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>makeCartCircle</code> creates a 2 x <code>num_points</code> array of the Cartesian coordinates of points evenly distributed over a circle or arc (if <code>arc_angle</code> is given). The plot that is displayed after calling <code>makeCartCircle(10, 100, [0,0], (215/180)*pi, true);</code> is given below.</p>
+
+<img vspace="5" hspace="5" src="images/makeCartCircle_01.png" style="width:560px;height:420px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>radius</code></td>
+        <td>circle radius [m]</td>
+    </tr>     
+    <tr valign="top">
+        <td width = "150"><code>num_points</code></td>
+        <td>number of points on the circle</td>        
+    </tr>           
+</table>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>center_pos</code></td>
+        <td>[x, y] position of the circle center [m] (default = [0, 0])</td>        
+    </tr>  
+    <tr valign="top">
+        <td width = "150"><code>arc_angle</code></td>
+        <td>arc angle for incomplete circle [radians] (default = 2*pi)</td>
+    </tr>     
+    <tr valign="top">
+        <td width = "150"><code>plot_circle</code></td>
+        <td>Boolean controlling whether the Cartesian points are plotted using <code><a href="matlab: doc plot">plot</a></code> (default = false)</td>
+    </tr>     
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>circle</code></td>
+        <td>2 x <code>num_points</code> array of Cartesian points</td>
+    </tr>
+</table>
+
+<h2>Examples</h2>
+<ul>
+<li><a href="example_ivp_homogeneous_medium.html">Homogenous Propagation Medium</a></li>
+<li><a href="example_ivp_loading_external_image.html">Loading External Image Maps</a></li> 
+<li><a href="example_ivp_heterogeneous_medium.html">Heterogeneous Propagation Medium</a></li>
+<li><a href="example_ivp_saving_movie_files.html">Saving Movie Files</a></li>   
+<li><a href="example_ivp_sensor_frequency_response.html">Defining A Gaussian Sensor Frequency Response</a></li> 
+<li><a href="example_ivp_comparison_modelling_functions.html">Comparison Of Modelling Functions</a></li>   
+<li><a href="example_sd_directivity_modelling_2D.html">Modelling Sensor Directivity in 2D</a></li>  
+<li><a href="example_sd_directivity_modelling_3D.html">Modelling Sensor Directivity in 3D</a></li> 
+<li><a href="example_pr_2D_tr_circular_sensor.html">2D Time Reversal For A Circular Sensor</a></li>
+<li><a href="example_pr_2D_tr_absorption_compensation.html">Image Reconstruction With Compensation For Acoustic Absorption</a></li> 
+<li><a href="example_na_controlling_the_pml.html">Controlling The Absorbing Boundary Layer</a></li>
+<li><a href="example_na_optimising_performance.html">Optimising k-Wave Performance</a></li> 
+</ul>
+
+<h2>See Also</h2>
+
+<code><a href="cart2grid.html">cart2grid</a></code>, <code><a href="makeCartSphere.html">makeCartSphere</a></code>, <code><a href="makeCircle.html">makeCircle</a></code>
+
+</div></body></html>

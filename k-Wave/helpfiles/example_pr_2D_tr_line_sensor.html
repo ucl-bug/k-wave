@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>2D Time Reversal Reconstruction For A Line Sensor Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="2D Time Reversal Reconstruction For A Line Sensor Example.">
+</head>
+
+<body><div class="content">
+
+<h1>2D Time Reversal Reconstruction For A Line Sensor Example</h1>
+
+<p>This example demonstrates the use of k-Wave for the time-reversal reconstruction of a two-dimensional photoacoustic wave-field recorded over a linear array of sensor elements. The sensor data is simulated and then time-reversed using <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>. It builds on the <a href="example_pr_2D_tr_line_sensor.html">2D FFT Reconstruction For A Line Sensor Example</a>.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_pr_2D_TR_line_sensor.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_pr_2D_TR_line_sensor']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Performing the time-reversal reconstruction</a></li>
+		<li><a href="#heading3">Comparison with the FFT reconstruction</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Performing the time-reversal reconstruction</h2>
+
+<p>The first-order k-Wave functions already described for the simulation of photoacoustic wave propagation can also be used for photoacoustic image reconstruction by assigning the time varying pressure recorded over the detector array to <code>sensor.time_reversal_boundary_data</code>. This pressure is then enforced, in time reversed order, as a Dirichlet boundary condition over the given sensor mask. If the sensor mask is given as a set of Cartesian coordinates then the sensor data, indexed as <code>sensor_data(sensor_position, time)</code>, must be given in the same order. An equivalent grid-based sensor mask computed using nearest neighbour interpolation is then used to enforce the boundary condition within the computational grid at each time step. If the sensor mask is instead given as a binary grid, the sensor data must be ordered using MATLAB's standard column-wise linear matrix indexing.</p>
+
+<p>By passing the sensor data returned from a k-space forward simulation directly to <code>sensor.time_reversal_boundary_data</code> and then calling <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>, it is straightforward to simulate the measurement and reconstruction process (note, in this simple example the 'inverse crime' is committed in which the same numerical parameters are used for both simulation and reconstruction). When using the simulation functions in time reversal mode, the array of time points <code>kgrid.t_array</code> must be explicitly defined. This array is created here using the <code>makeTime</code> method of the <code><a href="kWaveGrid.html">kWaveGrid</a></code> class.</p>
+
+<pre class="codeinput">
+<span class="comment">% run the simulation</span>
+sensor_data = kspaceFirstOrder2D(kgrid, medium, source, sensor, input_args{:});
+
+<span class="comment">% reset the initial pressure</span>
+source.p0 = 0;
+
+<span class="comment">% assign the time reversal data</span>
+sensor.time_reversal_boundary_data = sensor_data;
+
+<span class="comment">% run the time reversal reconstruction</span>
+p0_recon = kspaceFirstOrder2D(kgrid, medium, source, sensor, input_args{:});
+</pre>
+
+<p>The initial photoacoustic pressure distribution used in the simulation, and the reconstructed initial pressure distribution using time-reversal are shown below.</p>
+
+<img vspace="5" hspace="5" src="images/example_pr_2D_tr_line_sensor_01.png" style="width:560px;height:273px;" alt="">
+<img vspace="5" hspace="5" src="images/example_pr_2D_tr_line_sensor_02.png" style="width:560px;height:273px;" alt="">
+    
+<a name="heading2"></a>
+<h2>Comparison with the FFT reconstruction</h2>
+    
+<p>It is useful to compare the performance of the time-reversal and FFT reconstruction algorithms. The command line output of the two functions are given below. It is clear that the time-reversal reconstruction takes significantly longer to compute; more than an order of magnitude for this example, even using the slower <code>'*linear'</code> interpolation and a non 2^N grid size for the FFT comparison. However, in contrast to the one-step FFT reconstruction, time-reversal can account for a heterogeneous propagation medium, acoustic attenuation, and a sensor mask of arbitrary shape.</p>
+
+<pre class="codeinput">
+Running k-Wave simulation...
+  start time: 04-Jun-2017 09:00:15
+  reference sound speed: 1500m/s
+  time reversal mode
+  dt: 20ns, t_end: 15.54us, time steps: 778
+  input grid size: 88 by 216 grid points (8.8 by 21.6mm)
+  maximum supported frequency: 7.5MHz
+  expanding computational grid...
+  computational grid size: 128 by 256 grid points
+  precomputation completed in 0.1263s
+  starting time loop...
+  estimated simulation time 4.3667s...
+  simulation completed in 4.5085s
+  total computation time 4.669s
+Running k-Wave line reconstruction...
+  grid size: 216 by 778 grid points
+  interpolation mode: *linear
+  applying positivity condition...
+  computation completed in 0.062355s
+</pre>
+
+<p>A profile through the larger disc, including a comparison with the FFT reconstruction, is also given. The time-reversal reconstruction has a slightly improved signal to noise ratio, although, it is important to note that the inverse crime has been committed.</p>
+
+<img vspace="5" hspace="5" src="images/example_pr_2D_tr_line_sensor_03.png" style="width:560px;height:420px;" alt="">
+
+</div></body></html>

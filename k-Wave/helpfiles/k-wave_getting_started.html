@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Getting Started (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Getting Started.">
+</head>
+
+<body>
+<div class="content">
+
+<h1>Getting Started</h1>
+	
+<h2>Run the First Example</h2>
+
+<p>Regardless of your intended application for the k-Wave Toolbox, the easiest way to get started is to work through the <a href="k-wave_initial_value_problems.html">Initial Value Problems</a> examples, in particular the <a href="example_ivp_homogeneous_medium.html">Homogeneous Propagation Medium</a> example. This gives a step-by-step introduction to the way the simulation functions within k-Wave work. Each of the examples comes with an accompanying m-file which can be opened or run from within the help menu. At the top of the help file for each example, links to earlier examples are also given ("It builds on..."). Components of the example that have been discussed in these earlier examples will generally not be explained again in detail.</p>
+
+<p>After working through the <a href="k-wave_initial_value_problems.html">Initial Value Problems</a>, further examples are available specific to particular areas of interest, for example <a href="k-wave_time_varying_source_problems.html">Time Varying Source Problems</a> or <a href="k-wave_photoacoustic_image_reconstruction.html">Photoacoustic Image Reconstruction</a>. Additional details can also be found within the help files for each function. These are listed both by <a href="k-wave_function_ref_cat.html">category</a> as well as in <a href="k-wave_function_ref_alph.html">alphabetical order</a>.</p> 
+
+<p>There is additional information on the functions and algorithms used in k-Wave in the k-Wave Manual (this can be downloaded from <a href="http://www.k-wave.org/documentation.php">www.k-wave.org/documentation.php</a>). The manual includes a general introduction to the governing equations and numerical methods used in the main simulation functions in k-Wave. It also provides a basic overview of the software architecture and a number of canonical examples. The manual has a different emphasis to the MATLAB documentation, thus it can be beneficial when starting with k-Wave to read both in parallel.</p>
+
+<h2>Build Your Own Simulation</h2>
+
+<p>After running the various <a href="k-wave_examples.html">examples</a> included within the k-Wave toolbox, it is straightforward to build your own simulation by using the existing examples as templates. To get started:</p>
+
+<p>
+   <ul>
+        <li>open the <a href="k-wave_examples.html">list of examples</a>,</li>
+        <li>click on an example, eg. the <a href="example_ivp_homogeneous_medium.html">Homogeneous Propagation Medium Example</a>,</li>
+        <li>click <a href="matlab:edit([getkWavePath('examples') 'example_ivp_homogeneous_medium.m']);" target="_top">open the file</a> to open the m-file in the MATLAB Editor, and</li>
+        <li>save the file with a new name (in a directory that is on the MATLAB path) and make the changes you want.</li>
+    </ul>
+</p>
+
+<p>For example, you could:</p>
+
+<p>
+   <ul>
+        <li>change the size of the simulation grid,</li>
+	<li>change the properties of the propagation medium,</li>
+        <li>define a new initial pressure distribution,</li>
+	<li>change the shape or type of sensor used to collect the data, or</li>
+        <li>modify the default visualisation and computation options.</li>
+    </ul>
+</p>
+	
+<h2>Troubleshooting</h2>
+
+<p>If you are unable to run the examples or see the help files included within the k-Wave Toolbox, first check that the k-Wave Toolbox has been added to the MATLAB path. To add a directory to the MATLAB path, either use the <a href="matlab: doc addpath" target="_top"><code>addpath</code></a> command, type <a href="matlab: doc pathtool" target="_top"><code>pathtool</code></a> on the command line, or select "Set Path" from the menus in the main MATLAB window. In each case, you should select the root k-Wave Toolbox folder to add to the path. Depending on your version of MATLAB, you may need to restart MATLAB before the help files will appear in the help browser.</p>
+
+<p>If you are encountering problems using specific combinations of inputs using Octave or older versions of MATLAB, try turning the display off by setting the optional input parameter <code>'PlotSim'</code> to <code>false</code>, using a binary sensor mask or setting <code>'CartInterp'</code> to <code>'nearest'</code>, and using the default settings for <code>'DataCast'</code> (optional inputs are given as <code>'string', value</code> pairs following the <code>kgrid</code>, <code>medium</code>, <code>source</code>, and <code>sensor</code> inputs).</p>
+
+<p>If you are still having problems go to the online <a href="http://www.k-wave.org/forum/">k-Wave User Forum</a> and search for an answer or post a question.</p>	
+	
+</div></body></html>

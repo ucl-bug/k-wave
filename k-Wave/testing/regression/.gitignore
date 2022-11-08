@@ -1,0 +1,2 @@
+# Ignore regression data files
+*.mat

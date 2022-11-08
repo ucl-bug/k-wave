@@ -1,0 +1,557 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>kspaceFirstOrder2D :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>kspaceFirstOrder2D</h1>
+<p class="purpose">2D time-domain simulation of wave propagation.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+sensor_data = kspaceFirstOrder2D(kgrid, medium, source, sensor)
+sensor_data = kspaceFirstOrder2D(kgrid, medium, source, sensor, ...) 
+</pre>
+
+<h2>Description</h2>
+<p><code>kspaceFirstOrder2D</code> simulates the time-domain propagation of compressional waves through a two-dimensional homogeneous or heterogeneous acoustic medium given four input structures: <code>kgrid</code>, <code>medium</code>, <code>source</code>, and <code>sensor</code>. The computation is based on a first-order k-space model which accounts for power law absorption and a heterogeneous sound speed and density. If <code>medium.BonA</code> is specified, cumulative nonlinear effects are also modelled. At each time-step (defined by <code>kgrid.dt</code> and <code>kgrid.Nt</code> or <code>kgrid.t_array</code>), the acoustic field parameters at the positions defined by <code>sensor.mask</code> are recorded and stored. If <code>kgrid.t_array</code> is set to <code>'auto'</code>, this array is automatically generated using the <code>makeTime</code> method of the <code><a href="kWaveGrid.html">kWaveGrid</a></code> class. An anisotropic absorbing boundary layer called a perfectly matched layer (PML) is implemented to prevent waves that leave one side of the domain being reintroduced from the opposite side (a consequence of using the FFT to compute the spatial derivatives in the wave equation). This allows infinite domain simulations to be computed using small computational grids.</p>
+
+<p>For a homogeneous medium the formulation is exact and the time-steps are only limited by the effectiveness of the perfectly matched layer. For a heterogeneous medium, the solution represents a leap-frog pseudospectral method with a k-space correction that improves the accuracy of computing the temporal derivatives. This allows larger time-steps to be taken for the same level of accuracy compared to conventional pseudospectral time-domain methods. The computational grids are staggered both spatially and temporally.</p>
+
+<p>An initial pressure distribution can be specified by assigning a matrix (the same size as the computational grid) of arbitrary numeric values to <code>source.p0</code>. A time varying pressure source can similarly be specified by assigning a binary matrix (i.e., a matrix of 1's and 0's with the same dimensions as the computational grid) to <code>source.p_mask</code> where the 1's represent the grid points that form part of the source. The time varying input signals are then assigned to <code>source.p</code>. This can be a single time series (in which case it is applied to all source elements), or a matrix of time series following the source elements using MATLAB's standard column-wise linear matrix index ordering. A time varying velocity source can be specified in an analogous fashion, where the source location is specified by <code>source.u_mask</code>, and the time varying input velocity is assigned to <code>source.ux</code> and <code>source.uy</code>.</p>
+
+<p>The field values are returned as arrays of time series at the sensor locations defined by <code>sensor.mask</code>. This can be defined in three different ways. (1) As a binary matrix (i.e., a matrix of 1's and 0's with the same dimensions as the computational grid) representing the grid points within the computational grid that will collect the data. (2) As the grid coordinates of two opposing corners of a rectangle in the form [x1; y1; x2; y2]. This is equivalent to using a binary sensor mask covering the same region, however, the output is indexed differently as discussed below. (3) As a series of Cartesian coordinates within the grid which specify the location of the pressure values stored at each time step. If the Cartesian coordinates don't exactly match the coordinates of a grid point, the output values are calculated via interpolation. The Cartesian points must be given as a 2 by N matrix corresponding to the x and y positions, respectively, where the Cartesian origin is assumed to be in the center of the grid. If no output is required, the <code>sensor</code> input can be replaced with an empty array <code>[]</code>.</p>
+
+<p>If <code>sensor.mask</code> is given as a set of Cartesian coordinates, the computed <code>sensor_data</code> is returned in the same order. If <code>sensor.mask</code> is given as a binary matrix, <code>sensor_data</code> is returned using MATLAB's standard column-wise linear matrix index ordering. In both cases, the recorded data is indexed as <code>sensor_data(sensor_point_index, time_index)</code>. For a binary sensor mask, the field values at a particular time can be restored to the sensor positions within the computation grid using <code><a href="unmaskSensorData.html">unmaskSensorData</a></code>. If <code>sensor.mask</code> is given as a list of opposing corners of a rectangle, the recorded data is indexed as <code>sensor_data(rect_index).p(x_index, y_index, time_index)</code>, where <code>x_index</code> and <code>y_index</code> correspond to the grid index within the rectangle, and <code>rect_index</code> corresponds to the number of rectangles if more than one is specified.</p>
+
+<p>By default, the recorded acoustic pressure field is passed directly to the output <code>sensor_data</code>. However, other acoustic parameters can also be recorded by setting <code>sensor.record</code> to a cell array of the form <code>{'p', 'u', 'p_max', ...}</code>. For example, both the particle velocity and the acoustic pressure can be returned by setting <code>sensor.record = {'p', 'u'}</code>. If <code>sensor.record</code> is given, the output <code>sensor_data</code> is returned as a structure with the different outputs appended as structure fields. For example, if <code>sensor.record = {'p', 'p_final', 'p_max', 'u'}</code>, the output would contain fields <code>sensor_data.p</code>, <code>sensor_data.p_final</code>, <code>sensor_data.p_max</code>, <code>sensor_data.ux</code>, and <code>sensor_data.uy</code>. Most of the output parameters are recorded at the given sensor positions and are indexed as <code>sensor_data.field(sensor_point_index, time_index)</code> or <code>sensor_data(rect_index).field(x_index, y_index, time_index)</code> if using a sensor mask defined as opposing rectangular corners. The exceptions are the averaged quantities (<code>'p_max'</code>, <code>'p_rms'</code>, <code>'u_max'</code>, <code>'p_rms'</code>, <code>'I_avg'</code>), the 'all' quantities (<code>'p_max_all'</code>, <code>'p_min_all'</code>, <code>'u_max_all'</code>, <code>'u_min_all'</code>), and the final quantities (<code>'p_final'</code>, <code>'u_final'</code>). The averaged quantities are indexed as <code>sensor_data.p_max(sensor_point_index)</code> or <code>sensor_data(rect_index).p_max(x_index, y_index)</code> if using rectangular corners, while the final and 'all' quantities are returned over the entire grid and are always indexed as <code>sensor_data.p_final(nx, ny)</code>, regardless of the type of sensor mask.</p>
+
+<p><code>kspaceFirstOrder2D</code> may also be used for time reversal image reconstruction by assigning the time varying pressure recorded over an arbitrary sensor surface to the input field <code>sensor.time_reversal_boundary_data</code>. This data is then enforced in time reversed order as a time varying Dirichlet boundary condition over the sensor surface given by <code>sensor.mask</code>. The boundary data must be indexed as <code>sensor.time_reversal_boundary_data(sensor_point_index, time_index)</code>. If <code>sensor.mask</code> is given as a set of Cartesian coordinates, the boundary data must be given in the same order. An equivalent binary sensor mask (computed using nearest neighbour interpolation) is then used to place the pressure values into the computational grid at each time step. If <code>sensor.mask</code> is given as a binary matrix of sensor points, the boundary data must be ordered using MATLAB's standard column-wise linear matrix indexing. If no additional inputs are required, the <code>source</code> input can be replaced with an empty array <code>[]</code>.</p>
+
+<p>Acoustic attenuation compensation can also be included during time reversal image reconstruction by assigning the absorption parameters <code>medium.alpha_coeff</code> and <code>medium.alpha_power</code> and reversing the sign of the absorption term by setting <code>medium.alpha_sign = [-1, 1]</code>. This forces the propagating waves to grow according to the absorption parameters instead of decay. The reconstruction should then be regularised by assigning a filter to <code>medium.alpha_filter</code> (this can be created using <code><a href="getAlphaFilter.html">getAlphaFilter</a></code>).</p>
+
+<p>Note: To run a simple photoacoustic image reconstruction example using time reversal (that commits the 'inverse crime' of using the same numerical parameters and model for data simulation and image reconstruction), the <code>sensor_data</code> returned from a k-Wave simulation can be passed directly to <code>sensor.time_reversal_boundary_data</code> with the input fields <code>source.p0</code> and <code>source.p</code> removed or set to zero.</p>
+
+<h2>Inputs</h2>
+
+<p>The minimum fields that must be assigned to run an initial value problem (for example, a photoacoustic forward simulation) are marked with a *.</p>
+
+<table class="body">
+
+    <tr valign="top">
+        <td width = "150"><code>kgrid*</code></td>
+        <td>k-Wave grid object returned by <code><a href="kWaveGrid.html">kWaveGrid</a></code> containing Cartesian and k-space grid fields</td>
+    </tr>    
+    
+    <tr valign="top">
+        <td width = "150"><code>kgrid.t_array*</code></td>
+        <td>
+            <p>evenly spaced array of time values [s] (set to <code>'auto'</code> by <code><a href="kWaveGrid.html">kWaveGrid</a></code>)</p>
+        </td>
+    </tr>  
+    
+    <tr valign="top">
+        <td>&nbsp</td>
+        <td>&nbsp</td>
+    </tr>       
+    
+    <tr valign="top">
+        <td><code>medium.sound_speed*</code></td>
+        <td>sound speed distribution within the acoustic medium [m/s]</td>
+    </tr>  
+    
+    <tr valign="top">
+        <td><code>medium.sound_speed_ref</code></td>
+        <td>reference sound speed used within the k-space operator (phase correction term) [m/s]</td>
+    </tr>  	
+	
+    <tr valign="top">
+        <td><code>medium.density*</code></td>
+        <td>density distribution within the acoustic medium [kg/m^3]</td>
+    </tr>    
+
+    <tr valign="top">
+        <td><code>medium.BonA</code></td>
+        <td>parameter of nonlinearity</td>
+    </tr>  	
+	
+    <tr valign="top">
+        <td><code>medium.alpha_power</code></td>
+        <td>power law absorption exponent</td>
+    </tr> 
+    
+    <tr valign="top">
+        <td><code>medium.alpha_coeff</code></td>
+        <td>power law absorption coefficient [dB/(MHz^y cm)]</td>
+    </tr>     
+    
+    <tr valign="top">
+        <td><code>medium.alpha_mode</code></td>
+        <td>optional input to force either the absorption or dispersion terms in the equation of state to be excluded; valid inputs are <code>'no_absorption'</code> or <code>'no_dispersion'</code> </td>
+    </tr>  
+
+    <tr valign="top">
+        <td><code>medium.alpha_filter</code></td>
+        <td>frequency domain filter applied to the absorption and dispersion terms in the equation of state</td>
+    </tr>  
+
+    <tr valign="top">
+        <td><code>medium.alpha_sign</code></td>
+        <td>two element array used to control the sign of absorption and dispersion terms in the equation of state</td>
+    </tr>  
+
+    <tr valign="top">
+        <td>&nbsp</td>
+        <td>&nbsp</td>
+    </tr>       
+    
+    <tr valign="top">
+        <td><code>source.p0*</code></td>
+        <td>initial pressure within the acoustic medium</td>
+    </tr>     
+  
+    <tr valign="top">
+        <td><code>source.p</code></td>
+        <td>time varying pressure at each of the source positions given by <code>source.p_mask</code></td>
+    </tr>         
+    
+    <tr valign="top">
+        <td><code>source.p_mask</code></td>
+        <td>binary matrix specifying the positions of the time varying pressure source distribution</td>
+    </tr>
+	
+	<tr valign="top">
+        <td><code>source.p_mode</code></td>
+        <td>optional input to control whether the input pressure is injected as a mass source or enforced as a dirichlet boundary condition; valid inputs are <code>'additive'</code> (the default) or <code>'dirichlet'</code></td>
+    </tr>	
+
+    <tr valign="top">
+        <td><code>source.ux</code></td>
+        <td>time varying particle velocity in the x-direction at each of the source positions given by <code>source.u_mask</code></td>
+    </tr>     
+
+    <tr valign="top">
+        <td><code>source.uy</code></td>
+        <td>time varying particle velocity in the y-direction at each of the source positions given by <code>source.u_mask</code></td>
+    </tr>       
+
+    <tr valign="top">
+        <td><code>source.u_mask</code></td>
+        <td>binary matrix specifying the positions of the time varying particle velocity distribution</td>
+    </tr> 
+	
+	<tr valign="top">
+        <td><code>source.u_mode</code></td>
+        <td>optional input to control whether the input velocity is applied as a force source or enforced as a dirichlet boundary condition; valid inputs are <code>'additive'</code> (the default) or <code>'dirichlet'</code></td>
+    </tr>	
+
+    <tr valign="top">
+        <td>&nbsp</td>
+        <td>&nbsp</td>
+    </tr>     
+    
+    <tr valign="top">
+        <td><code>sensor.mask*</code></td>
+        <td>binary matrix or a set of Cartesian points where the pressure is recorded at each time-step</td>
+    </tr>    
+    
+	<tr valign="top">
+        <td><code>sensor.record</code></td>
+        <td>cell array of the acoustic parameters to record in the form <code>sensor.record = {'p', 'u', ...}</code>; valid inputs are:<br/>
+        <code>&nbsp;&nbsp;'p'</code> (acoustic pressure)<br/>
+        <code>&nbsp;&nbsp;'p_max'</code> (maximum pressure)<br/>
+        <code>&nbsp;&nbsp;'p_min'</code> (minimum pressure)<br/>
+        <code>&nbsp;&nbsp;'p_rms'</code> (RMS pressure)<br/>
+        <code>&nbsp;&nbsp;'p_final'</code> (final pressure field at all grid points)<br/>
+        <code>&nbsp;&nbsp;'p_max_all'</code> (maximum pressure at all grid points)<br/>
+        <code>&nbsp;&nbsp;'p_min_all'</code> (minimum pressure at all grid points)<br/>
+        <code>&nbsp;&nbsp;'u'</code> (particle velocity)<br/>
+        <code>&nbsp;&nbsp;'u_max'</code> (maximum particle velocity)<br/>
+        <code>&nbsp;&nbsp;'u_min'</code> (minimum particle velocity)<br/>
+        <code>&nbsp;&nbsp;'u_rms'</code> (RMS particle velocity)<br/>
+        <code>&nbsp;&nbsp;'u_final'</code> (final particle velocity field at all grid points)<br/>
+        <code>&nbsp;&nbsp;'u_max_all'</code> (maximum particle velocity at all grid points)<br/>
+        <code>&nbsp;&nbsp;'u_min_all'</code> (minimum particle velocity at all grid points)<br/>
+        <code>&nbsp;&nbsp;'u_non_staggered'</code> (particle velocity on non-staggered grid)<br/>
+        <code>&nbsp;&nbsp;'I'</code> (time varying acoustic intensity)<br/>
+        <code>&nbsp;&nbsp;'I_avg'</code> (average acoustic intensity)</td>
+    </tr>
+    
+    <tr valign="top">
+        <td><code>sensor.record_start_index</code></td>
+        <td>time index at which the sensor should start recording the data specified by <code>sensor.record</code> (default = 1)</td>
+    </tr> 
+    
+    <tr valign="top">
+        <td><code>sensor.time_reversal_boundary_data</code></td>
+        <td>time varying pressure enforced as a Dirichlet boundary condition over <code>sensor.mask</code></td>
+    </tr>      
+    
+    <tr valign="top">
+        <td><code>sensor.frequency_response</code></td>
+        <td>two element array specifying the center frequency and percentage bandwidth of a frequency domain Gaussian filter applied to the <code>sensor_data</code></td>
+    </tr>    
+    
+    <tr valign="top">
+        <td><code>sensor.directivity_angle</code></td>
+        <td>matrix of directivity angles (direction of maximum response) for each sensor element defined in <code>sensor.mask</code>. The angles are in radians where 0 = max sensitivity in x direction (up/down) and pi/2 or -pi/2 = max sensitivity in y direction (left/right)</td>
+    </tr>    
+        
+    <tr valign="top">
+        <td><code>sensor.directivity_size</code></td>
+        <td>equivalent element size (the larger the element size the more directional the response)</td>
+    </tr>	
+	
+</table>
+    
+<ul>
+    <table cellspacing="0" class="note" summary="Note" cellpadding="5" border="1">
+        <tr width="90%">
+            <td><b>Note</b>&nbsp;&nbsp;For a heterogeneous medium, <code>medium.sound_speed</code> and <code>medium.density</code> must be given in matrix form with the same dimensions as <code>kgrid</code>. For a homogeneous medium, these can be given as scalar values. If the medium is homogeneous and velocity inputs or outputs are not required, it is not necessary to specify <code>medium.density</code>.</td>
+        </tr>
+    </table>
+</ul>
+
+<h2>Optional Inputs</h2>
+
+<p>Optional 'string', value pairs that may be used to modify the default computational settings.</p>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="18%"><col width="18%"><col width="18%"><col width="46%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Input</th>
+            <th bgcolor="#B2B2B2">Valid Settings</th>
+            <th bgcolor="#B2B2B2">Default</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'CartInterp'</code></td>
+            <td bgcolor="#F2F2F2"><code>'linear'</code><br><code>'nearest'</code></td>
+            <td bgcolor="#F2F2F2"><code>'linear'</code></td>            
+            <td bgcolor="#F2F2F2">Interpolation mode used to extract the pressure when a Cartesian sensor mask is given. If set to <code>'nearest'</code> and more than one Cartesian point maps to the same grid point, duplicated data points are discarded and <code>sensor_data</code> will be returned with less points than that specified by <code>sensor.mask</code>.</td>
+        </tr>
+    
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'CreateLog'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the command line output is saved using the diary function with a date and time stamped filename.</td>
+        </tr>        
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'DataCast'</code></td>
+            <td bgcolor="#F2F2F2"><em>(string of data type)</em></td>
+            <td bgcolor="#F2F2F2"><code>'off'</code></td>            
+            <td bgcolor="#F2F2F2">String input of the data type that variables are cast to before computation. For example, setting to <code>'single'</code> will speed up the computation time (due to the improved efficiency of <code><a href="matlab: doc fftn">fftn</a></code> and <code><a href="matlab: doc ifftn">ifftn</a></code> for this data type) at the expense of a loss in precision. This variable is also useful for utilising GPU parallelisation through libraries such as the Parallel Computing Toolbox by setting <code>'DataCast'</code> to <code>'gpuArray-single'</code>.</td>
+        </tr>    
+        
+		<tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'DataRecast'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the output data is cast back to double precision. If set to false, <code>sensor_data</code> will be returned in the data format set using the <code>'DataCast'</code> option.</td>
+        </tr>         
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'DisplayMask'</code></td>
+            <td bgcolor="#F2F2F2"><em>(binary matrix)</em> or<br/><code>'off'</code></td>
+            <td bgcolor="#F2F2F2"><code>sensor.mask</code></td>            
+            <td bgcolor="#F2F2F2">Binary matrix overlaid onto the animated simulation display. Elements set to 1 within the display mask are set to black within the display.</td>
+        </tr>            
+
+		<tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'HDFCompressionLevel'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Integer scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>0</code></td>            
+            <td bgcolor="#F2F2F2">Compression level used for writing the input HDF5 file when using <code>'SaveToDisk'</code> or <code><a href="kspaceFirstOrder2DC.html">kspaceFirstOrder2DC</a></code>. Can be set to an integer between 0 (no compression) and 9 (maximum compression). The compression is lossless. Increasing the compression level will reduce the file size if there are portions of the medium that are homogeneous, but will also increase the time to create the HDF5 file.</td>
+        </tr>   
+		
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'LogScale'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em> or<br/><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the pressure field is log compressed before display. The data is compressed by scaling both the positive and negative values between 0 and 1 (truncating the data to the given plot scale), adding a scalar value (compression factor) and then using the corresponding portion of a log10 plot for the compression (the negative parts are remapped to be negative thus the default color scale will appear unchanged). The amount of compression can be controlled by adjusting the compression factor which can be given in place of the Boolean input. The closer the compression factor is to zero, the steeper the corresponding part of the log10 plot used, and the greater the compression (the default compression factor is 0.02).<p></td>
+        </tr>
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'MeshPlot'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether <code><a href="matlab: doc mesh">mesh</a></code> is used in place of <code><a href="matlab: doc imagesc">imagesc</a></code> to plot the pressure field. When <code>'MeshPlot'</code> is set to <code>true</code>, the default display mask is set to <code>'off'</code>.</td>
+        </tr> 		
+		
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'MovieArgs'</code></td>
+            <td bgcolor="#F2F2F2"><em>(string cell array)</em></td>
+            <td bgcolor="#F2F2F2"><code>{}</code></td>            
+            <td bgcolor="#F2F2F2">Settings for <code><a href="matlab: doc VideoWriter">VideoWriter</a></code>. Parameters must be given as {'param', value, ...} pairs within a cell array (default = {}), where 'param' corresponds to a writable property of a VideoWriter object.</td>
+        </tr> 
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'MovieName'</code></td>
+            <td bgcolor="#F2F2F2"><em>(string)</em></td>
+            <td bgcolor="#F2F2F2"><code>'date-time-kspaceFirstOrder2D'</code></td>            
+            <td bgcolor="#F2F2F2">Name of the movie produced when <code>'RecordMovie'</code> is set to <code>true</code>.</td>
+        </tr> 
+        
+		<tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'MovieProfile'</code></td>
+            <td bgcolor="#F2F2F2"><em>(string)</em></td>
+            <td bgcolor="#F2F2F2"><code>'Uncompressed AVI'</code></td>            
+            <td bgcolor="#F2F2F2">Profile input passed to <code><a href="matlab: doc VideoWriter">VideoWriter</a></code>.</td>
+        </tr>        
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'PlotFreq'</code></td>
+            <td bgcolor="#F2F2F2"><em>(integer numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>10</code></td>            
+            <td bgcolor="#F2F2F2">The number of iterations which must pass before the simulation plot is updated.</td>
+        </tr>        
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'PlotLayout'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether a four panel plot of the initial simulation layout is produced (initial pressure, sensor mask, sound speed, density).</td>
+        </tr>        
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'PlotPML'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>true</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the perfectly matched layer is shown in the simulation plots. If set to <code>false</code>, the PML is not displayed.<p></td>
+        </tr>
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'PlotScale'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric two element vector)</em> or<br><code>'auto'</code></td>
+            <td bgcolor="#F2F2F2"><code>[-1, 1]</code></td>            
+            <td bgcolor="#F2F2F2">[min, max] values used to control the scaling for <code><a href="matlab: doc imagesc">imagesc</a></code> (visualisation). If set to <code>'auto'</code>, a symmetric plot scale is chosen automatically for each plot frame.</td>
+        </tr>            
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'PlotSim'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>true</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the simulation iterations are progressively plotted.</td>
+        </tr>            
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'PMLAlpha'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar or three element vector)</em></td>
+            <td bgcolor="#F2F2F2"><code>2</code></td>            
+            <td bgcolor="#F2F2F2">Absorption within the perfectly matched layer in Nepers per grid point.</td>
+        </tr>        
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'PMLInside'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>true</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the perfectly matched layer is inside or outside the grid. If set to <code>false</code>, the input grids are enlarged by <code>PMLSize</code> before running the simulation.</td>
+        </tr>            
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'PMLSize'</code></td>
+            <td bgcolor="#F2F2F2"><em>(integer numeric scalar or three element vector)</em></td>
+            <td bgcolor="#F2F2F2"><code>10</code></td>            
+            <td bgcolor="#F2F2F2">Size of the perfectly matched layer in grid points. By default, the PML is added evenly to all sides of the grid, however, both <code>PMLSize</code> and <code>PMLAlpha</code> can be given as two element arrays to specify the x and y properties, respectively. To remove the PML, set the appropriate <code>PMLAlpha</code> to zero rather than forcing the PML to be of zero size.</td>
+        </tr>                  
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'RecordMovie'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the displayed image frames are captured and stored as a movie using <code><a href="matlab: doc VideoWriter">VideoWriter</a></code>.</td>
+        </tr>          
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Smooth'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar or three element vector)</em></td>
+            <td bgcolor="#F2F2F2"><code>[true, false, false]</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether <code>source.p0</code>, <code>medium.sound_speed</code>, and <code>medium.density</code> are smoothed using <code><a href="smooth.html">smooth</a></code> before computation. <code>'Smooth'</code> can either be given as a single Boolean value or as a 3 element array to control the smoothing of <code>source.p0</code>, <code>medium.sound_speed</code>, and <code>medium.density</code>, independently.</td>
+        </tr>      
+        
+    </tbody>
+</table>
+
+<h2>Outputs</h2>
+
+<p>If <code>sensor.record</code> is not defined by the user:</p>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>sensor_data</code></td>
+        <td>time varying pressure recorded at the sensor positions given by <code>sensor.mask</code></td>
+    </tr>  
+</table>
+
+<p>If <code>sensor.record</code> is defined by the user:</p>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>sensor_data.p</code></td>
+        <td>time varying pressure recorded at the sensor positions given by <code>sensor.mask</code> (returned if <code>'p'</code> is set)</td>
+    </tr>
+	<tr valign="top">
+        <td width = "150"><code>sensor_data.p_max</code></td>
+        <td>maximum pressure recorded at the sensor positions given by <code>sensor.mask</code> (returned if <code>'p_max'</code> is set)</td>
+    </tr>
+	<tr valign="top">
+        <td width = "150"><code>sensor_data.p_min</code></td>
+        <td>minimum pressure recorded at the sensor positions given by <code>sensor.mask</code> (returned if <code>'p_min'</code> is set)</td>
+    </tr>      
+	<tr valign="top">
+        <td width = "150"><code>sensor_data.p_rms</code></td>
+        <td>rms of the time varying pressure recorded at the sensor positions given by <code>sensor.mask</code> (returned if <code>'p_rms'</code> is set)</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>sensor_data.p_final</code></td>
+        <td>final pressure field at all grid points within the domain (returned if <code>'p_final'</code> is set)</td>
+    </tr>
+	<tr valign="top">
+        <td width = "150"><code>sensor_data.p_max_all</code></td>
+        <td>maximum pressure recorded at all grid points within the domain (returned if <code>'p_max_all'</code> is set)</td>
+    </tr>
+	<tr valign="top">
+        <td width = "150"><code>sensor_data.p_min_all</code></td>
+        <td>minimum pressure recorded at all grid points within the domain (returned if <code>'p_min_all'</code> is set)</td>
+    </tr>      
+    <tr valign="top">
+        <td width = "150"><code>sensor_data.ux</code></td>
+        <td>time varying particle velocity in the x-direction recorded at the sensor positions given by <code>sensor.mask</code> (returned if <code>'u'</code> is set)</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>sensor_data.uy</code></td>
+        <td>time varying particle velocity in the y-direction recorded at the sensor positions given by <code>sensor.mask</code> (returned if <code>'u'</code> is set)</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>sensor_data.ux_max</code></td>
+        <td>maximum particle velocity in the x-direction recorded at the sensor positions given by <code>sensor.mask</code> (returned if <code>'u_max'</code> is set)</td>
+    </tr>
+	<tr valign="top">
+        <td width = "150"><code>sensor_data.uy_max</code></td>
+        <td>maximum particle velocity in the y-direction recorded at the sensor positions given by <code>sensor.mask</code> (returned if <code>'u_max'</code> is set)</td>
+    </tr> 
+    <tr valign="top">
+        <td width = "150"><code>sensor_data.ux_min</code></td>
+        <td>minimum particle velocity in the x-direction recorded at the sensor positions given by <code>sensor.mask</code> (returned if <code>'u_min'</code> is set)</td>
+    </tr>
+	<tr valign="top">
+        <td width = "150"><code>sensor_data.uy_min</code></td>
+        <td>minimum particle velocity in the y-direction recorded at the sensor positions given by <code>sensor.mask</code> (returned if <code>'u_min'</code> is set)</td>
+    </tr>   
+    <tr valign="top">
+        <td width = "150"><code>sensor_data.ux_rms</code></td>
+        <td>rms of the time varying particle velocity in the x-direction recorded at the sensor positions given by <code>sensor.mask</code> (returned if <code>'u_rms'</code> is set)</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>sensor_data.uy_rms</code></td>
+        <td>rms of the time varying particle velocity in the y-direction recorded at the sensor positions given by <code>sensor.mask</code> (returned if <code>'u_rms'</code> is set)</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>sensor_data.ux_final</code></td>
+        <td>final particle velocity field in the x-direction at all grid points within the domain (returned if <code>'u_final'</code> is set)</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>sensor_data.uy_final</code></td>
+        <td>final particle velocity field in the y-direction at all grid points within the domain (returned if <code>'u_final'</code> is set)</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>sensor_data.ux_max_all</code></td>
+        <td>maximum particle velocity in the x-direction recorded at all grid points within the domain (returned if <code>'u_max_all'</code> is set)</td>
+    </tr>
+	<tr valign="top">
+        <td width = "150"><code>sensor_data.uy_max_all</code></td>
+        <td>maximum particle velocity in the y-direction recorded at all grid points within the domain (returned if <code>'u_max_all'</code> is set)</td>
+    </tr> 
+    <tr valign="top">
+        <td width = "150"><code>sensor_data.ux_min_all</code></td>
+        <td>minimum particle velocity in the x-direction recorded at all grid points within the domain (returned if <code>'u_min_all'</code> is set)</td>
+    </tr>
+	<tr valign="top">
+        <td width = "150"><code>sensor_data.uy_min_all</code></td>
+        <td>minimum particle velocity in the y-direction recorded at all grid points within the domain (returned if <code>'u_min_all'</code> is set)</td>
+    </tr>      
+    <tr valign="top">
+        <td width = "150"><code>sensor_data.ux_non_staggered</code></td>
+        <td>time varying particle velocity in the x-direction recorded at the sensor positions given by <code>sensor.mask</code> after shifting to the non-staggered grid (returned if <code>'u_non_staggered'</code> is set)</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>sensor_data.uy_non_staggered</code></td>
+        <td>time varying particle velocity in the y-direction recorded at the sensor positions given by <code>sensor.mask</code> after shifting to the non-staggered grid (returned if <code>'u_non_staggered'</code> is set)</td>
+    </tr>    
+    <tr valign="top">
+        <td width = "150"><code>sensor_data.Ix</code></td>
+        <td>time varying acoustic intensity in the x-direction recorded at the sensor positions given by <code>sensor.mask</code> (returned if <code>'I'</code> is set)</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>sensor_data.Iy</code></td>
+        <td>time varying acoustic intensity in the y-direction recorded at the sensor positions given by <code>sensor.mask</code> (returned if <code>'I'</code> is set)</td>
+    </tr>	
+    <tr valign="top">
+        <td width = "150"><code>sensor_data.Ix_avg</code></td>
+        <td>average acoustic intensity in the x-direction recorded at the sensor positions given by <code>sensor.mask</code> (returned if <code>'I_avg'</code> is set)</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>sensor_data.Iy_avg</code></td>
+        <td>average acoustic intensity in the z-direction recorded at the sensor positions given by <code>sensor.mask</code> (returned if <code>'I_avg'</code> is set)</td>
+    </tr>
+</table>
+
+<h2>Examples</h2>
+<ul>
+<li><a href="example_ivp_homogeneous_medium.html">Homogenous Propagation Medium</a></li> 
+<li><a href="example_ivp_binary_sensor_mask.html">Using A Binary Sensor Mask</a></li>      
+<li><a href="example_ivp_opposing_corners_sensor_mask.html">Defining A Sensor Mask By Opposing Corners</a></li>
+<li><a href="example_ivp_loading_external_image.html">Loading External Image Maps</a></li> 
+<li><a href="example_ivp_heterogeneous_medium.html">Heterogeneous Propagation Medium</a></li> 
+<li><a href="example_ivp_saving_movie_files.html">Saving Movie Files</a></li>          
+<li><a href="example_ivp_recording_particle_velocity.html">Recording The Particle Velocity</a></li> 
+<li><a href="example_ivp_sensor_frequency_response.html">Defining A Gaussian Sensor Frequency Response</a></li> 
+<li><a href="example_ivp_comparison_modelling_functions.html">Comparison Of Modelling Functions</a></li>                                   
+<li><a href="example_ivp_photoacoustic_waveforms.html">Photoacoustic Waveforms in 1D, 2D and 3D</a></li> 
+<li><a href="example_tvsp_homogeneous_medium_monopole.html">Monopole Point Source In A Homogeneous Propagation Medium</a></li>   
+<li><a href="example_tvsp_homogeneous_medium_dipole.html">Dipole Point Source In A Homogeneous Propagation Medium</a></li>  
+<li><a href="example_tvsp_transducer_field_patterns.html">Simulating Transducer Field Patterns</a></li>   
+<li><a href="example_tvsp_steering_linear_array.html">Steering A Linear Array</a></li>            
+<li><a href="example_tvsp_snells_law.html">Snell's Law And Critical Angle Reflection</a></li>  
+<li><a href="example_tvsp_doppler_effect.html">The Doppler Effect</a></li>             
+<li><a href="example_tvsp_slit_diffraction.html">Diffraction Through A Slit</a></li>    
+<li><a href="example_sd_focussed_detector_2D.html">Focussed Detector in 2D</a></li>
+<li><a href="example_sd_directivity_modelling_2D.html">Modelling Sensor Directivity in 2D</a></li>   
+<li><a href="example_sd_sensor_directivity_2D.html">Sensor Element Directivity in 2D</a></li>
+<li><a href="example_sd_directional_array_elements.html">Focussed 2D Array with Directional Elements</a></li>  
+<li><a href="example_pr_2D_fft_line_sensor.html">2D FFT Reconstruction For A Line Sensor</a></li>   
+<li><a href="example_pr_2D_tr_line_sensor.html">2D Time Reversal For A Line Sensor</a></li>
+<li><a href="example_pr_2D_tr_circular_sensor.html">2D Time Reversal For A Circular Sensor</a></li>
+<li><a href="example_pr_2D_tr_directional_sensors.html">Image Reconstruction With Directional Sensors</a></li>       
+<li><a href="example_pr_2D_tr_bandlimited_sensors.html">Image Reconstruction With Bandlimited Sensors</a></li>
+<li><a href="example_pr_2D_tr_absorption_compensation.html">Attenuation Compensation Using Time Reversal</a></li>      
+<li><a href="example_pr_2D_tr_time_variant_filtering.html">Attenuation Compensation Using Time Variant Filtering</a></li>      
+<li><a href="example_pr_2D_tr_iterative.html">Iterative Image Improvement Using Time Reversal</a></li>
+<li><a href="example_pr_2D_adjoint.html">Iterative Image Reconstruction Using The Adjoint</a></li>
+<li><a href="example_pr_2D_tr_autofocus.html">Automatic Sound Speed Selection</a></li>
+<li><a href="example_na_controlling_the_pml.html">Controlling The Absorbing Boundary Layer</a></li>
+<li><a href="example_na_optimising_performance.html">Optimising k-Wave Performance</a></li>
+<li><a href="example_diff_focused_ultrasound_heating.html">Heating By A Focused Ultrasound Transducer</a></li>
+</ul>
+
+<h2>See Also</h2>
+
+<code><code><a href="kspaceFirstOrderAS.html">kspaceFirstOrderAS</a></code>, <code><a href="kspaceFirstOrder1D.html">kspaceFirstOrder1D</a></code>, <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>, <code><a href="kWaveGrid.html">kWaveGrid</a></code>
+
+</div></body></html>

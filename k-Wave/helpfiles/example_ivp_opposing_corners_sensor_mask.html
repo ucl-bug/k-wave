@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Defining A Sensor Mask By Opposing Corners Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Defining A Sensor Mask By Opposing Corners.">
+</head>
+
+<body><div class="content">
+
+<h1>Defining A Sensor Mask By Opposing Corners Example</h1>
+
+<p>This example demonstrates how to define a sensor mask using the grid coordinates of two opposing corners of a rectangle. It builds on the <a href="example_ivp_homogeneous_medium.html">Homogeneous Propagation Medium </a> and <a href="example_ivp_binary_sensor_mask.html">Using A Binary Sensor Mask</a> examples.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_ivp_opposing_corners_sensor_mask.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_ivp_opposing_corners_sensor_mask']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Defining a sensor mask by opposing corners</a></li>
+		<li><a href="#heading3">Indexing the output data</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Defining a sensor mask by opposing corners</h2>
+
+<p>In addition to the Cartesian and binary sensor masks used in the previous two examples, it is also possible to define a sensor mask using the grid coordinates of two opposing corners of a line (1D), rectangle (2D), or cuboid (3D). The recorded data is identical to that recorded using a binary sensor mask covering the same region, however, the output is indexed differently as discussed below. In 2D, the rectangular regions are specified as column vectors in the form <code>[X1; Y1; X2; Y2]</code>, where <code>(X1, Y1)</code> and <code>(X2, Y2)</code> define two opposing corners of the desired rectangular sensor region in units of grid points, where <code>(1, 1)</code> defines the upper left corner of the grid. Multiple rectangles can be specified by adding additional column vectors to <code>sensor.mask</code> as shown below.</p>
+
+<pre class="codeinput">
+<span class="comment">% define the first rectangular sensor region by specifying the location of
+% opposing corners</span>
+rect1_x_start = 25;
+rect1_y_start = 31;
+rect1_x_end = 30;
+rect1_y_end = 50;
+
+<span class="comment">% define the second rectangular sensor region by specifying the location of
+% opposing corners</span>
+rect2_x_start = 71;
+rect2_y_start = 81;
+rect2_x_end = 80;
+rect2_y_end = 90;
+
+<span class="comment">% assign the list of opposing corners to the sensor mask</span>
+sensor.mask = [rect1_x_start, rect1_y_start, rect1_x_end, rect1_y_end;...
+               rect2_x_start, rect2_y_start, rect2_x_end, rect2_y_end].';
+</pre>
+
+<p>The computation is again started by calling <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>. A snapshot of the simulation showing the two rectangular regions is given below.</p>
+
+<img vspace="5" hspace="5" src="images/example_ivp_opposing_corners_sensor_mask_01.png" style="width:560px;height:420px;" alt="">
+    
+<a name="heading3"></a>
+<h2>Indexing the output data</h2>
+
+<p>When the sensor mask is defined using opposing corners, the output data is always returned as a structure (in the same way as when <code>sensor.record</code> is defined as discussed in the <a href="example_ivp_recording_particle_velocity.html">Recording The Particle Velocity Example</a>). In this case, the recorded time-varying acoustic pressure is accessed as <code>sensor_data(rect_num).p</code>, where <code>rect_num</code> is the number of the rectangular region within <code>sensor.mask</code>. In this example, two rectangular regions are assigned to <code>sensor.mask</code>, so <code>rect_num</code> would be set to <code>1</code> or <code>2</code>. As the shape of the sensor region is always regular, the output data is also indexed differently compared to using a Cartesian or binary sensor mask. In 2D, the sensor data is indexed <code>sensor_data(x_index, y_index, time_index)</code> (similarly in 1D and 3D). This makes it particularly useful for recording the results of a simulation in a plane or line without needing to reshape the output data. If the regions are overlapping, the overlapped data is returned as part of both sensor regions. An example of querying the size of the sensor data is shown below.</p>
+
+<pre class="codeinput">
+>> size(sensor_data(1).p)
+
+ans =
+
+     6    20   604
+
+>> size(sensor_data(2).p)
+
+ans =
+
+    10    10   604
+</pre>
+
+</div></body></html>

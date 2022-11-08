@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Constant Rate Of Heat Deposition (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Constant Rate Of Heat Deposition Example.">
+</head>
+
+<body>
+<div class="content">
+
+<h1>Constant Rate Of Heat Deposition</h1>
+
+<p>This example provides a simple demonstration of using k-Wave to model the diffusion of heat within a two-dimensional homogeneous medium with a constant source term (volume rate of heat deposition). It builds on the <a href="example_diff_homogeneous_medium_diffusion.html">Heat Diffusion In A Homogeneous Medium</a> example.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_diff_homogeneous_medium_source.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_diff_homogeneous_medium_source']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Defining the medium properties</a></li>
+		<li><a href="#heading3">Defining the heat source term</a></li>
+		<li><a href="#heading4">Calculating thermal dose</a></li>
+		<li><a href="#heading5">Comparison with exact solution</a></li>		
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Defining the medium properties</h2>
+
+<p>In the <a href="example_diff_homogeneous_medium_diffusion.html">Heat Diffusion In A Homogeneous Medium Example</a>, only the parameters related to diffusion are defined. Here, the parameters related to tissue perfusion are also specified. Similar to the diffusion parameters, these can be defined in two ways, either by defining a single perfusion coefficient (assigned to <code>medium.perfusion_coeff</code>), or by defining the density, specific heat capacity, and perfusion rate of the blood (assigned to <code>medium.blood_density</code>, <code>medium.blood_specific_heat</code>, and <code>medium.blood_perfusion_rate</code>). In both cases, the ambient temperature of the blood must be defined (assigned to <code>medium.blood_ambient_temperature</code>). These parameters can be specified as single scalar values in SI units (for homogeneous coefficients), or as matrices the same size as the computational grid (for heterogeneous coefficients). In this example, the individual medium properties are set as scalar values.</p>
+
+<pre class="codeinput">
+<span class="comment">% define medium properties related to diffusion</span>
+medium.density                      = 1079;     <span class="comment">% [kg/m^3]</span>
+medium.thermal_conductivity         = 0.52;     <span class="comment">% [W/(m.K)]</span>
+medium.specific_heat                = 3540;     <span class="comment">% [J/(kg.K)]</span>
+
+<span class="comment">% define medium properties related to perfusion</span>
+medium.blood_density                = 1060;     <span class="comment">% [kg/m^3]</span>
+medium.blood_specific_heat          = 3617;     <span class="comment">% [J/(kg.K)]</span>
+medium.blood_perfusion_rate         = 0.01;     <span class="comment">% [1/s]</span>
+medium.blood_ambient_temperature    = 37;       <span class="comment">% [degC]</span>
+</pre>
+
+<a name="heading3"></a>
+<h2>Defining the heat source term</h2>
+
+<p>In this example, the initial temperature is set to body temperature, and a volume heat source term (defined in units of W/m^3) is set to be a Gaussian distribution. The simulation is then performed by calling the <code>takeTimeStep</code> method.</p>
+
+<pre class="codeinput">
+<span class="comment">% set initial temperature distribution to be constant [degC]</span>
+source.T0 = 37;
+
+<span class="comment">% set Gaussian volume rate of heat deposition [W/m^3]</span>
+width = 4*dx;
+source.Q = 2e6 .* exp( -(kgrid.x ./ width).^2 - (kgrid.y ./ width).^2 );
+</pre>
+
+<a name="heading4"></a>
+<h2>Calculating thermal dose</h2>
+
+<p>During the simulation, the thermal dose delivered to the tissue is automatically calculated in units of cumulative equivalent minutes. This is calculated using the formula <code>cem43 = cem43 + dt/60 * R ^(43 - T)</code>, where <code>dt</code> is the size of the time step in seconds. The parameter <code>R</code> is given by 0.5 if the temperature <code>T</code> is above 43 degrees Celsius, and 0.25 if it is below (the difference in slope below 43 is due to the development of thermo-tolerance during heating). The dependence on <code>dt</code> means that if the temperature is rapidly changing, using a smaller time step will give a more accurate estimate of the thermal dose. The thermal dose can be accessed from an object of the <code><a href="kWaveDiffusion.html">kWaveDiffusion</a></code> class using the dynamic property <code>kdiff.cem43</code>. A thresholded lesion map where <code>cem43</code> exceeds 240 cumulative equivalent minutes can also be returned using the property <code>kdiff.lesion_map</code>. These are plotted below. The total size of the lesion can also be returned using the property <code>kdiff.lesion_size</code>. This is given in units of distance in 1D [m], area in 2D [m^2], and volume in 3D [m^3].</p>
+
+<img vspace="5" hspace="5" src="images/example_diff_homogeneous_medium_source_01.png" style="width:840px;height:420px;" alt="">
+
+<a name="heading5"></a>
+<h2>Comparison with exact solution</h2>
+
+<p>For a constant source term, when the medium is homogeneous, the computation by <code><a href="kWaveDiffusion.html">kWaveDiffusion</a></code> is again exact and unconditionally stable. In this case, the calculations using <code><a href="kWaveDiffusion.html">kWaveDiffusion</a></code> and <code><a href="bioheatExact.html">bioheatExact</a></code> agree to machine precision.</p>
+
+<pre class="codeinput">
+<span class="comment">% calculate perfusion coefficient from the medium parameters</span>
+P = medium.blood_density .* medium.blood_perfusion_rate .* ...
+    medium.blood_specific_heat ./ (medium.density .* medium.specific_heat);
+
+<span class="comment">% calculate diffusivity from the medium parameters</span>
+D = medium.thermal_conductivity / (medium.density * medium.specific_heat);
+
+<span class="comment">% calculate normalised heat source</span>
+S = source.Q ./ (medium.density .* medium.specific_heat);
+
+<span class="comment">% compute Green's function solution using bioheatExact</span>
+T_exact = bioheatExact(source.T0 .* ones(Nx, Ny), S, ...
+    [D, P, medium.blood_ambient_temperature], kgrid.dx, Nt * dt);
+</pre>
+
+<img vspace="5" hspace="5" src="images/example_diff_homogeneous_medium_source_02.png" style="width:560px;height:420px;" alt="">
+
+</div></body></html>

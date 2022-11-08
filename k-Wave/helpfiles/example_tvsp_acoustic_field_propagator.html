@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Simulating CW Fields Using The Acoustic Field Propagator Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Simulating CW Fields Using The Acoustic Field Propagator Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Simulating CW Fields Using The Acoustic Field Propagator Example</h1>
+
+<p>This example demonstrates how to use <code><a href="acousticFieldPropagator.html">acousticFieldPropagator</a></code> to simulate the steady-state pressure field from a steered line array in 2D without time stepping.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_tvsp_acoustic_field_propagator.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_tvsp_acoustic_field_propagator']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<p>For a more detailed discussion of this example and the underlying techniques, see B. E. Treeby, J. Budisky, E. S. Wise, J. Jaros, and B. T. Cox, "Rapid calculation of acoustic fields from arbitrary continuous-wave sources," <em>The Journal of the Acoustical Society of America</em>, vol. 143, no. 1, pp.529-537, 2018.</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading1">Overview</a></li>
+		<li><a href="#heading2">Running the simulation</a></li>
+    </ul>
+</div>
+
+<a name="heading1"></a>
+<h2>Overview</h2>
+
+<p>When simulating the output from time-varying pressure sources, if the driving signal is a continuous wave sinusoid and the acoustic medium is lossless and homogeneous, the steady-state acoustic field can be calculated very rapidly (without time stepping) using the function <code><a href="acousticFieldPropagator.html">acousticFieldPropagator</a></code>. For this function, the source is defined as two matrices of amplitude and phase which capture both the source geometry (the amplitude matrix is set to zero outside the support of the source) and the distribution of amplitude and phase across the source. In this example, the output from a steered line array is calculated in 2D. The steering angle is swept from -60 to 60 degrees with no apodisation (the amplitude is set to one across the array). For each steering angle, the phase at each grid point in the line array is calculated.</p>
+
+<pre class="codeinput">
+<span class="comment">% assign constant amplitude across the line array</span>
+amp_in(x1, y1:y2) = 1;
+
+<span class="comment">% get the current steering angle</span>
+steering_angle = angle_array(index);
+
+<span class="comment">% calculate phase offset for each grid point in the line array based on
+% element position and steering angle, and assign to the line array</span>
+phase_in(x1, y1:y2) = 2 * pi * f0 * el_pos * sind(steering_angle) / c0;
+</pre>
+
+<a name="heading2"></a>
+<h2>Running the simulation</h2>
+
+<p>For each steering angle, the matrices of amplitude and phase along with the grid spacing, source frequency, and medium sound speed are passed to <code><a href="acousticFieldPropagator.html">acousticFieldPropagator</a></code>. This calculates the steady state acoustic field (amplitude and phase) over the same size domain as the input matrices. A plot of the calculated amplitude and phase for a steering angle of -20 degrees is shown below.</p>
+
+<pre class="codeinput">
+<span class="comment">% compute beam pattern</span>
+[amp_out, phase_out] = acousticFieldPropagator(amp_in, phase_in, dx, f0, c0);
+</pre>
+
+<img vspace="5" hspace="5" src="images/example_tvsp_acoustic_field_propagator_01.png" style="width:696px;height:285px;" alt="">
+
+<p>To replicate this simulation using <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>, <code>source.p_mask</code> could be defined as <code>amp_in</code> with <code>source.p</code> created using <code><a href="createCWSignals.html">createCWSignals</a></code> along with the calculated phase offset for each steering angle. For simulations in 3D (which are conducted in an analogous fashion), the function <code><a href="acousticFieldPropagatorC.html">acousticFieldPropagatorC</a></code> can be used to reduce memory usage and compute time.</p>
+
+</div></body></html>

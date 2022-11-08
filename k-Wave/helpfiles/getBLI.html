@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>getBLI :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>getBLI</h1>
+<p class="purpose">Compute underlying Fourier band-limited interpolant (BLI).</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+BLI = getBLI(func)
+BLI = getBLI(func, dx)
+BLI = getBLI(func, dx, sampling_factor)
+BLI = getBLI(func, dx, sampling_factor, plot_BLI)
+BLI = getBLI(func, [], [], plot_BLI)
+[x_fine, BLI] = getBLI(func, dx, sampling_factor, plot_BLI)
+...
+</pre>
+
+<h2>Description</h2>
+<p><code>getBLI</code> computes the underlying band-limited interpolant (BLI) of a discretely sampled 1D function assuming a Fourier basis. The example below shows the BLI of a discrete spatial delta function.</p>
+
+<pre class="codeinput">
+delta = zeros(20, 1);
+delta(end/2) = 1;
+getBLI(delta, 0.001, 10, true);
+</pre>
+
+<img vspace="5" hspace="5" src="images/getBLI_01.png" style="width:560px;height:420px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>func</code></td>
+        <td>1D input function</td>
+    </tr> 
+</table>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>dx</code></td>
+        <td>spatial sampling [m] (default = 1)</td>        
+    </tr>     
+	<tr valign="top">
+        <td><code>upsampling_factor</code></td>
+        <td>spatial sampling used to sample the underlying BLI (default = 20)</td>        
+    </tr>     
+	<tr valign="top">
+        <td><code>plot_BLI</code></td>
+        <td>Boolean controlling whether the discrete input function and its BLI are displayed (default = false)</td>        
+    </tr>     
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>BLI</code></td>
+        <td>band-limited interpolant</td>
+    </tr>
+    <tr valign="top">
+        <td><code>x_fine</code></td>
+        <td>x-grid for BLI</td>
+    </tr>    
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="getDeltaBLI.html">getDeltaBLI</a></code>, <code><a href="spect.html">spect</a></code>
+
+</div></body></html>

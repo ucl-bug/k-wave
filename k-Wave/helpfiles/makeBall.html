@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>makeBall :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>makeBall</h1>
+<p class="purpose">Create a binary map of a filled ball within a 3D grid.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+ball = makeBall(Nx, Ny, Nz, cx, cy, cz, radius)
+ball = makeBall(Nx, Ny, Nz, cx, cy, cz, radius, plot_ball)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>makeBall</code> creates a binary map of a filled ball within a three-dimensional grid (the ball position is denoted by 1's in the matrix with 0's elsewhere). A single grid point is taken as the disc centre thus the total diameter of the ball will always be an odd number of grid points. The plot that is displayed after calling <code>makeBall(64, 64, 64, 32, 32, 32, 20, true);</code> is given below.</p>
+
+<img vspace="5" hspace="5" src="images/makeBall_01.png" style="width:560px;height:420px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>Nx, Ny, Nz</code></td>
+        <td>size of the 3D grid [grid points]</td>
+    </tr>     
+    
+    <tr valign="top">
+        <td width = "150"><code>cx, cy, cz</code></td>
+        <td>centre of the ball [grid points]</td>
+    </tr>     
+
+    <tr valign="top">
+        <td width = "150"><code>radius</code></td>
+        <td>ball radius [grid points]</td>
+    </tr>     
+    
+</table>
+    
+<h2>Optional Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>plot_ball</code></td>
+        <td>Boolean controlling whether the ball is plotted using <code><a href="voxelPlot.html">voxelPlot</a></code> (default = false)</td>
+    </tr>   
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>ball</code></td>
+        <td>3D binary map of a filled ball</td>
+    </tr>
+</table>
+
+<h2>Examples</h2>
+<ul>
+<li><a href="example_ivp_3D_simulation.html">Simulations In Three Dimensions</a></li> 
+<li><a href="example_ivp_photoacoustic_waveforms.html">Photoacoustic Waveforms in 1D, 2D and 3D</a></li>
+<li><a href="example_pr_3D_fft_planar_sensor.html">3D FFT Reconstruction For A Planar Sensor</a></li>
+<li><a href="example_pr_3D_tr_planar_sensor.html">3D Time Reversal For A Planar Sensor</a></li>  
+<li><a href="example_pr_3D_tr_spherical_sensor.html">3D Time Reversal For A Spherical Sensor</a></li>
+</ul>
+
+<h2>See Also</h2>
+
+<code><a href="makeCircle.html">makeCircle</a></code>, <code><a href="makeDisc.html">makeDisc</a></code>, <code><a href="makeSphere.html">makeSphere</a></code> 
+
+</div></body></html>

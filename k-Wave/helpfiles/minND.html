@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>minND :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>minND</h1>
+<p class="purpose">Return the value and indices of the smallest value in an N-D array.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+min_val = minND(mat)
+[min_val, ind] = minND(mat)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>minND</code> returns the smallest value in the N-D array given by <code>mat</code>. The indices of the smallest value within the array can also be returned, where <code>ind = [ind_dim_1, ind_dim_2, ... , ind_dim_N]</code>. The indices can be used to directly address the smallest value, i.e., <code>min_val = mat(ind)</code>. </p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>mat</code></td>
+        <td>input array</td>
+    </tr>  
+</table>
+    
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>min_val</code></td>
+        <td>smallest value in <code>mat</code></td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>ind</code></td>
+        <td>array of indices corresponding to the location of the smallest value in <code>mat</code></td>
+    </tr>    
+</table>
+
+</div></body></html>

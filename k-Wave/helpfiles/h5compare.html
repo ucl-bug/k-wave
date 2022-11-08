@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>h5compare :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body><div class="content">
+
+<h1>h5compare</h1>
+<p class="purpose">Compare the contents of two HDF5 files.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+h5compare(filename1, filename2)
+</pre>
+
+<h2>Description</h2>
+<p><code>h5compare</code> compares the datasets and attributes within two HDF5 files. Fields that are present in one file but not the other are reported as missing. For fields that exist in both files but have different values, the L_inf error is reported. All outputs are printed to the command line.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>filename1</code></td>
+        <td>filename of the first HDF5 file</td>
+    </tr>  
+    <tr valign="top">
+        <td><code>filename2</code></td>
+        <td>filename of the second HDF5 file</td>
+    </tr> 
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="matlab: doc h5write">h5write</a></code>, <code><a href="writeMatrix.html">writeMatrix</a></code>
+
+</div></body></html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>reorderSensorData :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>reorderSensorData</h1>
+<p class="purpose">Reorder sensor data from kspaceFirstOrder2D based on angle.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+[reordered_sensor_data, indices_new] = reorderSensorData(kgrid, sensor, sensor_data)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>reorderSensorData</code> reorders the time series from <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code> based on the angle that each sensor point makes with the centre of the grid. The sensor mask must be a binary mask, and the angles are defined from the upper left quadrant or negative y-axis in the same way as within <code><a href="makeCircle.html">makeCircle</a></code> and <code><a href="makeCartCircle.html">makeCartCircle</a></code>. </p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+	<tr valign="top">
+        <td width = "200"><code>kgrid</code></td>
+        <td>k-Wave grid object returned by <code><a href="kWaveGrid.html">kWaveGrid</a></code></td>       
+    </tr> 
+    <tr valign="top">
+        <td><code>sensor</code></td>
+        <td>k-Wave sensor structure where <code>sensor.mask</code> is defined as a binary grid</td>        
+    </tr>    
+    <tr valign="top">
+        <td><code>sensor_data</code></td>
+        <td>sensor data returned by <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code> ordered using MATLAB's standard column-wise linear matrix indexing</td>
+    </tr>             
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+<tr valign="top">
+        <td width = "200"><code>reordered_sensor_data</code></td>
+        <td>time varying sensor data reordered by the angle that each sensor point makes with the centre of the grid</td>
+    </tr>
+	<tr valign="top">
+        <td><code>indices_new</code></td>
+        <td>the indices of the reordered time series, where <code>reordered_sensor_data = sensor_data(indices_new, :)</code></td>
+    </tr>  
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>, <code><a href="reorderBinarySensorData.html">reorderBinarySensorData</a></code>, <code><a href="unmaskSensorData.html">unmaskSensorData</a></code>
+
+</div></body></html>

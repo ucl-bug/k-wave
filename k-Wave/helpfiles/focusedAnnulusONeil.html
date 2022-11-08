@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>focusedAnnulusONeil :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>focusedAnnulusONeil</h1>
+<p class="purpose">Compute axial pressure for focused annulus transducer using O'Neil's solution.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+p_axial = focusedAnnulusONeil(radius, diameter, amplitude, phase, frequency, sound_speed, density, axial_position)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>focusedAnnulusONeil</code> calculates the axial pressure for a focused annulus transducer using O'Neil's solution (O'Neil, H. Theory of focusing radiators. J. Acoust. Soc. Am., 21(5), 516-526, 1949). The annuluar elements are uniformly driven by a continuous wave sinusoid at a given frequency and normal surface velocity.</p>
+
+<p>The solution is evaluated at the positions along the beam axis given by <code>axial_position</code> (where 0 corresponds to the transducer surface).</p>
+
+<p>Note, O'Neil's formulae are derived under the assumptions of the Rayleigh integral, which are valid when the transducer diameter is large compared to both the transducer height and the acoustic wavelength.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>radius</code></td>
+        <td>transducer radius of curvature [m]</td>
+    </tr>
+
+    <tr valign="top">
+        <td><code>diameter</code></td>
+        <td>2 x num_elements array containing pairs of inner and outer aperture diameter (diameter of opening) [m]</td>
+    </tr> 
+
+    <tr valign="top">
+        <td><code>amplitude</code></td>
+        <td>array containing the normal surface velocities for each element [m/s]</td>
+    </tr> 
+
+    <tr valign="top">
+        <td><code>phase</code></td>
+        <td>array containing the phase for each element [rad]</td>
+    </tr> 
+
+    <tr valign="top">
+        <td><code>frequency</code></td>
+        <td>driving frequency [Hz]</td>
+    </tr> 
+    
+	<tr valign="top">
+        <td><code>sound_speed</code></td>
+        <td>speed of sound in the propagating medium [m/s]</td>
+    </tr>
+    
+    <tr valign="top">
+        <td><code>density</code></td>
+        <td>density in the propagating medium [kg/m^3]</td>
+    </tr>
+    
+    <tr valign="top">
+        <td><code>axial_position</code></td>
+        <td>vector of positions along the beam axis where the pressure amplitude is calculated [m]</td>
+    </tr>
+    
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>p_axial</code></td>
+        <td>pressure amplitude at the positions specified by <code>axial_position</code> [Pa]</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="focusedBowlONeil.html">focusedBowlONeil</a></code>, <code><a href="mendousse.html">mendousse</a></code>
+
+</div></body></html>

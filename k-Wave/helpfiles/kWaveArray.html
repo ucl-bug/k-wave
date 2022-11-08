@@ -1,0 +1,576 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>kWaveArray :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body><div class="content">
+
+<h1>kWaveArray</h1>
+<p class="purpose">Class definition for k-Wave array.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+karray = kWaveArray
+karray = kWaveArray(...)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>kWaveArray</code> is a class definition that allows the definition of multi-element transducer arrays in 1D, 2D, and 3D for use with the k-Wave simulation functions. The individual elements are defined using physical (rather than grid) parameters in Cartesian coordinates, and their representation on the grid is automatically calculated using off-grid sources as described in [1].</p>
+    
+<p>There are two key advantages of using the <code>kWaveArray</code> class to define arrays. (1) The geometry is stair-case free. (2) The transmit signals (for sources) and receive signals (for sensors) are defined per physical transducer element, rather than per grid point.</p>
+    
+<p>No information about the actual simulation grid is stored within objects of the <code>kWaveArray</code> class. The idea is that an array can be defined using physical characteristics, and then re-used for many different simulations. Note, some methods do use the grid information for calculations, and therefore take an object of the <code><a href="kWaveGrid.html">kWaveGrid</a></code> class as an input. The implementation assumes that the grid sampling is uniform, i.e., dx = dy = dz.</p>
+    
+<p>To calculate the off-grid source, first a uniform sampling of Cartesian points is generated covering the element shape (e.g., bowl, disc, etc). For each sample point, a band-limited interpolant is computed corresponding to a point source at that location. These point source responses are summed and scaled to give the source mask for that element. This means the source mask will be non-local, i.e., will extend spatially beyond where the physical source lies on the grid. Note, any Cartesian points that are outside the grid are automatically removed. </p>
+    
+<p>In the current version, objects of the <code>kWaveArray</code> class cannot be passed directly to the simulation functions in place of the source and sensor structures. Instead, methods of the <code>kWaveArray</code> class can be used to automatically create these inputs and process the outputs. See examples for further details.</p>
+    
+<p>[1] Wise, E. S., Cox, B. T., Jaros, J., & Treeby, B. E. (2019). Representing arbitrary acoustic source and sensor distributions in Fourier collocation methods. The Journal of the Acoustical Society of America, 146(1), 278-288.</p>
+
+<h2>Optional Inputs</h2>
+
+<p>Optional 'string', value pairs that may be used to modify the default computational settings.</p>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="18%"><col width="18%"><col width="18%"><col width="46%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Input</th>
+            <th bgcolor="#B2B2B2">Valid Settings</th>
+            <th bgcolor="#B2B2B2">Default</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'BLITolerance'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>0.05</code></td>            
+            <td bgcolor="#F2F2F2">Scalar value controlling where the spatial extent of the BLI at each point is trunctated as a portion of the maximum value.</td>
+        </tr>     
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'BLIType'</code></td>
+            <td bgcolor="#F2F2F2"><code>'sinc'</code><br/><code>'exact'</code></td>
+            <td bgcolor="#F2F2F2"><code>'sinc'</code></td>            
+            <td bgcolor="#F2F2F2">String controlling the BLI expression that is used for each point source (see <code><a href="offGridPoints.html">offGridPoints</a></code>). <code>'BLITolerance'</code> is ignored if <code>'exact'</code> is specified.</td>
+        </tr>   
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'SinglePrecision'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the calculation of the off-grid mask and distributed source are performed in single precision to improve performance. </td>
+        </tr> 
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'UpsamplingRate'</code></td>
+            <td bgcolor="#F2F2F2"><em>(numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>10</code></td>            
+            <td bgcolor="#F2F2F2">Oversampling used to distribute the off-grid points compared to the equivalent number of on-grid points.</td>
+        </tr>          
+    </tbody>
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>karray</code></td>
+        <td><code>kWaveArray</code> object which can be used to define source and sensor inputs for the kWave simulation functions.</td>
+    </tr>
+</table>
+
+<h2>Properties</h2>
+
+<p>Properties of the kWaveArray class which can be queried, but not directly modified.</p>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="25%"><col width="75%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Property</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>karray.array_transformation</code></td>
+            <td bgcolor="#F2F2F2">Position of the array defined by an affine transform. Used to move the array without needing to redefine the individual positions of the elements. Set by using the <code>setArrayPosition</code> and <code>setAffineTransform</code> methods.</td>
+        </tr>
+    </tbody>
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>karray.dim</code></td>
+            <td bgcolor="#F2F2F2">Number of spatial dimensions.</td>
+        </tr>
+    </tbody>      
+
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>karray.elements</code></td>
+            <td bgcolor="#F2F2F2">Structure containing the properties for each element in the array. New elements are added using the <code>addXXXElement</code> methods.</td>
+        </tr>
+    </tbody>   
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>karray.number_elements</code></td>
+            <td bgcolor="#F2F2F2">Number of transducer elements in the array.</td>
+        </tr>
+    </tbody>  
+
+</table>
+
+<h2>Methods</h2>
+
+<p>Methods of the kWaveArray class. After creating a kWaveArray object, methods are called using the syntax:</p>
+
+<pre class="codeinput">
+karray = kWaveArray;
+karray.methodName(inputs);
+output = karray.methodName(inputs);
+</pre>
+
+<p>The first syntax is used for methods with no output, and the second for methods with an output.</p>
+
+<h3>addAnnularArray</h3>
+
+<p>Add annular array (3D simulations). The array elements are indexed from the inner-most element outwards. If <code>radius ~= inf</code>, then the annular array is positioned over the surface of a bowl.</p>
+
+<pre class="codeinput">
+addAnnularArray(position, radius, diameters, focus_pos)
+</pre>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>position</code></td>
+        <td>Centre of rear surface <code>[bx, by, bz]</code> [m].</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>radius</code></td>
+        <td>Radius of curvature of a bowl on which the annular array lies [m].</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>diameters</code></td>
+        <td>2 x <code>num_elements</code> array containing pairs of inner and outer aperture diameter (diameter of opening) [m].</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>focus_pos</code></td>
+        <td>Any point on the beam axis <code>[fx, fy, fz]</code> [m].</td>
+    </tr>
+</table>
+
+<h3>addAnnularElement</h3>
+
+<p>Add annular element (3D simulations). Setting <code>diameter = [0, diameter]</code> will generate a bowl the same as <code>addBowlElement</code>.</p>
+
+<pre class="codeinput">
+addAnnularElement(position, radius, diameters, focus_pos)
+</pre>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>position</code></td>
+        <td>Centre of rear surface <code>[bx, by, bz]</code> [m].</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>radius</code></td>
+        <td>Radius of curvature of a bowl on which the annular element lies [m].</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>diameters</code></td>
+        <td>2 element array containing inner and outer aperture diameter (diameter of opening) [m].</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>focus_pos</code></td>
+        <td>Any point on the beam axis <code>[fx, fy, fz]</code> [m].</td>
+    </tr>
+</table>
+
+<h3>addArcElement</h3>
+
+<p>Add arc-shaped element to the array (2D simulations).</p>
+
+<pre class="codeinput">
+addArcElement(position, radius, diameters, focus_pos)
+</pre>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>position</code></td>
+        <td>Centre of rear surface (arc midpoint) <code>[bx, by]</code> [m].</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>radius</code></td>
+        <td>Radius of curvature of arc [m].</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>diameters</code></td>
+        <td>Diameter of arc opening [m].</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>focus_pos</code></td>
+        <td>Any point on the beam axis <code>[fx, fy]</code> [m].</td>
+    </tr>
+</table>
+
+<h3>addBowlElement</h3>
+
+<p>Add bowl-shaped element to the array (3D simulations).</p>
+
+<pre class="codeinput">
+addBowlElement(position, radius, diameter, focus_pos)
+</pre>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>position</code></td>
+        <td>Centre of rear surface <code>[bx, by, bz]</code> [m].</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>radius</code></td>
+        <td>Radius of curvature of bowl [m].</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>diameters</code></td>
+        <td>Diameter of bowl opening [m].</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>focus_pos</code></td>
+        <td>Any point on the beam axis <code>[fx, fy, fz]</code> [m].</td>
+    </tr>
+</table>
+
+<h3>addCustomElement</h3>
+
+<p>Add custom volume, area, or line element to the array defined as a series of integration points (see [1]; 1D/2D/3D simulations). Note, for custom elements, the integration point density should be sufficient relative the intended grid spacing (see [1]).</p>
+
+<pre class="codeinput">
+addCustomElement(integration_points, measure, element_dim, label)
+</pre>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>integration_points</code></td>
+        <td>1 x num_points (1D), 2 x num_points (2D) or 3 x num_points (3D) array of Cartesian coordinates [m].</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>measure</code></td>
+        <td>Length [m] of line element, area [m^2] of area element, or volume [m^3] of volume element corresponding to <code>element_dim</code>.</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>element_dim</code></td>
+        <td>Integer specifying whether the custom element is a line element (1), area element (2), or volume element (3). Note, <code>element_dim</code> does not need to match the dimension of the simulation, i.e., it is possible to use a line element in a 3D array.</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>label</code></td>
+        <td>String identifier.</td>
+    </tr>
+</table>
+
+<h3>addDiscElement</h3>
+
+<p>Add disc-shaped element to the array (2D/3D simulations).</p>
+
+<pre class="codeinput">
+addDiscElement(position, diameter, focus_pos)
+</pre>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>position</code></td>
+        <td>Centre of disc surface <code>[bx, by]</code> or <code>[bx, by, bz]</code> [m].</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>diameter</code></td>
+        <td>Diameter of the disc [m].</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>focus_pos</code></td>
+        <td>Any point on beam axis <code>[fx, fy, fz]</code> (not used for 2D simulations) [m].</td>
+    </tr>
+</table>
+
+<h3>addRectElement</h3>
+
+<p>Add rectangular element to the array (2D/3D simulations). The rectangle is created in the x-y plane and then rotated.</p>
+
+<pre class="codeinput">
+addRectElement(position, Lx, Ly, theta)
+</pre>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>position</code></td>
+        <td>Centre of rect <code>[bx, by]</code> or <code>[bx, by, bz]</code> [m].</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>Lx</code></td>
+        <td>Height of rect (along x-axis before rotation) [m].</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>Ly</code></td>
+        <td>Width of rect (along y-axis before rotation) [m].</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>theta</code></td>
+        <td>Either a scalar (2D) or three element vector (3D) <code>[tx, ty, tz]</code> specifying the orientation of the rectangle [deg]. In 3D, the rotations are specified about x-y'-z'' (intrinsic rotations) or z-y-x (extrinsic rotations). All rotations are counter-clockwise. Can be set to [] if no rotation.</tr>
+    </tr>
+</table>
+
+<h3>addLineElement</h3>
+
+<p>Add line element to the array (1D/2D/3D simulations).</p>
+
+<pre class="codeinput">
+addLineElement(start_point, end_point)
+</pre>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>start_point</code></td>
+        <td>Start coordinate for the line given as a one (1D), two (2D), or three (3D) element vector [m].</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>end_point</code></td>
+        <td>End coordinate for the line given as a one (1D), two (2D), or three (3D) element vector [m].</td>
+    </tr>
+</table>
+
+<h3>combineSensorData</h3>
+
+<p>When using <code>array.getArrayBinaryMask</code> to define a sensor mask for the k-Wave simulation functions, the returned sensor data is defined for every grid point that forms part of the array. This method combines the sensor data with the appropriate weights and returns a single time series (or value) for each physical array element (rather than each grid point). The data is returned in the same order as the transducer elements were added to the array. </p>
+
+<pre class="codeinput">
+combined_sensor_data = combineSensorData(kgrid, sensor_data)
+</pre>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>combined_sensor_data</code></td>
+        <td>Combined sensor data (one time series per transducer element).</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>kgrid</code></td>
+        <td>Grid object returned by <code><a href="kWaveGrid.html">kWaveGrid</a></code>.</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>sensor_data</code></td>
+        <td>Sensor data returned by simulation functions for a sensor mask given by <code>getArrayBinaryMask</code>.</td>
+    </tr>
+</table>
+
+<h3>getArrayBinaryMask</h3>
+
+<p>Returns binary mask containing all grid points that form part of the array. Note, as the array elements use off-grid sources (see [1]), this will be non-local to some extent (depending on the values set for <code>'BLITolerance'</code> and <code>'BLIType'</code>).</p>
+
+<pre class="codeinput">
+mask = getArrayBinaryMask(kgrid)
+</pre>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>mask</code></td>
+        <td>Binary mask (matrix of 1s and 0s) specifying the grid points that form part of the array.</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>kgrid</code></td>
+        <td>Grid object returned by <code><a href="kWaveGrid.html">kWaveGrid</a></code>.</td>
+    </tr>
+</table>
+
+<h3>getArrayGridWeights</h3>
+
+<p>Returns matrix containing sum of off-grid source weights for each grid point in the domain (defined by kgrid).</p>
+
+<pre class="codeinput">
+grid_weights = getArrayGridWeights(kgrid)
+</pre>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>grid_weights</code></td>
+        <td>Matrix of grid weights.</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>kgrid</code></td>
+        <td>Grid object returned by <code><a href="kWaveGrid.html">kWaveGrid</a></code>.</td>
+    </tr>
+</table>
+
+<h3>getDistributedSourceSignal</h3>
+
+<p>When defining a source input, a binary source mask (e.g, <code>source.p_mask</code>) should be defined using <code>getArrayBinaryMask</code>, and the time varying source (e.g., <code>source.p</code>) should be defined using this method. This automatically calculates the appropriate weighted source signal for each grid point that forms part of the off-grid source. The source data is assigned in the same order as the transducer elements were added to the array.</p>
+
+<pre class="codeinput">
+distributed_source = getDistributedSourceSignal(kgrid, source_signal)
+</pre>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>distributed_source</code></td>
+        <td>Source signal used to define time-varying source inputs for the k-Wave simulations functions, e.g, <code>source.p</code>.</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>kgrid</code></td>
+        <td>Grid object returned by <code><a href="kWaveGrid.html">kWaveGrid</a></code>.</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>source_signal</code></td>
+        <td>Source signal for each transducer element defined as an array <code>[number_elements, Nt]</code>.</td>
+    </tr>
+</table>
+
+<h3>getElementBinaryMask</h3>
+
+<p>Returns binary mask containing all grid points that form part of the specified element. Note, as the array elements use off-grid sources (see [1]), this will be non-local (depending on the values set for <code>'BLITolerance'</code> and <code>'BLIType'</code>).</p>
+
+<pre class="codeinput">
+mask = getElementBinaryMask(kgrid, element_num)
+</pre>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>mask</code></td>
+        <td>Binary mask (matrix of 1s and 0s) specifying the grid points that form part of the element.</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>kgrid</code></td>
+        <td>Grid object returned by <code><a href="kWaveGrid.html">kWaveGrid</a></code>.</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>element_num</code></td>
+        <td>Element number to return binary mask for.</td>
+    </tr>
+</table>
+
+<h3>getElementGridWeights</h3>
+
+<p>Returns matrix containing off-grid source weights for the transducer element defined as element_num (see [1]).</p>
+
+<pre class="codeinput">
+grid_weights = getElementGridWeights(kgrid, element_num)
+</pre>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>grid_weights</code></td>
+        <td>Matrix of grid weights.</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>kgrid</code></td>
+        <td>Grid object returned by <code><a href="kWaveGrid.html">kWaveGrid</a></code>.</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>element_num</code></td>
+        <td>Element number to return grid weights for.</td>
+    </tr>
+</table>
+
+<h3>getElementPositions</h3>
+
+<p>Returns a <code>[dim, num_elements]</code> array containing the positions of each array element after applying <code>array_transformation</code> (if defined).</p>
+
+<pre class="codeinput">
+element_pos = getElementPositions()
+</pre>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>element_pos</code></td>
+        <td>Matrix of element positions [m].</td>
+    </tr>
+</table>
+
+<h3>plotArray</h3>
+
+<p>Plot the array elements. If <code>new_figure</code> is true (the default), a new figure window is created, otherwise the elements are added to the currently active figure window.</p>
+
+<pre class="codeinput">
+plotArray(new_figure)
+</pre>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>new_figure</code></td>
+        <td>Boolean controlling whether a new figure window is created.</td>
+    </tr>
+</table>
+
+<h3>removeElement</h3>
+
+<p>Remove specified element from the array.</p>
+
+<pre class="codeinput">
+removeElement(element_num)
+</pre>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>element_num</code></td>
+        <td>Element number to remove from the array.</td>
+    </tr>
+</table>
+
+<h3>setAffineTransform</h3>
+
+<p>Sets value for <code>array_transformation</code> defined as an affine transformation matrix.</p>
+
+<pre class="codeinput">
+setAffineTransform(affine_transform)
+</pre>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>affine_transform</code></td>
+        <td>Affine transform given as a [3, 3] matrix in 2D or [4, 4] matrix in 3D.</td>
+    </tr>
+</table>
+
+<h3>setArrayPosition</h3>
+
+<p>Sets the property <code>array_transformation</code> (an affine transform) based on the values for translation and rotation. The translations are given as <code>[dx, dy]</code> in 2D and <code>[dx, dy, dz]</code> in 3D. The rotations angle/s are given as <code>[th]</code> in 2D (counter-clockwise) and <code>[x_th, y_th, z_th]</code> in 3D (rotation about x then y' then z'').</p>
+
+<pre class="codeinput">
+setArrayPosition(translation, rotation)
+</pre>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>translation</code></td>
+        <td>Array translation [m].</td>
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>rotation</code></td>
+        <td>Array rotation [degrees].</td>
+    </tr>
+</table>
+
+<h3>setOptionalInputs</h3>
+
+<p>Method to define the optional inputs (see <b>Optional Inputs</b> above). Can be called when the kWaveArray object is defined, or later.</p>
+
+<pre class="codeinput">
+setOptionalInputs(...)
+</pre>
+
+<h2>See Also</h2>
+
+<code><a href="offGridPoints.html">offGridPoints</a></code>, <code><a href="getDeltaBLI.html">getDeltaBLI</a></code>
+
+</div></body></html>

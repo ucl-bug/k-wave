@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Defining A Sensor Using An Array Transducer Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Defining A Sensor Using An Array Transducer Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Defining A Sensor Using An Array Transducer Example</h1>
+
+<p>This example provides a demonstration of using the <code><a href="kWaveArray.html">kWaveArray</a></code> class to define an array transducer with 20 arc-shaped elements which is then used as a receiver array. It builds on the <a href="example_at_array_as_source.html">Defining A Source Using An Array Transducer Example</a>.</p>
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_at_array_as_sensor.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_at_array_as_sensor']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Defining the array</a></li>
+    <li><a href="#heading3">Defining the sensor mask</a></li>
+    <li><a href="#heading4">Combining the sensor data</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Defining the array</h2>
+
+<p>In the <a href="example_at_array_as_source.html">Defining A Source Using An Array Transducer Example</a>, an array was defined using the <code><a href="kWaveArray.html">kWaveArray</a></code> class and used to create a source for a 2D simulation. In this example, the same array class is used to create a sensor. The <code><a href="kWaveArray.html">kWaveArray</a></code> class doesn't make any distinction between sources and sensors, it is just a container holding the physical properties of a collection of transducer elements. The syntax for creating a sensor is thus identical to the previous example. Here, an array is created with 20 arc-shaped elements placed around the outside of a circle, where the elements all point to the center.</p>
+
+<pre class="codeinput">
+<span class="comment">% create empty array</span>
+karray = kWaveArray;
+
+<span class="comment">% set the properties for the arc shaped elements and the ring geometry in</span>
+<span class="comment">% which they're placed</span>
+radius_of_curv = 100e-3;
+diameter       = 8e-3;
+ring_radius    = 50e-3;
+num_elements   = 20;
+
+<span class="comment">% orient all elements towards the centre of the grid</span>
+focus_pos = [0, 0];
+
+<span class="comment">% generate the centre position for each element in Cartesian space using</span>
+<span class="comment">% makeCartCircle (these positions could also be defined manually, etc)</span>
+elem_pos = makeCartCircle(ring_radius, num_elements, [0, 0]);
+
+<span class="comment">% add elements to the array</span>
+for ind = 1:num_elements
+    karray.addArcElement(elem_pos(:, ind), radius_of_curv, diameter, focus_pos);
+end
+</pre>
+
+<a name="heading3"></a>
+<h2>Defining the sensor mask</h2>
+
+<p>To use the array with the simulation functions, a binary mask must again be generated using <code>getArrayBinaryMask</code>. In this example, the mask is assigned to <code>sensor.mask</code> (in the previous example, it was assigned to <code>source.p_mask</code>).</p>
+
+<pre class="codeinput">
+<span class="comment">% assign binary mask from karray to the sensor mask</span>
+sensor.mask = karray.getArrayBinaryMask(kgrid);
+</pre>
+
+<p>The binary sensor mask is shown below, with the physical transducer elements overlaid in blue. This example models an initial value problem, so the initial pressure distribution (a rectangle and small circle) and the PML around the outside of the domain are also shown. Again, the sensor mask is non-local, extending around the physical arc-shaped elements. </p>
+
+<img vspace="5" hspace="5" src="images/example_at_array_as_sensor_01.png" style="width:525px;height:394px;" alt="">
+
+<a name="heading4"></a>
+<h2>Combining the sensor data</h2>
+
+<p>The simulation is run by passing the grid, medium, source, and sensor inputs to <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>. The returned <code>sensor_data</code> contains the time-varying pressure field at each grid point that formed part of the sensor mask (the sensor mask is shown in the figure above). This data is ordered following MATLAB's column-wise linear indexing. When using an array transducer, an additional step must be performed to combine this data to give the time-varying pressure field recorded by each physical transducer element. This is performed using the <code>combineSensorData</code> method of the <code><a href="kWaveArray.html">kWaveArray</a></code> class.</p>
+
+<pre class="codeinput">
+<span class="comment">% combine data to give one trace per physical array element</span>
+combined_sensor_data = karray.combineSensorData(kgrid, sensor_data);
+</pre>
+
+<p>In this example, the simulation is run twice. Once with a regular Cartesian sensor mask with point detectors placed at the center of each arc, and once using the array of arc detectors. The recorded sensor data from both simulations is shown below, along with the signal from the first element. The arc-shaped detectors are more directional, so have a lower response for waves that reach the array elements at steep angles.</p>
+
+<img vspace="5" hspace="5" src="images/example_at_array_as_sensor_02.png" style="width:525px;height:394px;" alt="">
+<img vspace="5" hspace="5" src="images/example_at_array_as_sensor_03.png" style="width:525px;height:394px;" alt="">
+
+</div></body></html>

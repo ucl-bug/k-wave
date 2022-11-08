@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>toneBurst :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>toneBurst</h1>
+<p class="purpose">Create an enveloped single frequency tone burst.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+signal = toneBurst(sample_freq, signal_freq, num_cycles)
+signal = toneBurst(sample_freq, signal_freq, num_cycles, ...)
+</pre>
+
+<h2>Description</h2>
+<p><code>toneBurst</code> creates an enveloped single frequency tone burst for use in ultrasound simulations. If an array is given for the optional input <code>'SignalOffset'</code>, a matrix of tone bursts is created where each row corresponds to a tone burst for each value of the <code>'SignalOffset'</code>. If a value for the optional input <code>'SignalLength'</code> is given, the tone burst/s are zero padded to this length (in samples). Several examples are given below.</p>
+
+<pre class="codeinput">
+<span class="comment">% return and plot a 1 MHz tone burst with 10 cycles and a Gaussian envelope sampled at 20 MHz</span>
+toneBurst(20e6, 1e6, 10, 'Plot', true);
+</pre>
+
+<img vspace="5" hspace="5" src="images/toneBurst_01.png" style="width:560px;height:420px;" alt="">
+
+<pre class="codeinput">
+<span class="comment">% specify several signals with different temporal offsets</span>
+sample_freq          = 20e6;
+signal_freq          = 1e6;
+num_cycles     	     = 10;
+num_ring_up_cycles   = 2;
+num_ring_down_cycles = 2;
+signal_offsets       = [0, 20, 40];
+
+<span class="comment">% create signals</span>
+signals = toneBurst(sample_freq, signal_freq, num_cycles, 'Envelope', [num_ring_up_cycles, num_ring_down_cycles], 'SignalOffset', signal_offsets); 
+
+<span class="comment">% plot signals</span>
+figure;
+t_axis = (1:size(signals, 2)) / sample_freq;
+stackedPlot(1e6 * t_axis, signals);
+xlabel('Time [\mus]');
+ylabel('Signal Number');
+</pre>
+
+<img vspace="5" hspace="5" src="images/toneBurst_02.png" style="width:560px;height:420px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>sample_freq</code></td>
+        <td>sampling frequency [Hz]</td>
+    </tr>     
+    
+    <tr valign="top">
+        <td><code>signal_freq</code></td>
+        <td>signal frequency [Hz]</td>
+    </tr> 
+    
+    <tr valign="top">
+        <td><code>num_cycles</code></td>
+        <td>number of sinusoidal oscillations</td>
+    </tr>      
+</table>
+
+<h2>Optional Inputs</h2>
+
+<p>Optional 'string', value pairs that may be used to modify the default computational settings.</p>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="18%"><col width="18%"><col width="18%"><col width="46%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Input</th>
+            <th bgcolor="#B2B2B2">Valid Settings</th>
+            <th bgcolor="#B2B2B2">Default</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Envelope'</code></td>
+            <td bgcolor="#F2F2F2"><code>'Gaussian'</code><br><code>'Rectangular'</code><br><code>[num_ring_up_cycles, num_ring_down_cycles]</code></td>
+            <td bgcolor="#F2F2F2"><code>'Gaussian'</code></td>            
+            <td bgcolor="#F2F2F2">Envelope used to taper the tone burst. The last option generates a continuous wave signal with a cosine taper of the specified length at the beginning and end.</td>
+        </tr>     
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Plot'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the created tone burst is plotted.</td>
+        </tr>   
+        
+        <td bgcolor="#F2F2F2"><code>'SignalLength'</code></td>
+            <td bgcolor="#F2F2F2"><em>(integer)</em></td>
+            <td bgcolor="#F2F2F2"><code>'auto'</code></td>            
+            <td bgcolor="#F2F2F2">Signal length in number of samples. If longer than the tone burst length, the signal is appended with zeros.</td>
+        </tr> 
+        
+        <td bgcolor="#F2F2F2"><code>'SignalOffset'</code></td>
+            <td bgcolor="#F2F2F2"><em>(integer)</em></td>
+            <td bgcolor="#F2F2F2"><code>0</code></td>            
+            <td bgcolor="#F2F2F2">Signal offset before the tone burst starts in number of samples.</td>
+        </tr>         
+    </tbody>
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>signal</code></td>
+        <td>created tone burst</td>
+    </tr>     
+</table>
+
+<h2>Examples</h2>
+
+<ul>
+	<li><a href="example_tvsp_steering_linear_array.html">Steering A Linear Array</a></li>
+	<li><a href="example_tvsp_snells_law.html">Snell's Law And Critical Angle Reflection</a></li> 
+</ul>
+
+<h2>See Also</h2>
+<code><a href="gaussian.html">gaussian</a></code>
+
+</div></body></html>

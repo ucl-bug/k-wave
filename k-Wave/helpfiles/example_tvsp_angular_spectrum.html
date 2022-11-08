@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Holographic Projections Using The Angular Spectrum Method Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Holographic Projection Using The Angular Spectrum Method Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Holographic Projections Using The Angular Spectrum Method Example</h1>
+
+<p>This example demonstrates how to project time-domain data between parallel planes using the angular spectrum method. It builds on the <a href="example_tvsp_3D_simulation.html">Simulations In Three Dimensions Example</a>.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_tvsp_angular_spectrum.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_tvsp_angular_spectrum']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Overview of the angular spectrum method</a></li>
+		<li><a href="#heading3">Generating the input and output data</a></li>
+        <li><a href="#heading4">Acoustic holography using the angular spectrum method</a></li>
+    </ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Overview of the angular spectrum method</h2>
+
+<p>Given time-series data measured over a plane, it is possible to project this data to other parallel planes using the angular spectrum method (sometimes called the angular spectrum approach). This method works by first decomposing the time signals into a series of frequency components (with a given amplitude and phase) by taking a 1D Fourier transform in time. For each frequency component, the amplitude and phase across the plane is then decomposed into a series of planes waves by taking a 2D Fourier transform in space. Each plane wave component is then propagated to the next plane by multiplying by a spectral propagator. The complex pressure at the next plane is reconstructed by taking an inverse Fourier transform in space. After propagating all temporal frequency components, the time-series at the next plane is then reconstructed.</p>
+
+<p>If the time series data is known over an infinite plane, in principle, the angular spectrum method can be used to project this data to any other parallel plane without any loss in accuracy (excluding the contributions from evanescent waves). However, in practice usually the time series data is only measured over a finite plane that captures most of the wave energy. This is the case when experimentally measuring the output from a transducer using a hydrophone. In this example, the time series data over two parallel planes is simulated using <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>. The function <code><a href="angularSpectrum.html">angularSpectrum</a></code> is then used to project the data from the first plane to the second, and the projected data is compared with the simulated data. Note, for a single frequency, the function <code><a href="angularSpectrumCW.html">angularSpectrumCW</a></code> could instead be used.</p>
+
+<a name="heading3"></a>
+<h2>Generating the input and output data</h2>
+
+<p>The function <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code> is used to simulate the output from a focused bowl transducer created using <code><a href="makeBowl.html">makeBowl</code></a>. The transducer is oriented in the z-direction, and the sensor mask is defined as two parallel x-y planes. To allow easy quantitative comparison with <code><a href="angularSpectrum.html">angularSpectrum</a></code> (which computes the projected time series in retarded time), the time step is adjusted so the distance between the two planes is an integer number of time steps. A snapshot of the simulation is shown below.</p>
+
+<img vspace="5" hspace="5" src="images/example_tvsp_angular_spectrum_01.png" style="width:560px;height:420px;" alt="">
+
+<a name="heading4"></a>
+<h2>Acoustic holography using the angular spectrum method</h2>
+
+<p>The function <code><a href="angularSpectrum.html">angularSpectrum</a></code> is used to project the input data from the first plane to the second plane in a single step. To improve the accuracy of the projection, the grid is expanded using the optional input <code>'GridExpansion'</code> (the same behaviour can also be obtained by directly setting the FFT size using the optional input <code>'FFTLength'</code>). This increases the number of discrete spatial frequencies used in the projection.</p>
+
+<pre class="codeinput">
+<span class="comment">% run projection from the first plane to the second plane using the angular spectrum method</span>
+[~, plane_2_as] = angularSpectrum(plane_1_kw, dx, kgrid.dt, proj_dist, c0, 'GridExpansion', 50);
+</pre>
+
+<p>The projected data is then compared with the data simulated using <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>. The plots below show different visualisations of the time domain waveforms, including the raw time series data, a maximum intensity projection through the time axis, and the time signal at the centre of the plane. There is close agreement between to the two datasets.</p>
+
+<p>Without the grid expansion, the maximum difference increases from ~1% to ~3%. However, further increasing the size of the grid expansion has diminishing returns, and will not reduce the difference to zero. This is because the plane of measured data does not capture the entire wave-field. To further reduce the difference, the size of the measured plane must be increased.</p>
+
+<img vspace="5" hspace="5" src="images/example_tvsp_angular_spectrum_02.png" style="width:560px;height:630px;" alt="">
+
+<img vspace="5" hspace="5" src="images/example_tvsp_angular_spectrum_03.png" style="width:560px;height:420px;" alt="">
+
+<img vspace="5" hspace="5" src="images/example_tvsp_angular_spectrum_04.png" style="width:560px;height:420px;" alt="">
+
+</div></body></html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Shear Waves And Critical Angle Reflection Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Shear Waves And Critical Angle Reflection Example.">
+</head>
+
+<body>
+
+<a name="top_of_page"></a>
+<div class="content">
+
+<h1>Shear Waves And Critical Angle Reflection Example</h1>
+
+<p>This example illustrates Snell's law for elastic media using a weakly focused ultrasound transducer incident on a soft-tissue / bone interface. It builds on the <a href="example_ewp_layered_medium.html">Explosive Source In A Layered Medium</a> and <a href="example_tvsp_snells_law.html">Snell's Law And Critical Angle Reflection</a> examples.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_ewp_shear_wave_snells_law.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_ewp_shear_wave_snells_law']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Elastic media and Snell's law</a></li>
+		<li><a href="#heading3">Heating of bones by an angled transducer</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Elastic media and Snell's law</h2>
+
+<p>When a compressional wave in a fluid medium is incident upon a solid body, both compressional and shear waves are generated. For a plane wave source incident on a flat fluid-solid interface, the angle of the transmitted waves can be predicted based on the sound speeds in the two medium, where:</p>
+
+&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<img vspace="5" hspace="5" src="images/example_tvsp_snells_law_eq_01.gif" style="width:90px;height:46px;" alt="">
+
+<p>For an isotropic solid, there are two different sound speeds for the compressional and shear waves, with the compressional sound speed always being higher. This means the compressional and shear waves generated in the solid will travel at different angles.</p>
+
+<img vspace="5" hspace="5" src="images/example_ewp_shear_wave_snells_law_01.png" style="width:287px;height:198px;" alt="">
+
+<p>When the incidence angle exceeds the critical angle</p>
+
+&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<img vspace="5" hspace="5" src="images/example_tvsp_snells_law_eq_02.gif" style="width:140px;height:23px;" alt="">
+
+<p>no wave is transmitted into the medium. As there are two sound speeds in the solid medium, there are two critical angles: one for the generation of compressional waves, and one for the generation of shear waves.</p>
+
+<a name="heading3"></a>
+<h2>Heating of bones by an angled transducer</h2>
+
+<p>Considering the case of bones and soft-tissue, the compressional sounds speeds are ~3000 m/s and ~1540 m/s, respectively. This gives a critical angle of ~30 degrees. Thus, if an ultrasound wave transmitted through soft tissue is incident on bone at an angle greater than 30 degrees, no compressional waves will be transmitted into the bone. However, the shear sound speed in bone is ~1400 m/s. This is close to the compressional sound speed in soft tissue, meaning shear waves will still be transmitted.</p>
+
+<p>In this example, a weakly focused ultrasound transducer is incident on a soft-tissue / bone interface as illustrated in the figure below. The angle of the transducer is ~56 degrees, which is beyond the critical angle for the transmission of compressional waves into bone.</p>
+
+<img vspace="5" hspace="5" src="images/example_ewp_shear_wave_snells_law_02.png" style="width:560px;height:420px;" alt="">
+
+<p>The simulation is run twice, first using the fluid code <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>, and then using the elastic code <code><a href="pstdElastic2D.html">pstdElastic2D</a></code>. A visualisation of the square of the particle velocity magnitude (which is proportional to heating) is given in the figure below. The fluid code does not consider the propagation of shear waves, thus the incident wave is completely reflected from the interface. Conversely, using the elastic code illustrates a significant shear component inside the bone. The vastly different profiles illustrate the importance of considering shear waves for ultrasound simulations involving bones.</p>
+
+<img vspace="5" hspace="5" src="images/example_ewp_shear_wave_snells_law_03.png" style="width:560px;height:684px;" alt="">
+
+</div></body></html>

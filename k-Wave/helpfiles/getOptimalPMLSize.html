@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>getOptimalPMLSize :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>getOptimalPMLSize</h1>
+<p class="purpose">Find PML size to give the smallest prime factors.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+pml_sz = getOptimalPMLSize(grid_sz)
+pml_sz = getOptimalPMLSize(grid_sz, pml_range)
+pml_sz = getOptimalPMLSize(grid_sz, [], axisymmetric)
+pml_sz = getOptimalPMLSize(grid_sz, pml_range, axisymmetric)
+</pre>
+
+<h2>Description</h2>
+<p><code>getOptimalPMLSize</code> finds the size of the perfectly matched layer (PML) that gives an overall grid size with the smallest prime factors when using the first-order simulation functions in k-Wave with the optional input <code>'PMLInside', false</code>. Choosing grid sizes with small prime factors can have a significant impact on the computational speed, as the code computes spatial gradients using the fast Fourier transform (FFT).</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td   width = "150"><p><code>grid_size</code></td>
+        <td>Grid size defined as a one (1D), two (2D), or three (3D) element vector. Alternatively, can be an object of the <code><a href="kWaveGrid.html">kWaveGrid</a></code> class defining the Cartesian and k-space grid fields.</td>
+    </tr>         
+</table>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>pml_range</code></td>
+        <td>Two element vector specifying the minimum and maximum PML size (default = <code>[10, 40]</code>).</td>        
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>axisymmetric</code></td>
+        <td>If using the axisymmetric code, string specifying the radial symmetry. Allowable inputs are <code>'WSWA'</code> and <code>'WSWS'</code> (default = []). This is important as the axisymmetric code only applies to the PML to the outside edge in the radial dimension.</td>        
+    </tr> 
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>pml_opt</code></td>
+        <td>PML size that gives the overall grid with the smallest prime factors.</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="matlab: doc fft">fft</a></code>
+
+</div></body></html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>writeAttributes :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>writeAttributes</h1>
+<p class="purpose">Write attributes to a k-Wave HDF5 file.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+writeAttributes(filename)
+writeAttributes(filename, file_description)
+</pre>
+
+<h2>Description</h2>
+<p><code>writeAttributes</code> writes a set of additional attributes to the HDF5 file specified by the user. These attributes specify the file version, k-Wave version, type, and so on, and are required by the k-Wave C++ simulation code. If the <code>file_description</code> is not specified, a description is generated based on computer username and MATLAB version.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>filename</code></td>
+        <td>name of HDF5 file to write matrix to</td>
+    </tr>  
+    <tr valign="top">
+        <td><code>file_description</code></td>
+        <td>custom file description</td>
+    </tr>   
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="matlab: doc h5writeatt">h5writeatt</a></code>, <code><a href="writeFlags.html">writeFlags</a></code>, <code><a href="writeGrid.html">writeGrid</a></code>, <code><a href="writeMatrix.html">writeMatrix</a></code>
+
+</div></body></html>

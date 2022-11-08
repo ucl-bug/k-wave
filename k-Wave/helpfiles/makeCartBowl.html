@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>makeCartBowl :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>makeCartBowl</h1>
+<p class="purpose">Create evenly distributed Cartesian points covering a bowl.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+bowl = makeCartBowl(bowl_pos, radius, diameter, focus_pos, num_points)
+bowl = makeCartBowl(bowl_pos, radius, diameter, focus_pos, num_points, plot_bowl)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>makeCartBowl</code> creates a 3 x <code>num_points</code> array of the Cartesian coordinates of points evenly distributed over the surface of a bowl. The bowl points are calculated using Fermat's spiral. The position of the bowl is set by <code>bowl_pos</code>, which corresponds to the center of the rear bowl surface. The orientation of the bowl is set by <code>focus_pos</code>, which corresponds to any point on the axis of the bowl (note, this must not be equal to <code>bowl_pos</code>). It is assumed that the solid angle of the bowl is equal to or less than 2*pi steradians. If the radius is set to inf, a disc is generated. The 3D plot that is displayed after calling <code>makeCartBowl([0, 0, 0], 40e-3, 60e-3, [0, 0, -1], 500, true);</code> is given below.</p>
+
+<img vspace="5" hspace="5" src="images/makeCartBowl_01.png" style="width:700px;height:525px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>bowl_pos</code></td>
+        <td>Cartesian position of the centre of the rear surface of the bowl given as a three element vector <code>[bx, by, bz]</code> [m]</td>
+    </tr>     
+    <tr valign="top">
+        <td width = "150"><code>radius</code></td>
+        <td>Radius of curvature of the bowl [m]</td>        
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>diameter</code></td>
+        <td>Diameter of the opening of the bowl [m]</td>        
+    </tr> 
+    <tr valign="top">
+        <td width = "150"><code>focus_pos</code></td>
+        <td>Any point on the beam axis of the bowl given as a three element vector <code>[fx, fy, fz]</code> [m]</td>        
+    </tr> 
+    <tr valign="top">
+        <td width = "150"><code>num_points</code></td>
+        <td>Number of points on the bowl</td>        
+    </tr> 
+</table>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">   
+    <tr valign="top">
+        <td width = "150"><code>plot_bowl</code></td>
+        <td>Boolean controlling whether the Cartesian coordinates are plotted (default = false)</td>
+    </tr>     
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>points</code></td>
+        <td>3 x <code>num_points</code> array of Cartesian coordinates</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="makeBowl.html">makeBowl</a></code>, <code><a href="makeCartArc.html">makeCartArc</a></code>, <code><a href="makeCartSphere.html">makeCartSphere</a></code>, <code><a href="makeCartSphericalSection.html">makeCartSphericalSection</a></code>, 
+
+</div></body></html>

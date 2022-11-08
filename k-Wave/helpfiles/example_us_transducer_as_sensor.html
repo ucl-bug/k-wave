@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Using An Ultrasound Transducer As A sensor Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Using An Ultrasound Transducer As A sensor Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Using An Ultrasound Transducer As A Sensor Example</h1>
+
+<p>This example shows how an ultrasound transducer can be used as a detector by substituting a transducer object for the normal <code>sensor</code> input structure. It builds on the <a href="example_us_defining_transducer.html">Defining An Ultrasound Transducer</a> and <a href="example_us_beam_patterns.html">Simulating Ultrasound Beam Patterns</a> examples.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_us_transducer_as_sensor.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_us_transducer_as_sensor']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Running the simulation</a></li>
+		<li><a href="#heading3">Forming a scan line</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Running the simulation</h2>
+
+<p>In the previous ultrasound examples, the transducer object was used to replace the <code>source</code> input of <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>. The same transducer object can also be used as a detector by using this to replace the corresponding <code>sensor</code> input. An equivalent sensor could be created using a sensor mask containing the grid points for each transducer element, and then averaging the recorded pressure signals over the appropriate grid elements after the simulation is complete. However, directly using the transducer object is both more convenient and more memory efficient (the average pressure across each element is calculated at every time step, and only the average is stored). In this example, two spherical objects embedded within the medium are used as the source, and an ultrasound transducer with 32 active elements is used as the detector. A snapshot is shown below.</p>
+
+<img vspace="5" hspace="5" src="images/example_us_transducer_as_sensor_01.png" style="width:560px;height:420px;" alt="">
+
+<p>The way in which the signals across each element are averaged within k-Wave depends on the setting for <code>transducer.elevation_focus_distance</code>. If this is set to <code>inf</code>, the signals across the grid points within each sensor element are averaged at each time step and only the average is stored. On the other hand, if an elevation focus is used, a buffer the length of the longest beamforming delay is filled (using a FIFO queue) and the elevation beamforming is computed on the fly once the buffer is filled. In both cases, this significantly reduces the memory requirements compared to storing the complete time history at every grid point within the transducer.</p> 
+
+<p>A plot of the returned <code>sensor_data</code> is shown below. This is indexed as <code>sensor_data(element_number, time)</code>. The signal from the off-axis source that is closer to the transducer is stronger and arrives first.</p>
+
+<img vspace="5" hspace="5" src="images/example_us_transducer_as_sensor_02.png" style="width:560px;height:630px;" alt="">
+
+<a name="heading3"></a>
+<h2>Forming a scan line</h2>
+
+<p>The raw signals recorded by the transducer can be formed into a scan line by using the functionality of the <code>kWaveTransducer</code> class. The <code>scan_line</code> method takes the recorded sensor data and forms it into a scan line based on the current <code>focus_distance</code> and <code>receive_apodization</code> settings. </p>
+
+<pre class="codeinput">
+<span class="comment">% extract a single scan line from the sensor data using the current
+% beamforming settings</span>
+scan_line = transducer.scan_line(sensor_data);
+</pre>
+
+<p>A plot of the scan line is given below. Even though the signal from the off-axis source is stronger in the individual signals, after beamforming, the signal from the on-axis source is much stronger.</p>
+
+<img vspace="5" hspace="5" src="images/example_us_transducer_as_sensor_03.png" style="width:560px;height:420px;" alt="">
+
+</div></body></html>

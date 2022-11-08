@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Photoacoustic Waveforms in 1D, 2D and 3D Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Photoacoustic Waveforms in 1D, 2D and 3D.">
+</head>
+
+<body><div class="content">
+
+<h1>Photoacoustic Waveforms in 1D, 2D and 3D Example</h1>
+
+<p>The time-varying pressure signals recorded from a photoacoustic source look different depending on the number of dimensions used in the simulation. This difference occurs because a point source in 1D corresponds to a plane wave in 3D, and a point source in 2D corresponds to an infinite line source in 3D. This examples shows the difference between the signals recorded in each dimension. It builds on the <a href="example_ivp_1D_simulation.html">Simulations in One Dimension</a>, <a href="example_ivp_homogeneous_medium.html">Homogeneous Propagation Medium</a>, and <a href="example_ivp_3D_simulation.html">Simulations in Three Dimensions</a> examples.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_ivp_photoacoustic_waveforms.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_ivp_photoacoustic_waveforms']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+        <li><a href="#heading2">Waves in 1D, 2D and 3D</a></li>	    
+    	<li><a href="#heading3">Running the simulation in 1D</a></li>
+        <li><a href="#heading4">Running the simulation in 2D</a></li>
+        <li><a href="#heading5">Running the simulation in 3D</a></li>
+        <li><a href="#heading6">Plotting the waveforms</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Waves in 1D, 2D and 3D</h2>
+
+<p>The fact that the characteristics of plane (1D), cylindrical (2D), and spherical (3D) wave propagation are different in some fundamental ways is often overlooked. This can lead to incorrect insight into the results from photoacoustic simulations. In particular, three key differences between 1D, 2D and 3D propagation are:</p>
+<ul>
+    <li>Photoacoustic waves in 1D and 3D are compactly supported. This means they are zero outside some finite region (they "end"), whereas a waveform in 2D has an infinitely long tail. This can be understood by considering a 2D point source as an infinitely long line source in 3D. This means there will always be some signal arriving at the detector from some (increasingly distant) part of the line source. One implication for photoacoustics is that time reversal image reconstruction is not exact in 2D.</li>
+    <li>There is no geometrical spreading in 1D, so wave amplitudes do not decay (unless there is absorption). In 2D, the waves undergo cylindrical spreading in which the acoustic energy is spread out over the growing wavefront. This means the acoustic energy is inversely proportional to radius and the acoustic pressure decays as 1/sqrt(radius). In 3D, the spreading is over a spherical wavefront, so the energy is spread over radius^2, and the pressure decays as 1/radius.</li>
+    <li>In 1D, the shape of the initial pressure distribution will be retained in the shape of the propagating pulse. This is not true in 2D and 3D.</li>
+</ul>
+
+<p>Note that 1D, 2D, and 3D are used here to refer to the Cartesian coordinate systems in which the variables are (x), (x, y), and (x, y, z). Other cases that could be described as 1D (such as spherically-symmetric with just a radial coordinate) or 2D (such as cylindrically-symmetric with (r, theta) as the coordinates) are not considered.
+</p>
+
+<a name="heading3"></a>
+<h2>Running the simulation in 1D</h2>
+
+<p>First, the common settings for all three examples are set, including the grid size, properties of the medium, size of the initial pressure distribution, source-receiver separation, time step, and length of time to run the simulation.</p>
+
+<pre class="codeinput">
+<span class="comment">% size of the computational grid</span>
+Nx = 64;    % number of grid points in the x (row) direction
+x = 1e-3;   % size of the domain in the x direction [m]
+dx = x/Nx;  % grid point spacing in the x direction [m]
+
+<span class="comment">% define the properties of the propagation medium</span>
+medium.sound_speed = 1500;      % [m/s]
+
+<span class="comment">% size of the initial pressure distribution</span>
+source_radius = 2;              % [grid points]
+
+<span class="comment">% distance between the centre of the source and the sensor</span>
+source_sensor_distance = 10;    % [grid points]
+
+<span class="comment">% time array</span>
+dt = 2e-9;                      % [s]
+t_end = 300e-9;                 % [s]
+
+<span class="comment">% computation settings</span>
+input_args = {'DataCast', 'single'};
+</pre>
+
+<p>The final line above sets MATLAB to run the simulations in single precision arithmetic, which is faster than double precision and more than sufficient for most simulations. The next set of commands create the k-Wave grid, the array of time points, the initial pressure distribution (source), and the sensor mask used to record the wavefield.</p>
+
+<pre class="codeinput">
+<span class="comment">% create the computational grid</span>
+kgrid = kWaveGrid(Nx, dx);
+
+<span class="comment">% create the time array</span>
+kgrid.setTime(round(t_end / dt) + 1, dt);
+
+<span class="comment">% create initial pressure distribution</span>
+source.p0 = zeros(Nx, 1);
+source.p0(Nx/2 - source_radius:Nx/2 + source_radius) = 1;
+
+<span class="comment">% define a single sensor point</span>
+sensor.mask = zeros(Nx, 1);
+sensor.mask(Nx/2 + source_sensor_distance) = 1;	
+</pre>
+
+<p>Finally, the 1D example is run.</p>
+
+<pre class="codeinput">
+<span class="comment">% run the simulation</span>
+sensor_data_1D = kspaceFirstOrder1D(kgrid, medium, source, sensor, input_args{:});
+</pre>
+
+<a name="heading4"></a>
+<h2>Running the simulation in 2D</h2>
+
+<p>Running the simulation in 2D is very similar, except the initial pressure distribution is defined as a disc (filled circle) using <code><a href="makeDisc.html">makeDisc</a></code>, and the sensor mask is defined as a single pixel in two-dimensions.</p>
+
+<pre class="codeinput">
+<span class="comment">% create the computational grid</span>
+kgrid = kWaveGrid(Nx, dx, Nx, dx);
+
+<span class="comment">% create initial pressure distribution</span>
+source.p0 = makeDisc(Nx, Nx, Nx/2, Nx/2, source_radius);
+
+<span class="comment">% define a single sensor point</span>
+sensor.mask = zeros(Nx, Nx);
+sensor.mask(Nx/2 - source_sensor_distance, Nx/2) = 1;
+
+<span class="comment">% run the simulation</span>
+sensor_data_2D = kspaceFirstOrder2D(kgrid, medium, source, sensor, input_args{:});
+</pre>
+
+<a name="heading5"></a>
+<h2>Running the simulation in 3D</h2>
+
+<p>The 3D example follows the same pattern, except now the source is defined as a ball (filled sphere) using <code><a href="makeBall.html">makeBall</a></code>.</p>
+
+<pre class="codeinput">
+<span class="comment">% create the computational grid</span>
+kgrid = kWaveGrid(Nx, dx, Nx, dx, Nx, dx);
+
+<span class="comment">% create initial pressure distribution</span>
+source.p0 = makeBall(Nx, Nx, Nx, Nx/2, Nx/2, Nx/2, source_radius);
+
+<span class="comment">% define a single sensor point</span>
+sensor.mask = zeros(Nx, Nx, Nx);
+sensor.mask(Nx/2 - source_sensor_distance, Nx/2, Nx/2) = 1;
+
+<span class="comment">% run the simulation</span>
+sensor_data_3D = kspaceFirstOrder3D(kgrid, medium, source, sensor, input_args{:});
+</pre>
+
+<a name="heading6"></a>
+<h2>Plotting the waveforms</h2>
+
+<p>The three recorded time series for 1D, 2D and 3D are shown below (the magnitudes have been normalised). The fact that the 1D and 3D waveforms are compactly supported can be clearly seen.</p>
+
+<img vspace="5" hspace="5" src="images/example_ivp_photoacoustic_waveforms_01.png" style="width:560px;height:420px;" alt="">
+
+</div></body></html>

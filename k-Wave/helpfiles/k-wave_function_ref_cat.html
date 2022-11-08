@@ -1,0 +1,768 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Functions - By Category (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body><div class="content">
+
+<h1>Functions &#8212; By Category</h1>
+
+<p><img src="images/more_arrows.gif">&nbsp;<a href="k-wave_function_ref_alph.html">View Functions Alphabetically</a></p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#cat1">Time Domain Wave Propagation in Fluid Media</a></li>
+		<li><a href="#cat14">Single Frequency Wave Propagation in Fluid Media</a></li>
+		<li><a href="#cat12">Time Domain Wave Propagation in Elastic Media</a></li>
+		<li><a href="#cat2">Time Domain Heat Diffusion</a></li>
+		<li><a href="#cat13">Reference Solutions</a></li>
+		<li><a href="#cat3">Photoacoustic Image Reconstruction</a></li>
+		<li><a href="#cat4">Geometry and Shape Creation</a></li>
+		<li><a href="#cat5">Acoustic Absorption Coefficient Calculation and Conversion</a></li>
+		<li><a href="#cat15">Material Properties</a></li>
+		<li><a href="#cat6">Grid and Matrix Utilities</a></li>
+		<li><a href="#cat7">Filtering and Spectral Utilities</a></li>
+		<li><a href="#cat8">Display and Visualisation</a></li>
+		<li><a href="#cat9">Signal Creation and Processing</a></li>
+		<li><a href="#cat10">HDF5 Utilities</a></li>
+		<li><a href="#cat11">System Parameters and Utilities</a></li>
+	</ul>
+</div>
+
+<h2>Time Domain Wave Propagation in Fluid Media</h2>
+<a name="cat1"></a>
+<p><table width="100%">
+
+    <tr valign="top">
+        <td width="200"><code><a href="angularSpectrum.html">angularSpectrum</a></code></td>
+        <td>Project time-domain input plane using the angular spectrum method.</td>
+    </tr>
+
+    <tr valign="top">
+        <td width="200"><code><a href="calculateMassSource.html">calculateMassSource</a></code></td>
+        <td>Compute k-Wave input plane from measured time-varying data.</td>
+    </tr>	
+	
+    <tr valign="top">
+        <td width="200"><code><a href="kspaceFirstOrder1D.html">kspaceFirstOrder1D</a></code></td>
+        <td>1D time-domain simulation of wave propagation</td>
+    </tr>
+
+    <tr valign="top">
+        <td width="200"><code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code></td>
+        <td>2D time-domain simulation of wave propagation</td>
+    </tr>
+	
+	<tr valign="top">
+        <td width="200"><code><a href="kspaceFirstOrder2DC.html">kspaceFirstOrder2DC</a></code></td>
+        <td>2D time-domain simulation of wave propagation using C++ code</td>
+    </tr>
+
+	<tr valign="top">
+        <td width="200"><code><a href="kspaceFirstOrder3DG.html">kspaceFirstOrder2DG</a></code></td>
+        <td>2D time-domain simulation of wave propagation on a GPU using C++ CUDA code</td>
+    </tr>
+	
+    <tr valign="top">
+        <td width="200"><code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code></td>
+        <td>3D time-domain simulation of wave propagation</td>
+    </tr>
+
+	<tr valign="top">
+        <td width="200"><code><a href="kspaceFirstOrder3DC.html">kspaceFirstOrder3DC</a></code></td>
+        <td>3D time-domain simulation of wave propagation using C++ code</td>
+    </tr>
+
+	<tr valign="top">
+        <td width="200"><code><a href="kspaceFirstOrder3DG.html">kspaceFirstOrder3DG</a></code></td>
+        <td>3D time-domain simulation of wave propagation on a GPU using C++ CUDA code</td>
+    </tr>
+
+	<tr valign="top">
+        <td width="200"><code><a href="kspaceFirstOrderAS.html">kspaceFirstOrderAS</a></code></td>
+        <td>Axisymmetric time-domain simulation of wave propagation</td>
+    </tr>
+	
+	<tr valign="top">
+        <td width="200"><code><a href="kspaceFirstOrderASC.html">kspaceFirstOrderASC</a></code></td>
+        <td>Axisymmetric time-domain simulation of wave propagation using C++ code</td>
+    </tr>	
+
+    <tr valign="top">
+        <td width="200"><code><a href="kspaceSecondOrder.html">kspaceSecondOrder</a></code></td>
+        <td>Fast time-domain simulation of wave propagation for homogeneous media</td>
+    </tr>
+    
+</table></p>
+
+<h2>Single Frequency Wave Propagation in Fluid Media</h2>
+<a name="cat14"></a>
+<p><table width="100%">
+
+    <tr valign="top">
+        <td width="200"><code><a href="angularSpectrumCW.html">angularSpectrumCW</a></code></td>
+        <td>Project CW input plane using the angular spectrum method.</td>
+    </tr>
+	
+    <tr valign="top">
+        <td width="200"><code><a href="calculateMassSource.html">calculateMassSourceCW</a></code></td>
+        <td>Compute k-Wave input plane from measured CW data.</td>
+    </tr>	
+	
+	<tr valign="top">
+        <td width="200"><code><a href="acousticFieldPropagator.html">acousticFieldPropagator</a></code></td>
+        <td>Calculate acoustic field for CW source.</td>
+    </tr>
+	
+	<tr valign="top">
+        <td width="200"><code><a href="acousticFieldPropagatorC.html">acousticFieldPropagatorC</a></code></td>
+        <td>Calculate acoustic field for CW source using C++ code.</td>
+    </tr>
+
+</table></p>
+
+<h2>Time Domain Wave Propagation in Elastic Media</h2>
+<a name="cat12"></a>
+<p><table width="100%">
+
+	<tr valign="top">
+        <td width="200"><code><a href="pstdElastic2D.html">pstdElastic2D</a></code></td>
+        <td>2D time-domain simulation of elastic wave propagation</td>
+    </tr>
+
+    <tr valign="top">
+        <td width="200"><code><a href="pstdElastic3D.html">pstdElastic3D</a></code></td>
+        <td>3D time-domain simulation of elastic wave propagation</td>
+    </tr>
+    
+</table></p>
+
+<h2>Time Domain Heat Diffusion</h2>
+<a name="cat2"></a>
+<p><table width="100%">
+
+    <tr valign="top">
+        <td width="200"><code><a href="bioheatExact.html">bioheatExact</a></code></td>
+        <td>Compute exact solution to Pennes' bioheat equation in homogeneous media</td>
+    </tr>
+
+    <tr valign="top">
+        <td width="200"><code><a href="kWaveDiffusion.html">kWaveDiffusion</a></code></td>
+        <td>Time-domain simulation of heat diffusion and perfusion</td>
+    </tr>
+    
+</table></p>
+
+<h2>Reference Solutions</h2>
+<a name="cat13"></a>
+<p><table width="100%">
+
+    <tr valign="top">
+        <td width="200"><code><a href="focusedAnnulusONeil.html">focusedAnnulusONeil</a></code></td>
+        <td>Compute axial pressure for focused annulus transducer using O'Neil's solution</td>
+    </tr>
+
+    <tr valign="top">
+        <td width="200"><code><a href="focusedBowlONeil.html">focusedBowlONeil</a></code></td>
+        <td>Compute O'Neil's solution for focused bowl transducer</td>
+    </tr>
+	
+    <tr valign="top">
+        <td width="200"><code><a href="mendousse.html">mendousse</a></code></td>
+        <td>Compute Mendousse's solution for nonlinear wave propagation in viscous media</td>
+    </tr>	
+    
+</table></p>
+
+<h2>Photoacoustic Image Reconstruction</h2>
+<a name="cat3"></a>
+<p><table width="100%">
+   
+    <tr valign="top">
+        <td width="200"><code><a href="kspaceLineRecon.html">kspaceLineRecon</a></code></td>
+        <td>2D linear FFT reconstruction</td>
+    </tr>  
+    
+    <tr valign="top">
+        <td width="200"><code><a href="kspacePlaneRecon.html">kspacePlaneRecon</a></code></td>
+        <td>3D planar FFT reconstruction</td>
+    </tr>      
+</table></p>
+
+<p></p>
+<p></p>
+<p>See also <a href="kspacefirstorder1d.html">kspaceFirstOrder1D</a>, <a href="kspacefirstorder2d.html">kspaceFirstOrder2D</a>, and <a href="kspacefirstorder3d.html">kspaceFirstOrder3D</a> for time-reversal image reconstruction</p>
+
+<h2>Geometry and Shape Creation</h2>
+<a name="cat4"></a>
+<p><table width="100%">
+   
+    <tr valign="top">
+        <td width="200"><code><a href="kWaveArray.html">kWaveArray</a></code></td>
+        <td>Class definition for k-Wave array</td>
+    </tr> 
+
+    <tr valign="top">
+        <td width="200"><code><a href="makeArc.html">makeArc</a></code></td>
+        <td>Create a binary map of an arc within a 2D grid</td>
+    </tr>   
+   
+    <tr valign="top">
+        <td width="200"><code><a href="makeBall.html">makeBall</a></code></td>
+        <td>Create a binary map of a filled ball within a 3D grid</td>
+    </tr>
+    
+    <tr valign="top">
+        <td width="200"><code><a href="makeBowl.html">makeBowl</a></code></td>
+        <td>Create a binary map of a bowl within a 3D grid</td>
+    </tr>
+    
+    <tr valign="top">
+        <td width="200"><code><a href="makeCartArc.html">makeCartArc</a></code></td>
+        <td>Create evenly distributed Cartesian points covering an arc</td>
+    </tr>
+
+    <tr valign="top">
+        <td width="200"><code><a href="makeCartBowl.html">makeCartBowl</a></code></td>
+        <td>Create evenly distributed Cartesian points covering a bowl</td>
+    </tr>    
+
+    <tr valign="top">
+        <td width="200"><code><a href="makeCartCircle.html">makeCartCircle</a></code></td>
+        <td>Create a 2D Cartesian circle or arc</td>
+    </tr>
+
+    <tr valign="top">
+        <td width="200"><code><a href="makeCartDisc.html">makeCartDisc</a></code></td>
+        <td>Create evenly distributed Cartesian points covering a disc</td>
+    </tr>
+
+    <tr valign="top">
+        <td width="200"><code><a href="makeCartRect.html">makeCartRect</a></code></td>
+        <td>Create evenly distributed Cartesian points covering a rectangle</td>
+    </tr>    
+    
+    <tr valign="top">
+        <td width="200"><code><a href="makeCartSphere.html">makeCartSphere</a></code></td>
+        <td>Create a 3D Cartesian sphere</td>
+    </tr>
+
+    <tr valign="top">
+        <td width="200"><code><a href="makeCartSphericalSegment.html">makeCartSphericalSegment</a></code></td>
+        <td>Create evenly distributed Cartesian points covering a spherical segment</td>
+    </tr> 
+
+    <tr valign="top">
+        <td width="200"><code><a href="makeCircle.html">makeCircle</a></code></td>
+        <td>Create a binary map of a circle within a 2D grid</td>
+    </tr>
+
+    <tr valign="top">
+        <td width="200"><code><a href="makeDisc.html">makeDisc</a></code></td>
+        <td>Create a binary map of a filled disc within a 2D grid</td>
+    </tr>
+    
+    <tr valign="top">
+        <td width="200"><code><a href="makeLine.html">makeLine</a></code></td>
+        <td>Create a binary map of a straight line within a 2D grid</td>
+    </tr>
+    
+    <tr valign="top">
+        <td width="200"><code><a href="makeMultiArc.html">makeMultiArc</a></code></td>
+        <td>Create a binary map of multiple arcs within a 2D grid</td>
+    </tr>
+    
+	<tr valign="top">
+        <td width="200"><code><a href="makeMultiBowl.html">makeMultiBowl</a></code></td>
+        <td>Create a binary map of multiple bowls within a 3D grid</td>
+    </tr>    
+    
+    <tr valign="top">
+        <td width="200"><code><a href="makeSphere.html">makeSphere</a></code></td>
+        <td>Create a binary map of a sphere within a 3D grid</td>
+    </tr>    
+
+    <tr valign="top">
+        <td width="200"><code><a href="makeSphericalSection.html">makeSphericalSection</a></code></td>
+        <td>Create a binary map of a sphere segment within a 3D grid</td>
+    </tr>  
+
+</table></p>
+
+<h2>Acoustic Absorption Coefficient Calculation and Conversion</h2>
+<a name="cat5"></a>
+<p><table width="100%">
+
+    <tr valign="top">
+        <td width="200"><code><a href="attenComp.html">attenComp</a></code></td>
+        <td>Attenuation compensation using time-variant filtering</td>
+    </tr>  
+    <tr valign="top">
+        <td width="200"><code><a href="db2neper.html">db2neper</a></code></td>
+        <td>Convert decibels to nepers</td>
+    </tr>    
+    <tr valign="top">
+        <td width="200"><code><a href="fitPowerLawParams.html">fitPowerLawParams</a></code></td>
+        <td>Fit power law absorption parameters for highly absorbing media</td>
+    </tr>       
+    <tr valign="top">
+        <td width="200"><code><a href="neper2db.html">neper2db</a></code></td>
+        <td>Convert nepers to decibels</td>
+    </tr>    
+    <tr valign="top">
+        <td width="200"><code><a href="powerLawKramersKronig.html">powerLawKramersKronig</a></code></td>
+        <td>Calculate dispersion for power law absorption</td>
+    </tr>
+    <tr valign="top">
+        <td width="200"><code><a href="waterAbsorption.html">waterAbsorption</a></code></td>
+        <td>Calculate ultrasound absorption in distilled water</td>
+    </tr>  
+  	
+</table></p>
+
+<h2>Material Properties</h2>
+<a name="cat15"></a>
+<p><table width="100%">
+
+    <tr valign="top">
+        <td width="200"><code><a href="waterAbsorption.html">waterAbsorption</a></code></td>
+        <td>Calculate ultrasound absorption in distilled water</td>
+    </tr>
+	
+    <tr valign="top">
+        <td width="200"><code><a href="waterDensity.html">waterDensity</a></code></td>
+        <td>Calculate density of air-saturated water with temperature</td>
+    </tr>
+	
+	<tr valign="top">
+        <td width="200"><code><a href="waterNonlinearity.html">waterNonlinearity</a></code></td>
+        <td>Calculate B/A of water with temperature</td>
+    </tr>
+	
+	<tr valign="top">
+        <td width="200"><code><a href="waterSoundSpeed.html">waterSoundSpeed</a></code></td>
+        <td>Calculate the sound speed in distilled water with temperature</td>
+    </tr> 
+	
+</table></p>
+
+<h2>Grid and Matrix Utilities</h2>
+<a name="cat6"></a>
+<p><table width="100%">
+
+    <tr valign="top">
+        <td width="200"><code><a href="cart2grid.html">cart2grid</a></code></td>
+        <td>Interpolate a set of Cartesian points onto a binary grid</td>
+    </tr>
+
+    <tr valign="top">
+        <td width="200"><code><a href="computeLinearTransform.html">computeLinearTransform</a></code></td>
+        <td>Compute a linear transformation matrix from two points</td>
+    </tr>    
+
+    <tr valign="top">
+        <td width="200"><code><a href="expandMatrix.html">expandMatrix</a></code></td>
+        <td>Enlarge a matrix by extending the edge values</td>
+    </tr>  
+
+    <tr valign="top">
+        <td width="200"><code><a href="findClosest.html">findClosest</a></code></td>
+        <td>Return the closest value in a matrix</td>
+    </tr>  
+
+    <tr valign="top">
+        <td width="200"><code><a href="fourierShift.html">fourierShift</a></code></td>
+        <td>Resample data using a Fourier interpolant</td>
+    </tr>	
+	
+    <tr valign="top">
+        <td width="200"><code><a href="getAffineMatrix.html">getAffineMatrix</a></code></td>
+        <td>Return matrix for affine transform in 3D</td>
+    </tr>
+
+    <tr valign="top">
+        <td width="200"><code><a href="getSpacedPoints.html">getSpacedPoints</a></code></td>
+        <td>Create vector of log or linear spaced points</td>
+    </tr> 	
+	
+    <tr valign="top">
+        <td width="200"><code><a href="getOptimalPMLSize.html">getOptimalPMLSize</a></code></td>
+        <td>Find PML size to give the smallest prime factors</td>
+    </tr> 	
+	
+    <tr valign="top">
+        <td width="200"><code><a href="grid2cart.html">grid2cart</a></code></td>
+        <td>Return the Cartesian coordinates of the non-zero points of a binary grid</td>
+    </tr>    
+
+    <tr valign="top">
+        <td width="200"><code><a href="interpCartData.html">interpCartData</a></code></td>
+        <td>Interpolate data from a Cartesian to a binary sensor mask</td>
+    </tr>   
+
+    <tr valign="top">
+        <td width="200"><code><a href="interpftn.html">interpftn</a></code></td>
+        <td>Resample data using Fourier interpolation</td>
+    </tr>
+    
+    <tr valign="top">
+        <td width="200"><code><a href="kWaveArray.html">kWaveArray</a></code></td>
+        <td>Class definition for k-Wave array</td>
+    </tr> 
+
+    <tr valign="top">
+        <td width="200"><code><a href="kWaveGrid.html">kWaveGrid</a></code></td>
+        <td>Class definition for k-Wave grid</td>
+    </tr>      
+    
+    <tr valign="top">
+        <td width="200"><code><a href="loadImage.html">loadImage</a></code></td>
+        <td>Load an image file</td>
+    </tr>
+
+    <tr valign="top">
+        <td width="200"><code><a href="offGridPoints.html">offGridPoints</a></code></td>
+        <td>Create a non-binary source mask from Cartesian points</td>
+    </tr> 
+    
+    <tr valign="top">
+        <td width="200"><code><a href="maxND.html">maxND</a></code></td>
+        <td>Return the value and indices of the largest value in an N-D array</td>
+    </tr>   
+    
+    <tr valign="top">
+        <td width="200"><code><a href="minND.html">minND</a></code></td>
+        <td>Return the value and indices of the smallest value in an N-D array</td>
+    </tr>  
+
+    <tr valign="top">
+        <td width="200"><code><a href="numDim.html">numDim</a></code></td>
+        <td>Return the number of matrix dimensions</td>
+    </tr>     
+
+    <tr valign="top">
+        <td width="200"><code><a href="resize.html">resize</a></code></td>
+        <td>Resize a matrix</td>
+    </tr>    
+
+    <tr valign="top">
+        <td width="200"><code><a href="reorderCartData.html">reorderBinarySensorData</a></code></td>
+        <td>Reorder data from a binary sensor mask</td>
+    </tr> 
+    
+    <tr valign="top">
+        <td width="200"><code><a href="reorderSensorData.html">reorderSensorData</a></code></td>
+        <td>Reorder sensor data from kspaceFirstOrder2D based on angle</td>
+    </tr> 
+    
+	<tr valign="top">
+        <td width="200"><code><a href="revolve2D.html">revolve2D</a></code></td>
+        <td>Form 3D matrix from revolution of 2D matrix</td>
+    </tr>      
+    
+	<tr valign="top">
+        <td width="200"><code><a href="roundEven.html">roundEven</a></code></td>
+        <td>Round towards the nearest even number</td>
+    </tr>
+
+	<tr valign="top">
+        <td width="200"><code><a href="roundOdd.html">roundOdd</a></code></td>
+        <td>Round towards the nearest odd number</td>
+    </tr>
+
+    <tr valign="top">
+        <td width="200"><code><a href="trimCartPoints.html">trimCartPoints</a></code></td>
+        <td>Remove Cartesian points that are not within a kgrid</td>
+    </tr>
+
+    <tr valign="top">
+        <td width="200"><code><a href="trimZeros.html">trimZeros</a></code></td>
+        <td>Create a tight bounding box by removing zeros</td>
+    </tr> 
+    
+    <tr valign="top">
+        <td width="200"><code><a href="unmaskSensorData.html">unmaskSensorData</a></code></td>
+        <td>Reorder data recorded using a binary sensor mask</td>
+    </tr> 
+
+</table></p>
+
+<h2>Filtering and Spectral Utilities</h2>
+<a name="cat7"></a>
+<p><table width="100%">
+
+    <tr valign="top">
+        <td width="200"><code><a href="applyFilter.html">applyFilter</a></code></td>
+        <td>Filter input with low, high, or band pass filter</td>
+    </tr>
+
+    <tr valign="top">
+        <td width="200"><code><a href="envelopeDetection.html">envelopeDetection</a></code></td>
+        <td>Extract signal envelope using the Hilbert Transform</td>
+    </tr>
+	
+    <tr valign="top">
+        <td width="200"><code><a href="filterTimeSeries.html">filterTimeSeries</a></code></td>
+        <td>Filter signal using the Kaiser windowing method</td>
+    </tr>    
+
+    <tr valign="top">
+        <td width="200"><code><a href="gaussianFilter.html">gaussianFilter</a></code></td>
+        <td>Filter signals using a frequency domain Gaussian filter</td>
+    </tr> 	
+	
+    <tr valign="top">
+        <td width="200"><code><a href="getAlphaFilter.html">getAlphaFilter</a></code></td>
+        <td>Create filter for <code>medium.alpha_filter</code></td>
+    </tr>
+    
+    <tr valign="top">
+        <td width="200"><code><a href="getBLI.html">getBLI</a></code></td>
+        <td>Compute underlying Fourier band-limited interpolant (BLI)</td>
+    </tr>
+
+    <tr valign="top">
+        <td width="200"><code><a href="getDeltaBLI.html">getDeltaBLI</a></code></td>
+        <td>Exact BLI of an arbitrarily positioned delta function</td>
+    </tr>    
+    
+	<tr valign="top">
+        <td width="200"><code><a href="getFDMatrix.html">getFDMatrix</a></code></td>
+        <td>Create a matrix of finite-difference coefficients</td>
+    </tr>    
+
+    <tr valign="top">
+        <td width="200"><code><a href="getWin.html">getWin</a></code></td>
+        <td>Return a frequency domain windowing function</td>
+    </tr>
+    
+    <tr valign="top">
+        <td width="200"><code><a href="gradientFD.html">gradientFD</a></code></td>
+        <td>Calculate the gradient using a finite-difference method</td>
+    </tr>   
+    
+	<tr valign="top">
+        <td width="200"><code><a href="gradientSpect.html">gradientSpect</a></code></td>
+        <td>Calculate the gradient using a Fourier spectral method</td>
+    </tr>    
+    
+    <tr valign="top">
+        <td width="200"><code><a href="sharpness.html">sharpness</a></code></td>
+        <td>Calculate image sharpness metric</td>
+    </tr> 
+
+    <tr valign="top">
+        <td width="200"><code><a href="spect.html">spect</a></code></td>
+        <td>Compute the single sided amplitude and phase spectrums</td>
+    </tr>       
+    
+    <tr valign="top">
+        <td width="200"><code><a href="smooth.html">smooth</a></code></td>
+        <td>Smooth a matrix</td>
+    </tr>
+    
+    <tr valign="top">
+        <td width="200"><code><a href="vesselFilter.html">vesselFilter</a></code></td>
+        <td>Frangi's 3D vessel filter</td>
+    </tr>     
+</table></p>
+
+<h2>Display and Visualisation</h2>
+<a name="cat8"></a>
+<p><table width="100%">
+
+	<tr valign="top">
+        <td width="200"><code><a href="beamPlot.html">beamPlot</a></code></td>
+        <td>Plot volumetric data using intersecting planes</td>
+    </tr>
+
+    <tr valign="top">
+        <td width="200"><code><a href="flyThrough.html">flyThrough</a></code></td>
+        <td>Display a three-dimensional matrix slice by slice</td>
+    </tr> 
+    
+    <tr valign="top">
+        <td width="200"><code><a href="getColorMap.html">getColorMap</a></code></td>
+        <td>Return default k-Wave color map</td>
+    </tr>        
+
+    <tr valign="top">
+        <td width="200"><code><a href="overlayPlot.html">overlayPlot</a></code></td>
+        <td>Overlay two images</td>
+    </tr> 
+           
+    <tr valign="top">
+        <td width="200"><code><a href="saveTiffStack.html">saveTiffStack</a></code></td>
+        <td>Save volume data as a tiff stack</td>
+    </tr>  
+    
+    <tr valign="top">
+        <td width="200"><code><a href="scaleFig.html">scaleFig</a></code></td>
+        <td>Resize current figure window</td>
+    </tr>   
+    
+    <tr valign="top">
+        <td width="200"><code><a href="stackedPlot.html">stackedPlot</a></code></td>
+        <td>Stacked linear plot</td>
+    </tr>      
+    
+    <tr valign="top">
+        <td width="200"><code><a href="voxelPlot.html">voxelPlot</a></code></td>
+        <td>3D plot of voxels in a binary matrix</td>
+    </tr>     
+           
+</table></p>
+
+<h2>Signal Creation and Processing</h2>
+<a name="cat9"></a>
+<p><table width="100%">
+
+    <tr valign="top">
+        <td width="200"><code><a href="addNoise.html">addNoise</a></code></td>
+        <td>Add Gaussian noise to a signal for a given SNR</td>
+    </tr>   
+
+    <tr valign="top">
+        <td width="200"><code><a href="createCWSignals.html">createCWSignals</a></code></td>
+        <td>Generate array of CW signals from amplitude and phase</td>
+    </tr>    
+
+    <tr valign="top">
+        <td width="200"><code><a href="envelopeDetection.html">envelopeDetection</a></code></td>
+        <td>Extract signal envelope using the Hilbert Transform</td>
+    </tr>
+    
+    <tr valign="top">
+        <td width="200"><code><a href="extractAmpPhase.html">extractAmpPhase</a></code></td>
+        <td>Extract amplitude and phase from CW signals</td>
+    </tr>    
+
+	<tr valign="top">
+        <td width="200"><code><a href="focus.html">focus</a></code></td>
+        <td>Create input signal based on source mask and focus position</td>
+    </tr>
+
+    <tr valign="top">
+        <td width="200"><code><a href="fwhm.html">fwhm</a></code></td>
+        <td>Compute the full width at half maximum</td>
+    </tr>    
+    
+    <tr valign="top">
+        <td width="200"><code><a href="gaussian.html">gaussian</a></code></td>
+        <td>Create a Gaussian distribution</td>
+    </tr>	
+	
+    <tr valign="top">
+        <td width="200"><code><a href="gaussianFilter.html">gaussianFilter</a></code></td>
+        <td>Filter signals using a frequency domain Gaussian filter</td>
+    </tr> 
+    
+	<tr valign="top">
+        <td width="200"><code><a href="hounsfield2density.html">hounsfield2density</a></code></td>
+        <td>Convert Hounsfield units to density</td>
+    </tr>  	
+	
+    <tr valign="top">
+        <td width="200"><code><a href="kWaveTransducer.html">kWaveTransducer</a></code></td>
+        <td>Class definition for k-Wave linear array transducer</td>
+    </tr>	
+	
+    <tr valign="top">
+        <td width="200"><code><a href="logCompression.html">logCompression</a></code></td>
+        <td>Log compress an input signal</td>
+    </tr>
+	
+    <tr valign="top">
+        <td width="200"><code><a href="scanConversion.html">scanConversion</a></code></td>
+        <td>Convert scan-lines in polar coordinates to a B-mode ultrasound image</td>
+    </tr>	
+    
+    <tr valign="top">
+        <td width="200"><code><a href="toneBurst.html">toneBurst</a></code></td>
+        <td>Create an enveloped single frequency tone burst</td>
+    </tr>      
+                
+</table></p>
+
+<h2>HDF5 Utilities</h2>
+<a name="cat10"></a>
+<p><table width="100%">
+  
+	<tr valign="top">
+        <td width="200"><code><a href="h5compare.html">h5compare</a></code></td>
+        <td>Compare the contents of two HDF5 files</td>
+    </tr>   
+  
+    <tr valign="top">
+        <td width="200"><code><a href="writeAttributes.html">writeAttributes</a></code></td>
+        <td>Write attributes to a k-Wave HDF5 file</td>
+    </tr> 
+    
+    <tr valign="top">
+        <td width="200"><code><a href="writeFlags.html">writeFlags</a></code></td>
+        <td>Write input flags to a k-Wave HDF5 file</td>
+    </tr> 
+    
+    <tr valign="top">
+        <td width="200"><code><a href="writeGrid.html">writeGrid</a></code></td>
+        <td>Write grid and PML properties to a k-Wave HDF5 file</td>
+    </tr>     
+  
+    <tr valign="top">
+        <td width="200"><code><a href="writeMatrix.html">writeMatrix</a></code></td>
+        <td>Write MATLAB matrix to a k-Wave HDF5 file</td>
+    </tr> 
+
+</table></p>
+
+<h2>System Parameters and Utilities</h2>
+<a name="cat11"></a>
+<p><table width="100%">
+
+    <tr valign="top">
+        <td width="200"><code><a href="benchmark.html">benchmark</a></code></td>
+        <td>Run performance benchmark</td>
+    </tr> 
+
+    <tr valign="top">
+        <td width="200"><code><a href="checkFactors.html">checkFactors</a></code></td>
+        <td>Return the maximum prime factor for a range of numbers</td>
+    </tr>    
+
+    <tr valign="top">
+        <td width="200"><code><a href="checkStability.html">checkStability</a></code></td>
+        <td>Return maximum stable time step for k-space fluid models</td>
+    </tr>    
+
+    <tr valign="top">
+        <td width="200"><code><a href="getDateString.html">getDateString</a></code></td>
+        <td>Create a string of the current date and time</td>
+    </tr>
+
+	<tr valign="top">
+        <td width="200"><code><a href="getComputerInfo.html">getComputerInfo</a><br></a></td>
+        <td>Return information about computer and k-Wave version</td>
+    </tr>
+	
+    <tr valign="top">
+        <td width="200"><code><a href="getkWavePath.html">getkWavePath</a></code></td>
+        <td>Return pathname to the k-Wave Toolbox</td>
+    </tr>         
+    
+    <tr valign="top">
+        <td width="200"><code><a href="scaleSI.html">scaleSI</a></code></td>
+        <td>Scale a number to nearest SI unit prefix</td>
+    </tr>    
+    
+    <tr valign="top">
+        <td width="200"><code><a href="scaleTime.html">scaleTime</a></code></td>
+        <td>Convert seconds to hours, minutes, and seconds</td>
+    </tr>         
+          
+</table></p>
+
+</div></body></html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Simulating B-mode Images Using A Phased Array Example (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+	<meta name="description" content="Simulating B-mode Images Using A Phased Array Example.">
+</head>
+
+<body><div class="content">
+
+<h1>Simulating B-mode Images Using A Phased Array Example</h1>
+
+<p>This example illustrates how k-Wave can be used for the simulation of B-mode ultrasound images using a phased-array or sector transducer. It builds on the <a href="example_us_bmode_linear_transducer.html">Simulating B-mode Ultrasound Images Example</a>.</p>
+
+<p>
+    <ul>
+        <li><a href="matlab:edit([getkWavePath('examples') 'example_us_bmode_phased_array.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
+        <li><a href="matlab:run([getkWavePath('examples') 'example_us_bmode_phased_array']);" target="_top">Run the file in MATLAB</a></li>
+    </ul>
+</p>
+
+<p>To allow the simulated scan line data to be processed multiple times with different settings, the simulated RF data is saved to disk. This can be reloaded by setting <code>run_simulation = false</code> within the example m-file. The data can also be downloaded from <a href="http://www.k-wave.org/datasets/example_us_phased_array_scan_lines.mat">http://www.k-wave.org/datasets/example_us_phased_array_scan_lines.mat</a></p>
+
+<h2>Contents</h2>
+<div>
+	<ul>
+		<li><a href="#heading2">Running the simulation</a></li>
+		<li><a href="#heading3">Scan conversion</a></li>
+	</ul>
+</div>
+
+<a name="heading2"></a>
+<h2>Running the simulation</h2>
+
+<p>The simulation is run in a similar same way to <a href="example_us_bmode_linear_transducer.html">Simulating B-mode Ultrasound Images</a>. In this example, a 64 element sector transducer is defined with all the elements active. This is used to replace both the <code>source</code> and <code>sensor</code> inputs. The scan lines are then simulated sequentially, with the value for <code>transducer.steering_angle</code> modified for each scan line.</p>
+
+<pre class="codeinput">
+<span class="comment">% loop through the range of angles to test</span>
+for angle_index = 1:number_scan_lines
+
+    <span class="comment">% update the current steering angle</span>
+    transducer.steering_angle = steering_angles(angle_index);
+
+    <span class="comment">% run the simulation</span>
+    sensor_data = kspaceFirstOrder3D(kgrid, medium, transducer, transducer, input_args{:});
+
+    <span class="comment">% extract the scan line from the sensor data</span>
+    scan_lines(angle_index, :) = transducer.scan_line(sensor_data);
+
+end
+</pre>
+
+<a name="heading3"></a>
+<h2>Scan conversion</h2>
+
+<p>After simulation, the scan lines are processed before display following the steps described in <a href="example_us_bmode_linear_transducer.html">Simulating B-mode Ultrasound Images</a>. However, in this example, the scan lines are taken at different steering angles. This means the scan lines must be converted from polar coordinates to Cartesian coordinates. This step is performed using <code><a href="scanConversion.html">scanConversion</a></code>  </p>
+
+<pre class="codeinput">
+<span class="comment">% set the desired size of the image</span>
+image_size = [Nx * dx, Ny * dy];
+
+<span class="comment">% convert the data from polar coordinates to Cartesian coordinates for
+% display</span>
+b_mode_fund = scanConversion(scan_lines_fund, steering_angles, image_size, c0, kgrid.dt);
+b_mode_harm = scanConversion(scan_lines_harm, steering_angles, image_size, c0, kgrid.dt);
+</pre>
+
+<p>The scattering phantom along with the simulated ultrasound images are shown below.</p>
+
+<img vspace="5" hspace="5" src="images/example_us_bmode_phased_array_01.png" style="width:1120px;height:420px;" alt="">
+
+</div></body></html>

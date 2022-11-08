@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>makeCartRect :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>makeCartRect</h1>
+<p class="purpose">Create evenly distributed Cartesian points covering a rectangle.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+rect = makeCartRect(rect_pos, Lx, Ly, theta, num_points)
+rect = makeCartRect(rect_pos, Lx, Ly, theta, num_points, plot_rect)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>makeCartRect</code> creates an array of the Cartesian coordinates of points evenly distributed over a rectangle. The position of the rectangle is set by <code>rect_pos</code>, and its height and width are specified by <code>Lx</code> and <code>Ly</code>. If <code>rect_pos</code> is given as a 2 element vector, the Cartesian rectangle points are returned in 2D. These points are rotated within the plane if an angle <code>theta</code> is given. If <code>rect_pos</code> is given as a 3 element vector, the Cartesian rectangle points are returned in 3D assuming the rectangle lies in the x-y plane. The orientation of the 3D points can be adjusted by giving <code>theta</code> as a 3 element vector specifying the yaw, pitch, and roll of the rectangle. The 2D plot that is displayed after calling <code>makeCartRect([1, 1], 2, 3, 20, 200, true);</code> is given below.</p>
+
+<img vspace="5" hspace="5" src="images/makeCartRect_01.png" style="width:700px;height:525px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>rect_pos</code></td>
+        <td>Cartesian position of the centre of the rectangle given as a two (2D) or three (3D) element vector [m]</td>
+    </tr>     
+    <tr valign="top">
+        <td width = "150"><code>Lx</code></td>
+        <td>Height of the rectangle (along the x-coordinate before rotation) [m]</td>        
+    </tr>
+    <tr valign="top">
+        <td width = "150"><code>Ly</code></td>
+        <td>Width of the rectangle (along the y-coordinate before rotation) [m]</td>        
+    </tr> 
+    <tr valign="top">
+        <td width = "150"><code>theta</code></td>
+        <td>Either a scalar (2D) or three element vector (3D) <code>[tx, ty, tz]</code> specifying the orientation of the rectangle [deg]. In 3D, the rotations are specified about x-y'-z'' (intrinsic rotations) or z-y-x (extrinsic rotations). All rotations are counter-clockwise. Can be set to [] if no rotation.</td>        
+    </tr> 
+    <tr valign="top">
+        <td width = "150"><code>num_points</code></td>
+        <td>Approximate number of points on the rectangle. This is rounded upwards to ensure the number of points along each side is an integer.</td>        
+    </tr> 
+</table>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">   
+    <tr valign="top">
+        <td width = "150"><code>plot_rect</code></td>
+        <td>Boolean controlling whether the Cartesian points are plotted (default = false)</td>
+    </tr>     
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>rect</code></td>
+        <td>2 x <code>num_points</code> or 3 x <code>num_points</code> array of Cartesian coordinates (note, <code>num_points</code> is adjusted, as described above)</td>
+    </tr>
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="makeDisc.html">makeDisc</a></code>, <code><a href="makeCartBowl.html">makeCartBowl</a></code>
+
+</div></body></html>

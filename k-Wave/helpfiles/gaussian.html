@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>gaussian :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>gaussian</h1>
+<p class="purpose">Create a Gaussian distribution.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+gauss_distr = gaussian(x)
+gauss_distr = gaussian(x, magnitude)
+gauss_distr = gaussian(x, magnitude, mean)
+gauss_distr = gaussian(x, magnitude, mean, variance)
+</pre>
+
+<h2>Description</h2>
+<p><code>gaussian</code> returns a Gaussian distribution f(x) with the specified magnitude, mean, and variance. If these values are not specified, the magnitude is normalised and values of variance = 1 and mean = 0 are used. For example running</p>
+
+<pre class="codeinput">
+x = -3:0.05:3;
+plot(x, gaussian(x));
+</pre>
+
+<p>will plot a normalised Gaussian distribution.</p>
+
+<img vspace="5" hspace="5" src="images/gaussian_01.png" style="width:560px;height:420px;" alt="">
+
+<p>Note, the full width at half maximum of the resulting distribution can be calculated by <code>FWHM = 2 * sqrt(2 * log(2) * variance)</code>.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>x</code></td>
+        <td>x-axis variable</td>
+    </tr>       
+</table>
+
+<h2>Optional Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>magnitude</code></td>
+        <td>bell height (default = normalised)</td>
+    </tr> 
+    <tr valign="top">
+        <td width = "150"><code>mean</code></td>
+        <td>mean or expected value (default = 0)</td>
+    </tr> 
+    <tr valign="top">
+        <td width = "150"><code>variance</code></td>
+        <td>variance ~ bell width (default = 1)</td>
+    </tr>     
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>gauss_distr</code></td>
+        <td>Gaussian distribution</td>
+    </tr>       
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="getWin.html">getWin</a></code>
+
+</div></body></html>

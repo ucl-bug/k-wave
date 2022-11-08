@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>makeMultiBowl :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>makeMultiBowl</h1>
+<p class="purpose">Create a binary map of multiple bowls within a 3D grid.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+[bowls, bowl_labelled] = makeBowl(grid_size, bowl_pos, radius, diameter, focus_pos)
+[bowls, bowl_labelled] = makeBowl(grid_size, bowl_pos, radius, diameter, focus_pos, ...)
+</pre>
+
+<h2>Description</h2>
+
+<p><code>makeMultiBowl</code> creates a binary map of multiple bowls within a three-dimensional grid using <code><a href="makeBowl.html">makeBowl</a></code>. The position of the bowls is denoted by 1's in the the matrix with 0's elsewhere. A labelled matrix can also be returned, where the position of the first bowl is denoted by 1's, the position of the second bowl by 2's, and so on.</p>
+
+<h2>Examples</h2>
+
+<pre class="codeinput">
+<span class="comment">% define grid parameters</span>
+x_size              = 300e-3;
+Nx                  = 256;
+dx                  = x_size / Nx;
+grid_size           = [Nx, Nx, Nx];
+
+<span class="comment">% create a Cartesian sphere with the x, y, z positions of the bowls</span>
+sphere_radius       = 125e-3;
+num_bowls           = 64;
+bowl_pos            = makeCartSphere(sphere_radius, num_bowls, [1, 1, 1] * x_size / 2).';
+
+<span class="comment">% convert the Cartesian bowl positions to grid points</span>
+bowl_pos            = round(bowl_pos/dx);
+
+<span class="comment">% define element parameters</span>
+radius              = round(x_size / (2 * dx));
+diameter            = 21;
+focus_pos           = [1, 1, 1] * Nx/2;
+
+<span class="comment">% create bowls</span>
+makeMultiBowl(grid_size, bowl_pos, radius, diameter, focus_pos, 'Plot', true);
+</pre>
+
+<img vspace="5" hspace="5" src="images/makeMultiBowl_01.png" style="width:560px;height:420px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>grid_size</code></td>
+        <td>size of the 3D grid given as a three element vector [Nx, Ny, Nz] [grid points] </td>
+    </tr>
+    
+    <tr valign="top">
+        <td width = "150"><code>bowl_pos</code></td>
+        <td>centre of the rear surface of each bowl given as matrix of dimensions N x 3, with each row  specifying the centre for each bowl as a three element vector [bx, by, bz] [grid points]</td>
+    </tr>
+
+    <tr valign="top">
+        <td width = "150"><code>radius</code></td>
+        <td>radius of curvature of each bowl given as either a single number (if the bowls have the same radius), or an N-element vector containing the radius for each bowl [grid points]</td>
+    </tr>
+    
+    <tr valign="top">
+        <td width = "150"><code>diameter</code></td>
+        <td>aperture diameter of each bowl given as either a single number (if the bowls have the same diameter), or an N-element vector containing the diameter for each bowl [grid points] </td>
+    </tr>
+    
+	<tr valign="top">
+        <td width = "150"><code>focus_pos</code></td>
+        <td>any point on the beam axis of the bowl given as either a three element vector (if the bowls have the same focus_pos), or as a matrix of dimensions N x 3, with each row specifying the focus_pos for each bowl given as a three element vector [fx, fy, fz] [grid points]</td>
+    </tr>    
+    
+</table>
+    
+<h2>Optional Inputs</h2>
+
+<p>Optional 'string', value pairs that may be used to modify the default computational settings.</p>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="18%"><col width="18%"><col width="18%"><col width="46%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Input</th>
+            <th bgcolor="#B2B2B2">Valid Settings</th>
+            <th bgcolor="#B2B2B2">Default</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+    	<tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Binary'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the bowl map is returned as a double precision matrix (false) or a logical matrix (true).</td>
+        </tr>  
+    
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Plot'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the bowl array is plotted using <code><a href="voxelPlot.html">voxelPlot</a></code>.</td>
+        </tr>     
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'RemoveOverlap'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether overlapped grid points within each bowl (not between bowls) are removed.</td>
+        </tr>            
+    </tbody>
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>bowls</code></td>
+        <td>3D binary map of a bowls</td>
+    </tr>
+    
+    <tr valign="top">
+        <td width = "150"><code>bowls_labelled</code></td>
+        <td>3D labelled matrix of bowls</td>
+    </tr>    
+</table>
+
+<h2>See Also</h2>
+
+<code><a href="makeBowl.html">makeBowl</a></code>, <code><a href="makeMultiArc.html">makeMultiArc</a></code>
+
+</div></body></html>

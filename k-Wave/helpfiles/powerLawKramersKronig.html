@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>powerLawKramersKronig :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>powerLawKramersKronig</h1>
+<p class="purpose">Calculate dispersion for power law absorption.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+c_kk = powerLawKramersKronig(w, w0, c0, a0, y)
+</pre>
+
+<h2>Description</h2>
+<p><code>powerLawKramersKronig</code> computes the variation in sound speed for an attenuating medium using the Kramers-Kronig for power law attenuation where <code>att = a0*w^y</code>. The power law parameters must be in Nepers / m, with the frequency in rad/s. The variation is given about the sound speed <code>c0</code> at a reference frequency <code>w0</code>.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>w</code></td>
+        <td>input frequency array [rad/s]</td>
+    </tr>
+    
+    <tr valign="top">
+        <td><code>w0</code></td>
+        <td>reference frequency [rad/s]</td>
+    </tr>
+    
+    <tr valign="top">
+        <td><code>c0</code></td>
+        <td>sound speed at <code>w0</code> [m/s]</td>
+    </tr>    
+    
+    <tr valign="top">
+        <td><code>a0</code></td>
+        <td>power law coefficient [Nepers/((rad/s)^y m)]</td>
+    </tr>    
+    
+    <tr valign="top">
+        <td><code>y</code></td>
+        <td>power law exponent, where 0 < <code>y</code> < 3</td>
+    </tr>    
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>c_kk</code></td>
+        <td>variation of sound speed with <code>w</code> [m/s]</td>
+    </tr>
+</table>
+
+<h2>Examples</h2>
+<ul>
+<li><a href="example_na_modelling_absorption.html">Modelling Power Law Absorption</a></li> 
+</ul>
+
+<h2>See Also</h2>
+<code><a href="db2neper.html">db2neper</a></code>
+
+</div></body></html>

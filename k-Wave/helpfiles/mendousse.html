@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>mendousse :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>mendousse</h1>
+<p class="purpose">Compute Mendousse's solution for nonlinear wave propagation in viscous media.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+p_mendousse = mendousse(x, t, source_freq, p0, c0, rho0, BonA, alpha_0)
+</pre>
+
+<h2>Description</h2>
+<p><code>mendousse</code> calculates the propagation of a monofrequency plane wave source in a thermoviscous medium with absorption given by <code>alpha_0*f^2</code>. The solution is taken from Eq. (264) in Chapter 4 of Nonlinear Acoustics by Hamilton and Blackstock (2008). The infinite sum is adaptively truncated when the moving average of the previous five sum terms is smaller than a predefined convergence percentage (0.01 percent by default). An example of using the function is given below.</p>
+
+<pre class="codeinput">
+<span class="comment">% define the properties used in the simulation</span>
+source_freq = 1e6;      <span class="comment">% [Hz]</span>
+p0 = 5e6;               <span class="comment">% [Pa]</span>
+c0 = 1500;              <span class="comment">% [m/s]</span>
+rho0 = 1000;            <span class="comment">% [kg/m^3]</span>
+BonA = 12;
+alpha_0 = 0.5;          <span class="comment">% [dB/(MHz^2 cm)]</span>
+x = 0:75e-6:40e-3;      <span class="comment">% [m]</span>
+t = x ./ c0;            <span class="comment">% [s]</span>
+
+<span class="comment">% compute solution</span>
+p_mendousse = mendousse(x, t, source_freq, p0, c0, rho0, BonA, alpha_0);
+
+<span class="comment">% plot</span>
+figure;
+plot(x * 1e3, p_mendousse * 1e-6);
+ylabel('Pressure [MPa]');
+xlabel('Distance [mm]');
+scaleFig(1, 0.65);
+</pre>
+
+<img vspace="5" hspace="5" src="images/mendousse_01.png" style="width:560px;height:273px;" alt="">
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>x</code></td>
+        <td>position [m]</td>
+    </tr>
+    <tr valign="top">
+        <td><code>t</code></td>
+        <td>time [s]</td>        
+    </tr>
+	<tr valign="top">
+        <td><code>source_freq</code></td>
+        <td>frequency of plane wave [Hz]</td>        
+    </tr>
+	<tr valign="top">
+        <td><code>p0</code></td>
+        <td>source pressure [Pa]</td>        
+    </tr>
+	<tr valign="top">
+        <td><code>c0</code></td>
+        <td>medium sound speed [m/s]</td>        
+    </tr>
+	<tr valign="top">
+        <td><code>rho0</code></td>
+        <td>medium density [kg/m^3]</td>        
+    </tr>
+	<tr valign="top">
+        <td><code>BonA</code></td>
+        <td>nonlinearity parameter B/A</td>        
+    </tr>
+	<tr valign="top">
+        <td><code>alpha_0</code></td>
+        <td>absorption coefficient [dB/(MHz^2 cm)]</td>        
+    </tr>
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>p_mendousse</code></td>
+        <td>calculated pressure field [Pa]</td>
+    </tr>
+</table>
+
+<h2>Examples</h2>
+<ul>
+<li><a href="example_na_modelling_nonlinearity.html">Modelling Nonlinear Wave Propagation</a></li>
+</ul>
+
+<h2>See Also</h2>
+
+<code><a href="focusedBowlONeil.html">focusedBowlONeil</a></code>
+
+</div></body></html>

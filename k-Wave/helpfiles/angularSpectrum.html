@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>angularSpectrum :: Functions (k-Wave)</title>
+	<link rel="stylesheet" href="kwavehelpstyle.css" type="text/css">
+</head>
+
+<body>
+<div class="content">
+
+<h1>angularSpectrum</h1>
+<p class="purpose">Project time-domain input plane using the angular spectrum method.</p>
+
+<h2>Syntax</h2>
+
+<pre class="codeinput">
+pressure_max = angularSpectrum(input_plane, dx, dt, z_pos, c0)
+pressure_max = angularSpectrum(input_plane, dx, dt, z_pos, medium, ...)
+[pressure_max, pressure_time] = angularSpectrum(input_plane, dx, dt, z_pos, c0)
+[pressure_max, pressure_time] = angularSpectrum(input_plane, dx, dt, z_pos, medium, ...)
+</pre>
+
+<h2>Description</h2>
+<p><code>angularSpectrum</code> projects a 2D input plane (given as a 3D matrix of time series at each spatial position) using the angular spectrum method. The time series are decomposed into spectral components and then each frequency is propagated using the spectral propagator with angular restriction described in reference [1].</p>
+
+<p>The time signals are computed in retarded time, where the time series for each plane are offset by z/c0 and the input plane corresponds to z = 0. The projections are calculated directly from the input plane (no spatial stepping is used). For linear projections in a lossless medium, just the sound speed can be specified. For projections in a lossy medium, the parameters are given as fields to the input structure <code>medium</code>.</p>
+
+<p>Two datasets are returned. The first, <code>pressure_max</code>, contains a 3D matrix of the maximum (temporal peak) pressure across the 2D planes specified by <code>z_pos</code>, and is indexed as <code>(x_ind, y_ind, plane_index)</code>. The second, <code>pressure_time</code>, contains the time-varying pressure signals across the 2D planes specified by <code>z_pos</code>, and is indexed as <code>(x_ind, y_ind, t_ind, plane_index)</code>.</p>
+
+<p>To compute the maximum pressure field over an isotropic domain with <code>Nz</code> grid points (assuming the source plane is aligned with <code>z_ind = 1</code>) without storing the time-series (which can be memory consuming), use the syntax:</p>
+
+<pre class="codeinput">
+pressure_max = angularSpectrum(input_plane, dx, dt, (0:(Nz - 1)) * dx, c0)
+</pre>
+
+<p>To compute the time series over another parallel plane separated by a distance of <code>z_pos</code>, use the syntax:</p>
+
+<pre class="codeinput">
+[~, pressure_time] = angularSpectrum(input_plane, dx, dt, z_pos, c0)
+</pre>
+
+<p>[1] Zeng, X., & McGough, R. J. (2008). Evaluation of the angular spectrum approach for simulations of near-field pressures. The Journal of the Acoustical Society of America, 123(1), 68-76.</p>
+
+<h2>Inputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>input_plane</code></td>
+        <td>3D matrix containing the time varying pressure over a 2D input plane indexed as (x, y, t) [Pa].</td>
+    </tr>
+    <tr valign="top">
+        <td><code>dx</code></td>
+        <td>Spatial step between grid points in the input plane [m].</td>
+    </tr>
+    <tr valign="top">
+        <td><code>dt</code></td>
+        <td>Temporal step between time points in the input plane [s].</td>
+    </tr>
+	<tr valign="top">
+        <td><code>z_pos</code></td>
+        <td>Vector specifying the relative z-position of the planes to which the data is projected [m].</td>
+    </tr>
+	<tr valign="top">
+        <td>&nbsp</td>
+        <td>&nbsp</td>
+    </tr>	
+	<tr valign="top">
+        <td><code>c0</code></td>
+        <td>Medium sound speed [m/s].</td>
+    </tr>
+	<tr valign="top">
+        <td><code>&nbsp</td>
+        <td>OR</td>        
+    </tr> 
+	<tr valign="top">
+        <td><code>medium.sound_speed</code></td>
+        <td>Medium sound speed [m/s].</td>
+    </tr>
+	<tr valign="top">
+        <td><code>medium.alpha_power</code></td>
+        <td>Power law absorption exponent.</td>
+    </tr>	
+	<tr valign="top">
+        <td><code>medium.alpha_coeff</code></td>
+        <td>Power law absorption coefficient [dB/(MHz^y cm)].</td>
+    </tr>	
+</table>
+
+<h2>Optional Inputs</h2>
+
+<p>Optional 'string', value pairs that may be used to modify the default computational settings.</p>
+
+<table cellspacing="0" class="body" cellpadding="4" border="2">
+    <colgroup>
+        <col width="18%"><col width="18%"><col width="18%"><col width="46%">
+    </colgroup>
+    
+    <thead>
+        <tr valign="top">
+            <th bgcolor="#B2B2B2">Input</th>
+            <th bgcolor="#B2B2B2">Valid Settings</th>
+            <th bgcolor="#B2B2B2">Default</th>
+            <th bgcolor="#B2B2B2">Description</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'AngularRestriction'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>true</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether angular restriction is used as described in [1].</td>
+        </tr>     
+        
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'DataCast'</code></td>
+            <td bgcolor="#F2F2F2"><em>(string of data type)</em></td>
+            <td bgcolor="#F2F2F2"><code>'off'</code></td>            
+            <td bgcolor="#F2F2F2">String input of the data type that variables are cast to before computation. For example, setting to <code>'single'</code> will speed up the computation time (due to the improved efficiency of <code>fft2</code> and <code>ifft2</code> for this data type). This variable is also useful for utilising GPU parallelisation the Parallel Computing Toolbox by setting <code>'DataCast'</code> to <code>'gpuArray-single'</code>.</td>
+        </tr>   
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'DataRecast'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the output data is cast back to double precision. If set to <code>false</code>, <code>sensor_data</code> will be returned in the data format set using the <code>'DataCast'</code> option.</td>
+        </tr> 
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'FFTLength'</code></td>
+            <td bgcolor="#F2F2F2"><em>(integer numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2">1 + the next power of two larger than the grid size</td>            
+            <td bgcolor="#F2F2F2">Length of the FFT used to compute the angular spectrum.</td>
+        </tr> 
+
+        <tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'GridExpansion'</code></td>
+            <td bgcolor="#F2F2F2"><em>(integer numeric scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>0</code></td>            
+            <td bgcolor="#F2F2F2">Grid padding used to increase the accuracy of the projection. The grid expansion is removed before returning the calculated pressure to the user.</td>
+        </tr>
+		
+		<tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Plot'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>true</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the field is plotted at each z step.</td>
+        </tr> 
+		
+		<tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'Reverse'</code></td>
+            <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>
+            <td bgcolor="#F2F2F2"><code>false</code></td>            
+            <td bgcolor="#F2F2F2">Boolean controlling whether the projection is in the forward (<code>false</code>) or backward (<code>true</code>) direction.</td>
+        </tr> 
+    </tbody>
+</table>
+
+<h2>Outputs</h2>
+
+<table class="body">
+    <tr valign="top">
+        <td width = "150"><code>pressure_max</code></td>
+        <td>3D matrix of maximum pressure (temporal peak) across the 2D planes specified by <code>z_pos</code>, indexed as <code>(x_ind, y_ind, plane_index)</code> [Pa].</td>
+    </tr>  
+
+    <tr valign="top">
+        <td><code>pressure_time</code></td>
+        <td>4D matrix of the time varying pressure signals across the 2D planes specified by <code>z_pos</code>, indexed as <code>(x_ind, y_ind, t_ind, plane_index)</code> [Pa].</td>
+    </tr>     
+</table>
+
+<h2>Examples</h2>
+<ul>
+<li><a href="example_tvsp_angular_spectrum.html">Holographic Projections Using The Angular Spectrum Method</a></li>
+</ul>
+
+<h2>See Also</h2>
+
+<code><a href="angularSpectrumCW.html">angularSpectrumCW</a></code>
+
+</div></body></html>
