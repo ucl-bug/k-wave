@@ -92,4 +92,4 @@ If you find the toolbox useful for your academic work, please consider citing on
 
 ## Contributing To k-Wave
 
-k-Wave version 1.4.x is the last feature release of k-Wave version 1.x. Development work is now focused on k-Wave 2.x. Pull requests for k-Wave 1.x won't be accepted. Please direct any bug reports to the k-Wave forum.
+k-Wave version 1.4.x is the last feature release of k-Wave version 1.x. Development work is now focused on k-Wave 2.x. Pull requests for k-Wave 1.x won't be accepted. Please direct any feature requests to the [k-Wave forum](http://www.k-wave.org/forum). To report bugs, either file a [bug report](https://github.com/ucl-bug/k-wave/issues/new/choose), or post on the [k-Wave forum](http://www.k-wave.org/forum).
