@@ -16,7 +16,13 @@ Power law acoustic absorption is accounted for using a linear integro-differenti
 
 ## Installation Instructions
 
-The k-Wave toolbox is installed by adding the `k-Wave` folder to the MATLAB path. 
+### MATLAB Add-On Explorer
+
+The k-Wave toolbox can be installed directly from the MATLAB Add-On Explorer. Select `Add-Ons` and search for `k-Wave`, then select `Add`, `Add to MATLAB`. 
+
+### Direct Download
+
+If  you downloaded the k-Wave Toolbox from GitHub or the the k-Wave website, the k-Wave toolbox is installed by adding the `k-Wave` folder to the MATLAB path. 
 
 To update the path interactively, use the `Set Path` dialog box which is accessed by typing `pathtool` at the MATLAB command line. This dialog box can also be accessed using the `Set Path` button on the ribbon bar. Once the dialog box is open, the toolbox is installed by clicking `Add Folder`, selecting the k-Wave toolbox folder, and clicking `Save`. The toolbox can be uninstalled in the same fashion. 
 
@@ -32,7 +38,7 @@ to the `startup.m` file, where `<pathname>` is replaced with the location of the
 
 ## Using The C++ Codes
 
-Accelerated versions of the simulation functions written in C++/CUDA are also available. These are not included in the MATLAB toolbox. To use the C++/CUDA codes, the appropriate binaries (and library files if using Windows) should be downloaded from [k-wave.org/download.php](http://www.k-wave.org/download.php) and placed in the `k-Wave/binaries` folder of the toolbox.
+Accelerated versions of the simulation functions written in C++/CUDA are also available. These are not included in the MATLAB toolbox. To use the C++/CUDA codes, the appropriate binaries (and library files if using Windows) should be downloaded from [k-wave.org/download.php](http://www.k-wave.org/download.php) and placed in the `k-Wave/binaries` folder of the toolbox. To find where k-Wave is installed, type `which(getkWavePath)` or `cd(getkWavePath)`.
 
 ## Documentation And Examples
 
