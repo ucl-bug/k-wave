@@ -1,6 +1,6 @@
 # k-Wave: A MATLAB toolbox for the time-domain simulation of acoustic wave fields
 
-[![License: LGPL v3](https://img.shields.io/badge/License-LGPL_v3-blue.svg)](LICENSE.txt)
+[![License: LGPL v3](https://img.shields.io/badge/License-LGPL_v3-blue.svg)](LICENSE.txt)   [![View k-Wave on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://uk.mathworks.com/matlabcentral/fileexchange/120178-k-wave)
 
 ## Overview
 
