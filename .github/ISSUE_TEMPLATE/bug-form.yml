@@ -1,0 +1,62 @@
+name: Bug Report
+description: File a bug report
+title: "Bug: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report.
+  - type: textarea
+    id: description
+    attributes:
+      label: What Happened?
+      description: What happened and what did you expect to happen?
+      placeholder: What happened.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error messages
+      description: Please copy and paste any relevant error messages or output. This will be automatically formatted into code, so no need for backticks.
+      render: shell
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How Can We Reproduce?
+      description: Give detailed step-by-step instructions (including examples and/or code snippets) how the bug or error can be reproduced. We encourage you to try, as much as possible, to reduce your problem to the minimal example that still reproduces the issue. 
+      placeholder: How to reproduce.
+    validations:
+      required: true
+  - type: dropdown
+    id: operating-system
+    attributes:
+      label: Operating System
+      description: What operating system are you using?
+      options:
+        - Windows
+        - Linux
+        - Mac
+    validations:
+      required: true      
+  - type: dropdown
+    id: kwave-version
+    attributes:
+      label: Release Version
+      description: What version of k-Wave are you using?
+      options:
+        - 1.4 (Default)
+        - 1.3
+        - 1.2.1
+        - Earlier
+    validations:
+      required: true
+  - type: textarea
+    id: matlab-version
+    attributes:
+      label: MATLAB Version
+      description: What version of MATLAB are you using?
+      placeholder: Matlab version.
+    validations:
+      required: true
