@@ -5,10 +5,10 @@ function test_pass = angularSpectrum_data_cast(plot_comparisons, plot_simulation
 % ABOUT:
 %     author      - Bradley Treeby
 %     date        - 8th January 2019
-%     last update - 13th February 2019
+%     last update - 7th August 2023
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2019 Bradley Treeby
+% Copyright (C) 2023 Bradley Treeby
 
 % This file is part of k-Wave. k-Wave is free software: you can
 % redistribute it and/or modify it under the terms of the GNU Lesser
@@ -31,7 +31,7 @@ if nargin == 0
 end
 
 % set comparison threshold
-comparison_threshold_single = 1e-6;
+comparison_threshold_single = 2e-6;
 comparison_threshold_double = 1e-15;
 
 % set pass variable

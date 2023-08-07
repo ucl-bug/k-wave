@@ -31,7 +31,7 @@ end
 
 % check for dtt functions
 if ~exist('dtt1D', 'file') 
-    disp('WARNING: kWaveDiffusion_test_boundary_conditions_2D not tested, as dtt library is not present on path');
+    disp('WARNING: kWaveDiffusion_compare_with_pde not tested, as dtt library is not present on path');
     return
 end
 
