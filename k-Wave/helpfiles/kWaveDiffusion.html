@@ -203,6 +203,13 @@ perfusion coefficient [1/s] = B / A
     
     <tbody>
         
+		<tr valign="top">
+            <td bgcolor="#F2F2F2"><code>'DataCast'</code></td>
+            <td bgcolor="#F2F2F2"><em>(string of data type)</em></td>
+            <td bgcolor="#F2F2F2"><code>'off'</code></td>            
+            <td bgcolor="#F2F2F2">String input of the data type that variables are cast to before computation (default = <code>'off'</code>). For example, setting to <code>'single'</code> will speed up the computation time. To exploit GPU parallelisation via the Parallel Computing Toolbox, set <code>'DataCast'</code> to <code>'gpuArray-single'</code>. Note, the output variables are stored in the same data type. To transfer a <code>gpuArray</code> to the local workspace, use <code><a href="matlab: doc gpuarray.gather">gather</a></code>.</td>
+        </tr> 
+
         <tr valign="top">
             <td bgcolor="#F2F2F2"><code>'DisplayUpdates'</code></td>
             <td bgcolor="#F2F2F2"><em>(Boolean scalar)</em></td>

@@ -134,6 +134,14 @@
 %     Optional 'string', value pairs that may be used to modify the
 %     default computational settings.
 %
+%     'DataCast'       - String input of the data type that variables
+%                        are cast to before computation (default = 'off').
+%                        For example, setting to 'single' will speed up the
+%                        computation time. To exploit GPU parallelisation
+%                        via the Parallel Computing Toolbox, set 'DataCast'
+%                        to 'gpuArray-single'. Note, the output variables
+%                        are stored in the same data type. To transfer a
+%                        gpuArray to the local workspace, use gather.
 %     'DisplayUpdates' - Boolean controlling whether details of the
 %                        simulation are printed to the MATLAB command line
 %                        (default = true).
@@ -194,10 +202,10 @@
 % ABOUT:
 %     author           - Bradley Treeby and Teedah Saratoon
 %     date             - 10th September 2014
-%     last update      - 10th July 2019
+%     last update      - 7th August 2023
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2014-2019 Bradley Treeby and Teedah Saratoon
+% Copyright (C) 2014-2023 Bradley Treeby and Teedah Saratoon
 %
 % See also bioheatExact
 
@@ -346,6 +354,8 @@ classdef kWaveDiffusion < handle
         use_kspace      = true;
         color_map       = jet(256);
         display_updates = true;
+        data_cast       = 'off';
+        data_cast_prepend = '';
         
         % literals used in the code
         num_time_steps_before_simulation_time_estimate = 10;
@@ -679,6 +689,22 @@ classdef kWaveDiffusion < handle
                 eval(['kdiff.sensor_mask_index = ' index_data_type '(kdiff.sensor_mask_index);']); 
                 
             end
+
+            % -------------------------------------------------------------
+
+            if ~strcmp(kdiff.data_cast, 'off')
+
+                cast_variables = {'T', ...
+                    'k', 'diffusion_p1', 'diffusion_p2', ...
+                    'perfusion_coeff', 'perfusion_coeff_ref', 'blood_ambient_temperature', ...
+                    'Q', 'q_scale_factor', ...
+                    'cem43'};
+
+                for cast_index = 1:length(cast_variables)
+                    eval(['kdiff.' cast_variables{cast_index} ' = ' kdiff.data_cast '(' kdiff.data_cast_prepend '(kdiff.' cast_variables{cast_index} '));']);
+                end
+
+            end
                         
         end 
     end
@@ -741,7 +767,30 @@ classdef kWaveDiffusion < handle
             
             % pre-allocate sensor_data matrix if sensor.mask is defined
             if obj.num_sensor_points > 0
-                obj.sensor_data = [obj.sensor_data, zeros(obj.num_sensor_points, Nt)];
+                switch obj.data_cast
+                    case 'off'
+                        obj.sensor_data = [obj.sensor_data, zeros(obj.num_sensor_points, Nt)];
+                    case 'single'
+                        obj.sensor_data = [obj.sensor_data, zeros(obj.num_sensor_points, Nt, 'single')];
+                    case 'gpuArray'
+                        if strcmp(obj.data_cast_prepend, 'single')
+                            obj.sensor_data = [obj.sensor_data, gpuArray.zeros(obj.num_sensor_points, Nt, 'single')];
+                        else
+                            obj.sensor_data = [obj.sensor_data, gpuArray.zeros(obj.num_sensor_points, Nt, 'double')];
+                        end
+                end
+            end
+
+            % cast derivative variables
+            if ~strcmp(obj.data_cast, 'off')
+                if obj.display_updates
+                    disp(['  casting variables to ' obj.data_cast ' type...']);
+                end
+
+                cast_variables = {'kappa', 'dt', 'deriv_x', 'deriv_y', 'deriv_z'};
+                for cast_index = 1:length(cast_variables)
+                    eval([cast_variables{cast_index} ' = ' obj.data_cast '(' obj.data_cast_prepend '(' cast_variables{cast_index} '));']);
+                end
             end
             
             % initialise plot
@@ -1018,7 +1067,48 @@ classdef kWaveDiffusion < handle
             
             % loop through the optional inputs
             for input_index = 1:2:length(input_params)
-                switch input_params{input_index}           
+                switch input_params{input_index}
+                    case 'DataCast'
+
+                        % assign input
+                        obj.data_cast = input_params{input_index + 1};
+                        
+                        % check list of valid inputs
+                        if ~ischar(obj.data_cast)
+                            error('Optional input ''DataCast'' must be a string.');
+                        elseif ~(strcmp(obj.data_cast, 'off') || strcmp(obj.data_cast, 'double') ...
+                                || strcmp(obj.data_cast, 'single') || strcmp(obj.data_cast, 'gpuArray-single') ... 
+                                || strcmp(obj.data_cast, 'gpuArray-double'))
+                            error('Invalid input for ''DataCast''.');
+                        end
+                        
+                        % replace double with off
+                        if strcmp(obj.data_cast, 'double')
+                            obj.data_cast = 'off';
+                        end
+                        
+                        % replace PCT options with gpuArray
+                        if strcmp(obj.data_cast, 'gpuArray-single')
+                            obj.data_cast = 'gpuArray';
+                            obj.data_cast_prepend = 'single';
+                        elseif strcmp(obj.data_cast, 'gpuArray-double')
+                            obj.data_cast = 'gpuArray';
+                        end
+                        
+                        if strcmp(obj.data_cast, 'gpuArray')
+                            
+                            % check the PCT is installed and the version is 2012a or
+                            % later (verLessThan only works in release 7.4 or later)
+                            v = ver;
+                            if verLessThan('matlab', '7.14') || ~ismember('Parallel Computing Toolbox', {v.Name})
+                                error('The Parallel Computing Toolbox for MATLAB 2012a or later is required for ''DataCast'' set to ''gpuArray-single'' or ''gpuArray-double''.');
+                            end
+        
+                            % cleanup unused variables
+                            clear v;
+                            
+                        end
+
                     case 'DisplayUpdates'
                         obj.display_updates = input_params{input_index + 1};
                         if ~islogical(obj.display_updates)
@@ -1071,6 +1161,33 @@ classdef kWaveDiffusion < handle
         
     % set and get functions for dependent variables
     methods
+
+        % set Q
+        function set.Q(obj, val)
+            if ~strcmp(obj.data_cast, 'off') %#ok<MCSUP>
+                eval(['obj.Q = ' obj.data_cast '(' obj.data_cast_prepend '(val));']); %#ok<MCSUP>
+            else
+                obj.Q = val;
+            end
+        end
+
+        % set T
+        function set.T(obj, val)
+            if ~strcmp(obj.data_cast, 'off') %#ok<MCSUP>
+                eval(['obj.T = ' obj.data_cast '(' obj.data_cast_prepend '(val));']); %#ok<MCSUP>
+            else
+                obj.T = val;
+            end
+        end
+
+        % set cem43
+        function set.cem43(obj, val)
+            if ~strcmp(obj.data_cast, 'off') %#ok<MCSUP>
+                eval(['obj.cem43 = ' obj.data_cast '(' obj.data_cast_prepend '(val));']); %#ok<MCSUP>
+            else
+                obj.cem43 = val;
+            end
+        end
         
         % return lesion according to cem43 > 240mins
         function lesion_map = get.lesion_map(obj)
