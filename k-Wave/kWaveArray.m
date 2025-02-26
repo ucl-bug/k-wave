@@ -1254,8 +1254,11 @@ classdef kWaveArray < handle
                 case 'custom'
                     
                     % directly assign integration points
-                    integration_points = obj.elements{element_num}.integration_points;
-                    
+                    integration_points = zeros(size(obj.elements{element_num}.integration_points));
+                    for point_ind = 1:size(obj.elements{element_num}.integration_points, 2)
+                        integration_points(:, point_ind) = obj.affine(obj.elements{element_num}.integration_points(:, point_ind));
+                    end
+
                 case 'disc'
                     
                     % compute points using makeCartDisc
