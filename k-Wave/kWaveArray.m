@@ -194,9 +194,9 @@
 %         end_point   - End coordinate for the line given as a one (1D),
 %                       two (2D), or three (3D) element vector [m].
 %
-%     addHolographyElement(integration_points, amplitude, phase, measure)
+%     addHologramElement(integration_points, amplitude, phase)
 %
-%         Add a holography element to the array (3D simulation).
+%         Add a hologram element to the array (3D simulation).
 %
 %         Specifies a continuous wave (single frequency) source where the
 %         integration points are specified manually and the radiation
@@ -218,8 +218,6 @@
 %                              integration point.
 %         phase              - 1 x num_points vector of phases for each
 %                              integration point [rad].
-%         measure            - Area [m^2] of area element. For evenly
-%                              spaced integration points, set to dx^2.
 %
 %     combined_sensor_data = combineSensorData(kgrid, sensor_data)
 %
@@ -275,10 +273,11 @@
 %         source_signal      - Source signal for each transducer element
 %                              defined as an array [number_elements, Nt].
 %
-%     distributed_source = getDistributedSourceSignalCW(kgrid, Nt, dt, freq, amp, phase)
+%     distributed_source = getDistributedSourceSignalCW(kgrid, freq, amp, phase)
 %
 %         Alternative to getDistributedSourceSignal for single frequency
-%         driving signals. See createCWSignals for definition of inputs.
+%         driving signals and hologram elements. See createCWSignals for
+%         definition of inputs.
 %
 %     mask = getElementBinaryMask(kgrid, element_num)
 %
