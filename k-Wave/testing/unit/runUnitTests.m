@@ -1,4 +1,4 @@
-function runUnitTests
+function runUnitTests(wildcard)
 %RUNUNITTESTS Run MATLAB unit tests.
 %
 % DESCRIPTION:
@@ -19,13 +19,17 @@ function runUnitTests
 %     After all unit tests have been performed, a summary of the test names
 %     and pass status is displayed.
 %
+% OPTIONAL INPUTS:
+%         wildcard         - String with wildcard pattern to match test
+%                            filenames
+%
 % ABOUT:
 %     author        - Bradley Treeby
 %     date          - 17th February 2014
-%     last update   - 7th February 2020
+%     last update   - 4th March 2024
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2014-2020 Bradley Treeby
+% Copyright (C) 2014-2024 Bradley Treeby
 
 % This file is part of k-Wave. k-Wave is free software: you can
 % redistribute it and/or modify it under the terms of the GNU Lesser
@@ -53,6 +57,11 @@ filenames = filenames.m;
 
 % remove this file from the list
 filenames(contains(filenames, 'runUnitTests.m')) = [];
+
+% filter filenames based on wildcard
+if nargin > 0
+    filenames = filenames(contains(filenames, wildcard));
+end
 
 % extract number of files to test
 num_files = length(filenames);
