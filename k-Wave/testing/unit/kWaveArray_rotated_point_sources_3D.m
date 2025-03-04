@@ -5,7 +5,7 @@ function test_pass = kWaveArray_rotated_point_sources_3D(plot_comparisons, plot_
 %       created using the kWaveArray class.
 %
 % ABOUT:
-%       author      - Bradley TReeby
+%       author      - Bradley Treeby
 %       date        - 26th February 2025
 %       last update - 26th February 2025
 %       

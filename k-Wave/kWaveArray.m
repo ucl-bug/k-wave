@@ -937,8 +937,11 @@ classdef kWaveArray < handle
         % compute distributed source signal
         function distributed_source_signal = getDistributedSourceSignal(obj, kgrid, source_signal)
 
-            % TODO don't allow for hologram elements
-            
+            % don't allow this function if there are any hologram elements
+            if any(cellfun(@(element) strcmp(element.type, 'hologram'), obj.elements))
+                error('getDistributedSourceSignal can''t be used with hologram elements. Use getDistributedSourceSignalCW instead.');
+            end
+
             % update command line
             func_start_time = clock;
             disp('Computing distributed source signal...');
@@ -1013,11 +1016,16 @@ classdef kWaveArray < handle
         % compute distributed source signal
         function distributed_source_signal = getDistributedSourceSignalCW(obj, kgrid, freq, el_amp, el_phase)
 
-            % TODO amp/phase should be the same length as obj.number_elements
-            % TODO only allow for hologram elements
+            if ~all(cellfun(@(element) strcmp(element.type, 'hologram'), obj.elements))
+                error('All elements must be holograms.')
+            end
 
             if strcmp(kgrid.t_array, 'auto')
                 error('kgrid time array must be specified.');
+            end
+
+            if (numel(obj.elements) ~= length(el_amp)) || (numel(obj.elements) ~= length(el_phase))
+                error('Element amplitude and phase vectors must be the same length as the number of elements in the array.');
             end
 
             % update command line
@@ -1111,7 +1119,10 @@ classdef kWaveArray < handle
         % combine distributed sensor data
         function combined_sensor_data = combineSensorData(obj, kgrid, sensor_data)
 
-            % TODO don't allow for hologram elements
+            % don't allow this function if there are any hologram elements
+            if any(cellfun(@(element) strcmp(element.type, 'hologram'), obj.elements))
+                error('combineSensorData can''t be used with hologram elements.');
+            end
             
             % check the array has elements
             obj.checkForElements(dbstack);
@@ -1359,6 +1370,7 @@ classdef kWaveArray < handle
         function vec = affine(obj, vec)
             
             if isempty(obj.array_transformation)
+                vec = vec(:)';
                 return;
             end
                
