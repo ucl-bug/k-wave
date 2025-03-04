@@ -192,7 +192,34 @@
 %         start_point - Start coordinate for the line given as a one (1D),
 %                       two (2D), or three (3D) element vector [m]. 
 %         end_point   - End coordinate for the line given as a one (1D),
-%                       two (2D), or three (3D) element vector [m]. 
+%                       two (2D), or three (3D) element vector [m].
+%
+%     addHolographyElement(integration_points, amplitude, phase, measure)
+%
+%         Add a holography element to the array (3D simulation).
+%
+%         Specifies a continuous wave (single frequency) source where the
+%         integration points are specified manually and the radiation
+%         pattern across the integration points is defined by an amplitude
+%         and phase map.
+%
+%         This can be used to take a complex source plane, for example,
+%         calculated using calculateMassSourceCW, and add this to a k-Wave
+%         simulation at a new position or angle.
+%
+%         The integration points define the measurement points in the
+%         source plane in transducer coordinates. The amplitude and phase
+%         are then used to weight the amplitude of each integration point
+%         when used with 
+%
+%         integration_points - 3 x num_points (3D) array of Cartesian
+%                              coordinates [m].
+%         amplitude          - 1 x num_points vector of amplitudes for each
+%                              integration point.
+%         phase              - 1 x num_points vector of phases for each
+%                              integration point [rad].
+%         measure            - Area [m^2] of area element. For evenly
+%                              spaced integration points, set to dx^2.
 %
 %     combined_sensor_data = combineSensorData(kgrid, sensor_data)
 %
@@ -247,6 +274,11 @@
 %         kgrid              - Grid object returned by kWaveGrid.
 %         source_signal      - Source signal for each transducer element
 %                              defined as an array [number_elements, Nt].
+%
+%     distributed_source = getDistributedSourceSignalCW(kgrid, Nt, dt, freq, amp, phase)
+%
+%         Alternative to getDistributedSourceSignal for single frequency
+%         driving signals. See createCWSignals for definition of inputs.
 %
 %     mask = getElementBinaryMask(kgrid, element_num)
 %
@@ -319,7 +351,7 @@
 % ABOUT:
 %     author      - Bradley Treeby and Elliott Wise
 %     date        - 5th September 2018
-%     last update - 31st July 2021
+%     last update - 26th February 2025
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
 % Copyright (C) 2018-2021 Bradley Treeby and Elliott Wise
@@ -787,12 +819,59 @@ classdef kWaveArray < handle
             
         end
 
+        % add hologram element
+        function addHologramElement(obj, integration_points, amplitude, phase)
+            
+            % check inputs
+            validateattributes(integration_points, {'numeric'}, {'finite', 'real', '2d'},       'addHolographyElement', 'integration_points', 1);
+            validateattributes(amplitude,          {'numeric'}, {'finite', 'real', '2d'},       'addHolographyElement', 'amplitude', 2);
+            validateattributes(phase,              {'numeric'}, {'finite', 'real', '2d'},       'addHolographyElement', 'phase', 3);
+            
+            % check the dimensionality of the integration points
+            input_dim = size(integration_points, 1);
+            if (input_dim ~= 3)
+                error('Input integration_points must be a 3 x N array.');
+            end
+
+            % check the size of the amplitude and phase
+            if size(amplitude, 2) ~= size(integration_points, 2)
+                error('Input amplitude must be the same length as integration_points');
+            end
+            if size(phase, 2) ~= size(integration_points, 2)
+                error('Input phase must be the same length as integration_points');
+            end
+            
+            % check if this is the first element, and set the dimension
+            if obj.number_elements == 0
+                obj.dim = input_dim;
+            end
+            
+            % check that the element is being added to an array with the
+            % correct dimensions
+            if obj.dim ~= input_dim
+                error([num2str(input_dim) 'D custom element cannot be added to an array with ' num2str(obj.dim) 'D elements.']);
+            end
+            
+            % increment the number of elements
+            obj.number_elements = obj.number_elements + 1;
+            
+            % store the integration points
+            obj.elements{obj.number_elements}.group_id           = 0;
+            obj.elements{obj.number_elements}.type               = 'hologram';
+            obj.elements{obj.number_elements}.dim                = 2;
+            obj.elements{obj.number_elements}.integration_points = integration_points;
+            obj.elements{obj.number_elements}.active             = true;
+            obj.elements{obj.number_elements}.amplitude          = amplitude;
+            obj.elements{obj.number_elements}.phase              = phase;
+            
+        end
+
         % remove element
         function removeElement(obj, element_num)
             
             % check the element number exists
             if element_num > obj.number_elements
-                error(['Cannot remove element ' num2str(element_num) ' from array with ' num2str(obj.num_elements) ' elements']);
+                error(['Cannot remove element ' num2str(element_num) ' from array with ' num2str(obj.number_elements) ' elements']);
             end
             
             % remove the element
@@ -857,6 +936,8 @@ classdef kWaveArray < handle
 
         % compute distributed source signal
         function distributed_source_signal = getDistributedSourceSignal(obj, kgrid, source_signal)
+
+            % TODO don't allow for hologram elements
             
             % update command line
             func_start_time = clock;
@@ -925,12 +1006,112 @@ classdef kWaveArray < handle
                 
             end
             
+            disp(['  total computation time ' scaleTime(etime(clock, func_start_time))]); %#ok<*DETIM,*CLOCK>
+            
+        end
+
+        % compute distributed source signal
+        function distributed_source_signal = getDistributedSourceSignalCW(obj, kgrid, freq, el_amp, el_phase)
+
+            % TODO amp/phase should be the same length as obj.number_elements
+            % TODO only allow for hologram elements
+
+            if strcmp(kgrid.t_array, 'auto')
+                error('kgrid time array must be specified.');
+            end
+
+            % update command line
+            func_start_time = clock;
+            disp('Computing distributed source signal CW...');
+            
+            % check the array has elements
+            obj.checkForElements(dbstack);
+            
+            % get the binary mask to count how many points contribute to
+            % the source
+            comp_start_time = clock;
+            fprintf('  calculating binary mask...                  ');
+            mask = obj.getArrayBinaryMask(kgrid);
+            mask_ind = find(mask);
+            num_source_points = sum(mask(:));
+            disp(['completed in ' scaleTime(etime(clock, comp_start_time))]);
+            
+            % estimate size of the signal, and cast if needed
+            if obj.single_precision
+                data_type = 'single';
+                sz_bytes = num_source_points * kgrid.Nt * 4;
+            else
+                data_type = 'double';
+                sz_bytes = num_source_points * kgrid.Nt * 8;
+            end
+            sz_ind = 1;
+            while sz_bytes > 1024
+                sz_bytes = sz_bytes / 1024;
+                sz_ind = sz_ind + 1;
+            end
+            prefixes = {'', 'K', 'M', 'G', 'T'};
+            sz_bytes = round(sz_bytes, 2, 'significant');
+            disp(['  approximate size of source matrix:          ' num2str(sz_bytes) ' ' prefixes{sz_ind} 'B (' data_type ' precision)']);
+            
+            % initialise the source signal
+            distributed_source_signal = zeros(num_source_points, kgrid.Nt, data_type);
+            
+            % loop through the elements
+            for element_num = 1:obj.number_elements
+
+                comp_start_time = clock;
+                fprintf(['  calculating element ' num2str(element_num) ' grid weights...       ']);
+
+                % create signals combining the element amplitude and phase
+                % with the amplitude of phase for the individual
+                % integration points
+                source_signal = createCWSignals(kgrid.t_array, freq, el_amp(element_num) .* obj.elements{element_num}.amplitude, el_phase(element_num) + obj.elements{element_num}.phase);
+                source_signal = cast(source_signal, data_type);
+
+                % check there are no integration points which are outside grid
+                integration_points_trimmed = trimCartPoints(kgrid, obj.elements{element_num}.integration_points);
+                if any(size(integration_points_trimmed) ~= size(obj.elements{element_num}.integration_points))
+                    error('All integration points must be within the domain specified by kgrid.');
+                end
+                clear integration_points_trimmed;
+                number_integration_points = size(obj.elements{element_num}.integration_points, 2);
+
+                % loop over integration points
+                for intg_ind = 1:number_integration_points
+
+                    % calculate grid weights from BLIs centered on the integration point
+                    scale = 1;
+                    source_weights = offGridPoints(kgrid, obj.affine(obj.elements{element_num}.integration_points(:, intg_ind)).', scale, ...
+                        'BLITolerance', obj.bli_tolerance, ...
+                        'BLIType', obj.bli_type, ...
+                        'MaskOnly', false, ...
+                        'SinglePrecision', obj.single_precision);
+                    
+                    % get indices of the non-zero points 
+                    integration_mask_ind = find(source_weights ~= 0);
+                    
+                    % convert these to indices in the distributed source
+                    local_ind = ismember(mask_ind, integration_mask_ind);
+                    
+                    % add to distributed source
+                    distributed_source_signal(local_ind, :) = ...
+                        distributed_source_signal(local_ind, :) ...
+                        + bsxfun(@times, source_weights(integration_mask_ind), source_signal(intg_ind, :));
+
+                end
+
+                disp(['completed in ' scaleTime(etime(clock, comp_start_time))]);
+                
+            end
+            
             disp(['  total computation time ' scaleTime(etime(clock, func_start_time))]);
             
         end
         
         % combine distributed sensor data
         function combined_sensor_data = combineSensorData(obj, kgrid, sensor_data)
+
+            % TODO don't allow for hologram elements
             
             % check the array has elements
             obj.checkForElements(dbstack);
@@ -1203,10 +1384,17 @@ classdef kWaveArray < handle
             validateattributes(element_num, {'numeric'}, {'integer', '>=', 1, '<=', obj.number_elements}, 'getElementGridWeights', 'element_num', 2);
             
             % compute measure (length/area/volume) in grid squares (assuming dx = dy = dz)
-            m_grid = obj.elements{element_num}.measure ./ (kgrid.dx).^(obj.elements{element_num}.dim);
+            if strcmp(obj.elements{element_num}.type, 'hologram')
+                m_grid = 1;
+                if ~mask_only
+                    warning('Off grid points are not scaled for hologram elements.');
+                end
+            else
+                m_grid = obj.elements{element_num}.measure ./ (kgrid.dx).^(obj.elements{element_num}.dim);
+            end
             
             % get number of integration points
-            if strcmp(obj.elements{element_num}.type, 'custom')
+            if strcmp(obj.elements{element_num}.type, 'custom') || strcmp(obj.elements{element_num}.type, 'hologram')
                 
                 % assign number of integration points directly
                 m_integration = size(obj.elements{element_num}.integration_points, 2);
@@ -1251,7 +1439,7 @@ classdef kWaveArray < handle
                         obj.affine(obj.elements{element_num}.focus_position), ...
                         m_integration);
                     
-                case 'custom'
+                case {'custom', 'hologram'}
                     
                     % directly assign integration points
                     integration_points = zeros(size(obj.elements{element_num}.integration_points));
@@ -1301,7 +1489,7 @@ classdef kWaveArray < handle
                             pz = linspace(obj.elements{element_num}.start_point(3) + d(3)/2, obj.elements{element_num}.end_point(3) - d(3)/2, m_integration);
                             integration_points = [px; py; pz];
                     end
-                    
+  
                 otherwise
                     
                     % unknown element type
