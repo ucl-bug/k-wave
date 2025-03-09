@@ -113,7 +113,7 @@ if nargin < 3 || isempty(scale)
 end
 
 % expand scale value if scalar
-if numel(scale) == 1
+if isscalar(scale)
     scale = scale .* ones(num_points, 1);
 elseif numel(scale) ~= num_points
     error('Input scale must be scalar or the same length as points.');

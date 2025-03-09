@@ -7,7 +7,7 @@ function test_pass = kWaveArray_rotated_point_sources_2D(plot_comparisons, plot_
 % ABOUT:
 %       author      - Bradley TReeby
 %       date        - 26th February 2025
-%       last update - 26th February 2025
+%       last update - 6th March 2025
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
 % Copyright (C) 2025- Bradley Treeby
@@ -35,6 +35,13 @@ end
 % set pass variable
 test_pass = true;
 
+% check for image processing toolbox and fail gracefull
+v = ver;
+if ~any(strcmp('Image Processing Toolbox', {v.Name}))
+    warning('Skipping test, image processing toolbox not installed.');
+    return
+end
+
 % set comparison threshold
 comparison_thresh = 5;  % 5% error threshold
 
@@ -53,7 +60,7 @@ c0 = 1500;  % [m/s]
 medium.sound_speed = c0;
 
 % time array
-kgrid.makeTime(c0, 0.3);
+kgrid.makeTime(c0, 0.3, 70e-6);
 
 % define source parameters
 source_grid_pos = 40:50;

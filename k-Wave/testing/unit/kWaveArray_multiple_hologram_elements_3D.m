@@ -6,7 +6,7 @@ function test_pass = kWaveArray_multiple_hologram_elements_3D(plot_comparisons, 
 % ABOUT:
 %       author      - Bradley Treeby
 %       date        - 4th March 2025
-%       last update - 4th March 2025
+%       last update - 9th March 2025
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
 % Copyright (C) 2025- Bradley Treeby
@@ -34,6 +34,13 @@ end
 % set pass variable
 test_pass = true;
 
+% check for image processing toolbox and fail gracefull
+v = ver;
+if ~any(strcmp('Image Processing Toolbox', {v.Name}))
+    warning('Skipping test, image processing toolbox not installed.');
+    return
+end
+
 % set comparison threshold
 comparison_thresh = 5;  % 5% error threshold
 
@@ -53,7 +60,7 @@ c0 = 1500;  % [m/s]
 medium.sound_speed = c0;
 
 % time array
-kgrid.makeTime(c0, 0.3, 25e-6);
+kgrid.makeTime(c0, 0.3, 40e-6);
 
 % define source parameters
 source_freq = 200e3;  % [Hz]
@@ -81,13 +88,14 @@ integration_points_1 = [x_grid(:), y_grid(:), z_grid(:)]';
 
 % Create amplitude and phase patterns for the first hologram
 % Use a simple focused pattern (phase depends on distance from center)
-center_point = [0, 0, 0];
+center_point_1 = [0, 0, 0];
 amp_1 = ones(1, size(integration_points_1, 2));
-distances = sqrt(sum((integration_points_1 - repmat(center_point', 1, size(integration_points_1, 2))).^2, 1));
+distances = sqrt(sum((integration_points_1 - repmat(center_point_1', 1, size(integration_points_1, 2))).^2, 1));
 phase_1 = 2 * pi * distances / (c0 / source_freq);
 
 % Second element - a plane offset in the negative x-direction
 x_offset_2 = -15 * dx;
+center_point_2 = center_point_1 + [x_offset_2, 0, 0];
 
 % Create a grid of points for the second hologram
 x_grid = x_offset_2 * ones(size(y_grid));
@@ -100,8 +108,9 @@ phase_gradient = 2;  % phase gradient factor
 phase_2 = phase_gradient * integration_points_2(2, :) / spacing;
 
 % Add hologram elements to the array
-karray.addHologramElement(integration_points_1, amp_1, phase_1);
-karray.addHologramElement(integration_points_2, amp_2, phase_2);
+hologram_area = (num_points_side * spacing)^2;
+karray.addHologramElement(center_point_1, integration_points_1, amp_1, phase_1, hologram_area);
+karray.addHologramElement(center_point_2, integration_points_2, amp_2, phase_2, hologram_area);
 
 % Create source using binary mask from karray
 source_holograms.p_mask = karray.getArrayBinaryMask(kgrid);
@@ -127,9 +136,9 @@ for elem_idx = 1:2
     karray_single = kWaveArray();
     
     if elem_idx == 1
-        karray_single.addHologramElement(integration_points_1, amp_1, phase_1);
+        karray_single.addHologramElement(center_point_1, integration_points_1, amp_1, phase_1, hologram_area);
     else
-        karray_single.addHologramElement(integration_points_2, amp_2, phase_2);
+        karray_single.addHologramElement(center_point_2, integration_points_2, amp_2, phase_2, hologram_area);
     end
     
     % Create source

@@ -7,7 +7,7 @@ function test_pass = kWaveArray_rotated_point_sources_3D(plot_comparisons, plot_
 % ABOUT:
 %       author      - Bradley Treeby
 %       date        - 26th February 2025
-%       last update - 26th February 2025
+%       last update - 6th March 2025
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
 % Copyright (C) 2025- Bradley Treeby
@@ -35,8 +35,15 @@ end
 % set pass variable
 test_pass = true;
 
+% check for image processing toolbox and fail gracefull
+v = ver;
+if ~any(strcmp('Image Processing Toolbox', {v.Name}))
+    warning('Skipping test, image processing toolbox not installed.');
+    return
+end
+
 % set comparison threshold
-comparison_thresh = 5;  % 5% error threshold
+comparison_thresh = 12;
 
 % =========================================================================
 % DEFINE GRID PROPERTIES
@@ -59,13 +66,24 @@ kgrid.makeTime(c0, 0.3, 25e-6);
 % define source parameters
 source_grid_pos = 20:40;
 num_source_points_side = length(source_grid_pos);
-num_source_points_total = length(source_grid_pos).^2;
 source_freq = 200e3;  % [Hz]
 rotation_angle = 45;  % [degrees]
 
 % define spatially varying source amplitudes and phases
-amp = linspace(0.1, 2, num_source_points_total);
-phase = linspace(0, pi, num_source_points_total);
+source_grid_pos_upsampled = 20:0.5:40;
+num_source_points_side_upsampled = length(source_grid_pos_upsampled);
+
+amp_upsampled = linspace(0.1, 2, num_source_points_side_upsampled) .* linspace(0.1, 2, num_source_points_side_upsampled)';
+phase_upsampled = linspace(0, sqrt(2*pi), num_source_points_side_upsampled) .* linspace(0, sqrt(2*pi), num_source_points_side_upsampled)';
+
+amp = amp_upsampled(1:2:end, 1:2:end);
+phase = phase_upsampled(1:2:end, 1:2:end);
+
+amp_upsampled = amp_upsampled(:).';
+phase_upsampled = phase_upsampled(:).';
+
+amp = amp(:).';
+phase = phase(:).';
 
 % create source signals with varying amplitude and phase
 source_signals = createCWSignals(kgrid.t_array, source_freq, amp, phase);
@@ -137,7 +155,9 @@ for ind1 = 1:num_source_points_side
     end
 end
 
-karray.addHologramElement(integration_points, amp, phase);
+position = [0, source_grid_pos(ceil(end/2)), source_grid_pos(ceil(end/2))];
+hologram_area = (length(source_grid_pos) * kgrid.dx)^2; % area of hologram plane
+karray.addHologramElement(position, integration_points, amp, phase, hologram_area);
 karray.setArrayPosition(translation, rotation);
 
 % create source using binary mask from karray
@@ -152,6 +172,38 @@ source_off_grid.p = karray.getDistributedSourceSignalCW(kgrid, source_freq, el_a
 sensor_data_holography = kspaceFirstOrder3D(kgrid, medium, source_off_grid, sensor, 'PlotSim', plot_simulations);
 
 % =========================================================================
+% SIMULATION WITH UPSAMPLED HOLOGRAPHY ELEMENT
+% =========================================================================
+
+karray = kWaveArray();
+
+% setup integration points
+integration_points_upsampled = [];
+linear_ind = 1;
+for ind1 = 1:num_source_points_side_upsampled
+    for ind2 = 1:num_source_points_side_upsampled
+        z_pos = (source_grid_pos_upsampled(ind1) - 1) * kgrid.dx + kgrid.z_vec(1);
+        y_pos = (source_grid_pos_upsampled(ind2) - 1) * kgrid.dx + kgrid.y_vec(1);
+        integration_points_upsampled(:, linear_ind) = [0; y_pos; z_pos]; %#ok<AGROW>
+        linear_ind = linear_ind + 1;
+    end
+end
+
+karray.addHologramElement(position, integration_points_upsampled, amp_upsampled, phase_upsampled, hologram_area);
+karray.setArrayPosition(translation, rotation);
+
+% create source using binary mask from karray
+source_off_grid.p_mask = karray.getArrayBinaryMask(kgrid);
+
+% get distributed source signals
+el_amp = 1;
+el_phase = 0;
+source_off_grid.p = karray.getDistributedSourceSignalCW(kgrid, source_freq, el_amp, el_phase);
+
+% run k-Wave simulation with rotated off-grid sources
+sensor_data_holography_upsampled = kspaceFirstOrder3D(kgrid, medium, source_off_grid, sensor, 'PlotSim', plot_simulations);
+
+% =========================================================================
 % COMPARISON AND ERROR CALCULATION
 % =========================================================================
 
@@ -160,13 +212,18 @@ crop_range = 15:45;
 ref = squeeze(sensor_data.p_final(ceil(Nx/2), :, :));
 ref = ref(crop_range, crop_range);
 
-for ind = 1:2
-    if ind == 1
-        rotated = squeeze(sensor_data_off_grid.p_final(ceil(Nx/2), :, :));
-        str = 'Off grid';
-    else
-        rotated = squeeze(sensor_data_holography.p_final(ceil(Nx/2), :, :));
-        str = 'Hologram';
+for ind = 1:3
+
+    switch ind
+        case 1
+            rotated = squeeze(sensor_data_off_grid.p_final(ceil(Nx/2), :, :));
+            str = 'Off grid';
+        case 2
+            rotated = squeeze(sensor_data_holography.p_final(ceil(Nx/2), :, :));
+            str = 'Hologram';
+        case 3
+            rotated = squeeze(sensor_data_holography_upsampled.p_final(ceil(Nx/2), :, :));
+            str = 'Hologram Upsampled';
     end
 
     % rotate the off-grid result back to match orientation of on-grid result

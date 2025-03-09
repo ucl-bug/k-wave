@@ -168,7 +168,45 @@
 %         position  - Centre of disc surface [bx, by] or [bx, by, bz] [m].
 %         diameter  - Diameter of the disc [m].
 %         focus_pos - Any point on beam axis [fx, fy, fz] (not used for 2D
-%                     simulations) [m]. 
+%                     simulations) [m].
+%
+%     addHologramElement(position, integration_points, amplitude, phase, area)
+%
+%         Add a hologram element to the array (3D simulation).
+%
+%         Specifies a continuous wave (single frequency) source where the
+%         integration points are specified manually and the radiation
+%         pattern across the integration points is defined by an amplitude
+%         and phase map.
+%
+%         This can be used to take a complex source plane, for example,
+%         calculated using calculateMassSourceCW, and add this to a k-Wave
+%         simulation at a new position or angle.
+%
+%         The integration points define the measurement points in the
+%         source plane in transducer coordinates. The amplitude and phase
+%         are then used to weight the amplitude of each integration point.
+%
+%         Note, the integration point density should be sufficient relative
+%         the intended grid spacing (see [1]).
+%
+%         position           - Reference position [x, y, z] [m].
+%         integration_points - 3 x num_points (3D) array of Cartesian
+%                              coordinates [m].
+%         amplitude          - 1 x num_points vector of amplitudes for each
+%                              integration point.
+%         phase              - 1 x num_points vector of phases for each
+%                              integration point [rad].
+%         area               - Area of the hologram plane [m^2].
+%
+%     addLineElement(start_point, end_point)
+%
+%         Add line element to the array (1D/2D/3D simulations).
+%
+%         start_point - Start coordinate for the line given as a one (1D),
+%                       two (2D), or three (3D) element vector [m]. 
+%         end_point   - End coordinate for the line given as a one (1D),
+%                       two (2D), or three (3D) element vector [m].
 %
 %     addRectElement(position, Lx, Ly, theta)
 %
@@ -184,40 +222,6 @@
 %                    about x-y'-z'' (intrinsic rotations) or z-y-x
 %                    (extrinsic rotations). All rotations are
 %                    counter-clockwise. Can be set to [] if no rotation.
-%
-%     addLineElement(start_point, end_point)
-%
-%         Add line element to the array (1D/2D/3D simulations).
-%
-%         start_point - Start coordinate for the line given as a one (1D),
-%                       two (2D), or three (3D) element vector [m]. 
-%         end_point   - End coordinate for the line given as a one (1D),
-%                       two (2D), or three (3D) element vector [m].
-%
-%     addHologramElement(integration_points, amplitude, phase)
-%
-%         Add a hologram element to the array (3D simulation).
-%
-%         Specifies a continuous wave (single frequency) source where the
-%         integration points are specified manually and the radiation
-%         pattern across the integration points is defined by an amplitude
-%         and phase map.
-%
-%         This can be used to take a complex source plane, for example,
-%         calculated using calculateMassSourceCW, and add this to a k-Wave
-%         simulation at a new position or angle.
-%
-%         The integration points define the measurement points in the
-%         source plane in transducer coordinates. The amplitude and phase
-%         are then used to weight the amplitude of each integration point
-%         when used with 
-%
-%         integration_points - 3 x num_points (3D) array of Cartesian
-%                              coordinates [m].
-%         amplitude          - 1 x num_points vector of amplitudes for each
-%                              integration point.
-%         phase              - 1 x num_points vector of phases for each
-%                              integration point [rad].
 %
 %     combined_sensor_data = combineSensorData(kgrid, sensor_data)
 %
@@ -308,6 +312,14 @@
 %
 %         element_pos - Matrix of element positions [m].
 %
+%     is_hologram = hasAllHologramElements
+%
+%         Returns true if the array has all hologram elements.
+%
+%     is_hologram = hasHologramElements
+%
+%         Returns true if the array has any hologram elements.
+%
 %     plotArray(new_figure)
 %
 %         Plot the array elements. If new_figure is true (the default), a
@@ -350,10 +362,10 @@
 % ABOUT:
 %     author      - Bradley Treeby and Elliott Wise
 %     date        - 5th September 2018
-%     last update - 26th February 2025
+%     last update - 5th March 2025
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2018-2021 Bradley Treeby and Elliott Wise
+% Copyright (C) 2018-2025 Bradley Treeby and Elliott Wise
 %
 % See also offGridPoints, getDeltaBLI
 
@@ -819,23 +831,25 @@ classdef kWaveArray < handle
         end
 
         % add hologram element
-        function addHologramElement(obj, integration_points, amplitude, phase)
+        function addHologramElement(obj, position, integration_points, amplitude, phase, area)
             
             % check inputs
-            validateattributes(integration_points, {'numeric'}, {'finite', 'real', '2d'},       'addHolographyElement', 'integration_points', 1);
-            validateattributes(amplitude,          {'numeric'}, {'finite', 'real', '2d'},       'addHolographyElement', 'amplitude', 2);
-            validateattributes(phase,              {'numeric'}, {'finite', 'real', '2d'},       'addHolographyElement', 'phase', 3);
+            validateattributes(position,           {'numeric'}, {'finite', 'real', 'numel', 3}, 'addHolographyElement', 'position',  1);
+            validateattributes(integration_points, {'numeric'}, {'finite', 'real', '2d'},       'addHolographyElement', 'integration_points', 2);
+            validateattributes(amplitude,          {'numeric'}, {'finite', 'real', '2d'},       'addHolographyElement', 'amplitude', 3);
+            validateattributes(phase,              {'numeric'}, {'finite', 'real', '2d'},       'addHolographyElement', 'phase', 4);
+            validateattributes(area,               {'numeric'}, {'finite', 'real', 'numel', 1}, 'addHolographyElement', 'area', 5);
             
-            % check the dimensionality of the integration points
+            % check input sizes
             input_dim = size(integration_points, 1);
             if (input_dim ~= 3)
                 error('Input integration_points must be a 3 x N array.');
             end
 
-            % check the size of the amplitude and phase
             if size(amplitude, 2) ~= size(integration_points, 2)
                 error('Input amplitude must be the same length as integration_points');
             end
+
             if size(phase, 2) ~= size(integration_points, 2)
                 error('Input phase must be the same length as integration_points');
             end
@@ -857,11 +871,13 @@ classdef kWaveArray < handle
             % store the integration points
             obj.elements{obj.number_elements}.group_id           = 0;
             obj.elements{obj.number_elements}.type               = 'hologram';
+            obj.elements{obj.number_elements}.position           = position(:).';
             obj.elements{obj.number_elements}.dim                = 2;
             obj.elements{obj.number_elements}.integration_points = integration_points;
             obj.elements{obj.number_elements}.active             = true;
             obj.elements{obj.number_elements}.amplitude          = amplitude;
             obj.elements{obj.number_elements}.phase              = phase;
+            obj.elements{obj.number_elements}.measure            = area;
             
         end
 
@@ -937,7 +953,7 @@ classdef kWaveArray < handle
         function distributed_source_signal = getDistributedSourceSignal(obj, kgrid, source_signal)
 
             % don't allow this function if there are any hologram elements
-            if any(cellfun(@(element) strcmp(element.type, 'hologram'), obj.elements))
+            if obj.hasHologramElements
                 error('getDistributedSourceSignal can''t be used with hologram elements. Use getDistributedSourceSignalCW instead.');
             end
 
@@ -1015,7 +1031,7 @@ classdef kWaveArray < handle
         % compute distributed source signal
         function distributed_source_signal = getDistributedSourceSignalCW(obj, kgrid, freq, el_amp, el_phase)
 
-            if ~all(cellfun(@(element) strcmp(element.type, 'hologram'), obj.elements))
+            if ~obj.hasAllHologramElements
                 error('All elements must be holograms.')
             end
 
@@ -1081,13 +1097,16 @@ classdef kWaveArray < handle
                     error('All integration points must be within the domain specified by kgrid.');
                 end
                 clear integration_points_trimmed;
+                
+                % compute scaling factor
                 number_integration_points = size(obj.elements{element_num}.integration_points, 2);
+                m_grid = obj.elements{element_num}.measure ./ (kgrid.dx).^(obj.elements{element_num}.dim);
+                scale = m_grid ./ number_integration_points;
 
                 % loop over integration points
                 for intg_ind = 1:number_integration_points
 
                     % calculate grid weights from BLIs centered on the integration point
-                    scale = 1;
                     source_weights = offGridPoints(kgrid, obj.affine(obj.elements{element_num}.integration_points(:, intg_ind)).', scale, ...
                         'BLITolerance', obj.bli_tolerance, ...
                         'BLIType', obj.bli_type, ...
@@ -1119,7 +1138,7 @@ classdef kWaveArray < handle
         function combined_sensor_data = combineSensorData(obj, kgrid, sensor_data)
 
             % don't allow this function if there are any hologram elements
-            if any(cellfun(@(element) strcmp(element.type, 'hologram'), obj.elements))
+            if obj.hasHologramElements
                 error('combineSensorData can''t be used with hologram elements.');
             end
             
@@ -1207,7 +1226,17 @@ classdef kWaveArray < handle
             end
             
         end
+
+        % check for hologram elements
+        function is_hologram = hasHologramElements(obj)
+            is_hologram = any(cellfun(@(element) strcmp(element.type, 'hologram'), obj.elements));
+        end
         
+        % check if all elements are hologram elements
+        function is_hologram = hasAllHologramElements(obj)
+            is_hologram = all(cellfun(@(element) strcmp(element.type, 'hologram'), obj.elements));
+        end
+
         % set the optional input parameters
         function setOptionalInputs(obj, varargin)
     
@@ -1395,26 +1424,11 @@ classdef kWaveArray < handle
             validateattributes(element_num, {'numeric'}, {'integer', '>=', 1, '<=', obj.number_elements}, 'getElementGridWeights', 'element_num', 2);
             
             % compute measure (length/area/volume) in grid squares (assuming dx = dy = dz)
-            if strcmp(obj.elements{element_num}.type, 'hologram')
-                m_grid = 1;
-                if ~mask_only
-                    warning('Off grid points are not scaled for hologram elements.');
-                end
-            else
-                m_grid = obj.elements{element_num}.measure ./ (kgrid.dx).^(obj.elements{element_num}.dim);
-            end
+            m_grid = obj.elements{element_num}.measure ./ (kgrid.dx).^(obj.elements{element_num}.dim);
             
-            % get number of integration points
-            if strcmp(obj.elements{element_num}.type, 'custom') || strcmp(obj.elements{element_num}.type, 'hologram')
-                
-                % assign number of integration points directly
-                m_integration = size(obj.elements{element_num}.integration_points, 2);
-                
-            else
-                
-                % compute the number of integration points using the upsampling rate          
-                m_integration = ceil(m_grid .* obj.upsampling_rate);
-                
+            % compute the number of integration points using the upsampling rate
+            if ~(strcmp(obj.elements{element_num}.type, 'custom') || strcmp(obj.elements{element_num}.type, 'hologram'))
+                m_integration = ceil(m_grid .* obj.upsampling_rate);                
             end
             
             % compute integration points covering element
