@@ -157,16 +157,14 @@ end
 
 position = [0, source_grid_pos(ceil(end/2)), source_grid_pos(ceil(end/2))];
 hologram_area = (length(source_grid_pos) * kgrid.dx)^2; % area of hologram plane
-karray.addHologramElement(position, integration_points, amp, phase, hologram_area);
+karray.addHologramElement(position, integration_points, source_freq, amp, phase, hologram_area);
 karray.setArrayPosition(translation, rotation);
 
 % create source using binary mask from karray
 source_off_grid.p_mask = karray.getArrayBinaryMask(kgrid);
 
 % get distributed source signals
-el_amp = 1;
-el_phase = 0;
-source_off_grid.p = karray.getDistributedSourceSignalCW(kgrid, source_freq, el_amp, el_phase);
+source_off_grid.p = karray.getDistributedSourceSignalCW(kgrid);
 
 % run k-Wave simulation with rotated off-grid sources
 sensor_data_holography = kspaceFirstOrder3D(kgrid, medium, source_off_grid, sensor, 'PlotSim', plot_simulations);
@@ -189,7 +187,7 @@ for ind1 = 1:num_source_points_side_upsampled
     end
 end
 
-karray.addHologramElement(position, integration_points_upsampled, amp_upsampled, phase_upsampled, hologram_area);
+karray.addHologramElement(position, integration_points_upsampled, source_freq, amp_upsampled, phase_upsampled, hologram_area);
 karray.setArrayPosition(translation, rotation);
 
 % create source using binary mask from karray
@@ -198,7 +196,7 @@ source_off_grid.p_mask = karray.getArrayBinaryMask(kgrid);
 % get distributed source signals
 el_amp = 1;
 el_phase = 0;
-source_off_grid.p = karray.getDistributedSourceSignalCW(kgrid, source_freq, el_amp, el_phase);
+source_off_grid.p = karray.getDistributedSourceSignalCW(kgrid, el_amp, el_phase);
 
 % run k-Wave simulation with rotated off-grid sources
 sensor_data_holography_upsampled = kspaceFirstOrder3D(kgrid, medium, source_off_grid, sensor, 'PlotSim', plot_simulations);

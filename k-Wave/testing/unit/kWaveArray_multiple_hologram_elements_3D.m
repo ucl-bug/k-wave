@@ -6,7 +6,7 @@ function test_pass = kWaveArray_multiple_hologram_elements_3D(plot_comparisons, 
 % ABOUT:
 %       author      - Bradley Treeby
 %       date        - 4th March 2025
-%       last update - 9th March 2025
+%       last update - 24th March 2025
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
 % Copyright (C) 2025- Bradley Treeby
@@ -109,8 +109,8 @@ phase_2 = phase_gradient * integration_points_2(2, :) / spacing;
 
 % Add hologram elements to the array
 hologram_area = (num_points_side * spacing)^2;
-karray.addHologramElement(center_point_1, integration_points_1, amp_1, phase_1, hologram_area);
-karray.addHologramElement(center_point_2, integration_points_2, amp_2, phase_2, hologram_area);
+karray.addHologramElement(center_point_1, integration_points_1, source_freq, amp_1, phase_1, hologram_area);
+karray.addHologramElement(center_point_2, integration_points_2, source_freq, amp_2, phase_2, hologram_area);
 
 % Create source using binary mask from karray
 source_holograms.p_mask = karray.getArrayBinaryMask(kgrid);
@@ -118,7 +118,7 @@ source_holograms.p_mask = karray.getArrayBinaryMask(kgrid);
 % Get distributed source signals
 el_amp = [1.0, 0.8];  % Element-level amplitudes
 el_phase = [0, pi/2]; % Element-level phases (second element 90 degrees out of phase)
-source_holograms.p = karray.getDistributedSourceSignalCW(kgrid, source_freq, el_amp, el_phase);
+source_holograms.p = karray.getDistributedSourceSignalCW(kgrid, el_amp, el_phase);
 
 % Run hologram simulation
 sensor_data_holograms = kspaceFirstOrder3D(kgrid, medium, source_holograms, sensor, 'PlotSim', plot_simulations);
@@ -136,14 +136,14 @@ for elem_idx = 1:2
     karray_single = kWaveArray();
     
     if elem_idx == 1
-        karray_single.addHologramElement(center_point_1, integration_points_1, amp_1, phase_1, hologram_area);
+        karray_single.addHologramElement(center_point_1, integration_points_1, source_freq, amp_1, phase_1, hologram_area);
     else
-        karray_single.addHologramElement(center_point_2, integration_points_2, amp_2, phase_2, hologram_area);
+        karray_single.addHologramElement(center_point_2, integration_points_2, source_freq, amp_2, phase_2, hologram_area);
     end
     
     % Create source
     source_single.p_mask = karray_single.getArrayBinaryMask(kgrid);
-    source_single.p = karray_single.getDistributedSourceSignalCW(kgrid, source_freq, el_amp(elem_idx), el_phase(elem_idx));
+    source_single.p = karray_single.getDistributedSourceSignalCW(kgrid, el_amp(elem_idx), el_phase(elem_idx));
     
     % Run simulation
     sensor_data_single = kspaceFirstOrder3D(kgrid, medium, source_single, sensor, 'PlotSim', plot_simulations);

@@ -170,7 +170,7 @@
 %         focus_pos - Any point on beam axis [fx, fy, fz] (not used for 2D
 %                     simulations) [m].
 %
-%     addHologramElement(position, integration_points, amplitude, phase, area)
+%     addHologramElement(position, integration_points, frequency, amplitude, phase, area)
 %
 %         Add a hologram element to the array (3D simulation).
 %
@@ -193,6 +193,7 @@
 %         position           - Reference position [x, y, z] [m].
 %         integration_points - 3 x num_points (3D) array of Cartesian
 %                              coordinates [m].
+%         frequency          - Frequency [Hz].
 %         amplitude          - 1 x num_points vector of amplitudes for each
 %                              integration point.
 %         phase              - 1 x num_points vector of phases for each
@@ -277,12 +278,23 @@
 %         source_signal      - Source signal for each transducer element
 %                              defined as an array [number_elements, Nt].
 %
-%     distributed_source = getDistributedSourceSignalCW(kgrid, freq, amp, phase, apply_correction)
+%     distributed_source = getDistributedSourceSignalCW(kgrid, element_amplitude, element_phase, apply_correction)
 %
 %         Alternative to getDistributedSourceSignal for single frequency
-%         driving signals and hologram elements. See createCWSignals for
-%         definition of inputs. Set apply_correction to true to
-%         automatically scale the source signals by cos(2*pi*f*dt/2).
+%         driving signals and hologram elements. The scalar amplitude and
+%         phase defined for each element are used to further scale the
+%         spatially varying hologram amplitude and phase. 
+%
+%         kgrid                 - Grid object returned by kWaveGrid.
+%         element_amplitude     - Weighting used to weight the spatially
+%                                 varying amplitude set with
+%                                 addHologramElement. Default = 1.
+%         element_phase         - Weighting used to shift the spatially
+%                                 varying phase set with addHologramElement
+%                                 [rad]. Default = 0.
+%         apply_correction      - Set to true to automatically scale the
+%                                 source signals by cos(2*pi*f*dt/2).
+%                                 Default = false.
 %
 %     mask = getElementBinaryMask(kgrid, element_num)
 %
@@ -363,7 +375,7 @@
 % ABOUT:
 %     author      - Bradley Treeby and Elliott Wise
 %     date        - 5th September 2018
-%     last update - 5th March 2025
+%     last update - 24th March 2025
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
 % Copyright (C) 2018-2025 Bradley Treeby and Elliott Wise
@@ -832,14 +844,15 @@ classdef kWaveArray < handle
         end
 
         % add hologram element
-        function addHologramElement(obj, position, integration_points, amplitude, phase, area)
+        function addHologramElement(obj, position, integration_points, frequency, amplitude, phase, area)
             
             % check inputs
-            validateattributes(position,           {'numeric'}, {'finite', 'real', 'numel', 3}, 'addHologramElement', 'position',  1);
-            validateattributes(integration_points, {'numeric'}, {'finite', 'real', '2d'},       'addHologramElement', 'integration_points', 2);
-            validateattributes(amplitude,          {'numeric'}, {'finite', 'real', '2d'},       'addHologramElement', 'amplitude', 3);
-            validateattributes(phase,              {'numeric'}, {'finite', 'real', '2d'},       'addHologramElement', 'phase', 4);
-            validateattributes(area,               {'numeric'}, {'finite', 'real', 'numel', 1}, 'addHologramElement', 'area', 5);
+            validateattributes(position,           {'numeric'}, {'finite', 'real', 'numel', 3},             'addHologramElement', 'position',  1);
+            validateattributes(integration_points, {'numeric'}, {'finite', 'real', '2d'},                   'addHologramElement', 'integration_points', 2);
+            validateattributes(frequency,          {'numeric'}, {'finite', 'real', 'scalar', 'positive'},   'addHologramElement', 'frequency', 3);
+            validateattributes(amplitude,          {'numeric'}, {'finite', 'real', '2d'},                   'addHologramElement', 'amplitude', 4);
+            validateattributes(phase,              {'numeric'}, {'finite', 'real', '2d'},                   'addHologramElement', 'phase', 5);
+            validateattributes(area,               {'numeric'}, {'finite', 'real', 'scalar', 'positive'},   'addHologramElement', 'area', 6);
             
             % check input sizes
             input_dim = size(integration_points, 1);
@@ -879,6 +892,7 @@ classdef kWaveArray < handle
             obj.elements{obj.number_elements}.amplitude          = amplitude;
             obj.elements{obj.number_elements}.phase              = phase;
             obj.elements{obj.number_elements}.measure            = area;
+            obj.elements{obj.number_elements}.frequency          = frequency;
             
         end
 
@@ -1030,9 +1044,15 @@ classdef kWaveArray < handle
         end
 
         % compute distributed source signal
-        function distributed_source_signal = getDistributedSourceSignalCW(obj, kgrid, freq, el_amp, el_phase, apply_correction)
+        function distributed_source_signal = getDistributedSourceSignalCW(obj, kgrid, el_amp, el_phase, apply_correction)
 
-            if nargin < 6
+            if (nargin < 2) || (isempty(el_amp))
+                el_phase = ones(1, obj.number_elements);
+            end
+            if (nargin < 3) || (isempty(el_phase))
+                el_phase = zeros(1, obj.number_elements);
+            end
+            if (nargin < 4) || (isempty(apply_correction))
                 apply_correction = false;
             end
 
@@ -1090,10 +1110,16 @@ classdef kWaveArray < handle
                 comp_start_time = clock;
                 fprintf(['  calculating element ' num2str(element_num) ' grid weights...       ']);
 
+                % source weighting
+                sw = 1;
+                if apply_correction
+                    sw = cos(2 * pi * obj.elements{element_num}.frequency * kgrid.dt/2);
+                end
+
                 % create signals combining the element amplitude and phase
                 % with the amplitude of phase for the individual
                 % integration points
-                source_signal = createCWSignals(kgrid.t_array, freq, el_amp(element_num) .* obj.elements{element_num}.amplitude, el_phase(element_num) + obj.elements{element_num}.phase);
+                source_signal = createCWSignals(kgrid.t_array, obj.elements{element_num}.frequency, el_amp(element_num) .* obj.elements{element_num}.amplitude, el_phase(element_num) + obj.elements{element_num}.phase);
                 source_signal = cast(source_signal, data_type);
 
                 % check there are no integration points which are outside grid
@@ -1127,12 +1153,8 @@ classdef kWaveArray < handle
                     % add to distributed source
                     distributed_source_signal(local_ind, :) = ...
                         distributed_source_signal(local_ind, :) ...
-                        + bsxfun(@times, source_weights(integration_mask_ind), source_signal(intg_ind, :));
+                        + sw .* bsxfun(@times, source_weights(integration_mask_ind), source_signal(intg_ind, :));
 
-                end
-
-                if apply_correction
-                    distributed_source_signal = cos(2*pi*freq*kgrid.dt/2) .* distributed_source_signal;
                 end
 
                 disp(['completed in ' scaleTime(etime(clock, comp_start_time))]);
