@@ -277,11 +277,12 @@
 %         source_signal      - Source signal for each transducer element
 %                              defined as an array [number_elements, Nt].
 %
-%     distributed_source = getDistributedSourceSignalCW(kgrid, freq, amp, phase)
+%     distributed_source = getDistributedSourceSignalCW(kgrid, freq, amp, phase, apply_correction)
 %
 %         Alternative to getDistributedSourceSignal for single frequency
 %         driving signals and hologram elements. See createCWSignals for
-%         definition of inputs.
+%         definition of inputs. Set apply_correction to true to
+%         automatically scale the source signals by cos(2*pi*f*dt/2).
 %
 %     mask = getElementBinaryMask(kgrid, element_num)
 %
@@ -834,11 +835,11 @@ classdef kWaveArray < handle
         function addHologramElement(obj, position, integration_points, amplitude, phase, area)
             
             % check inputs
-            validateattributes(position,           {'numeric'}, {'finite', 'real', 'numel', 3}, 'addHolographyElement', 'position',  1);
-            validateattributes(integration_points, {'numeric'}, {'finite', 'real', '2d'},       'addHolographyElement', 'integration_points', 2);
-            validateattributes(amplitude,          {'numeric'}, {'finite', 'real', '2d'},       'addHolographyElement', 'amplitude', 3);
-            validateattributes(phase,              {'numeric'}, {'finite', 'real', '2d'},       'addHolographyElement', 'phase', 4);
-            validateattributes(area,               {'numeric'}, {'finite', 'real', 'numel', 1}, 'addHolographyElement', 'area', 5);
+            validateattributes(position,           {'numeric'}, {'finite', 'real', 'numel', 3}, 'addHologramElement', 'position',  1);
+            validateattributes(integration_points, {'numeric'}, {'finite', 'real', '2d'},       'addHologramElement', 'integration_points', 2);
+            validateattributes(amplitude,          {'numeric'}, {'finite', 'real', '2d'},       'addHologramElement', 'amplitude', 3);
+            validateattributes(phase,              {'numeric'}, {'finite', 'real', '2d'},       'addHologramElement', 'phase', 4);
+            validateattributes(area,               {'numeric'}, {'finite', 'real', 'numel', 1}, 'addHologramElement', 'area', 5);
             
             % check input sizes
             input_dim = size(integration_points, 1);
@@ -1029,7 +1030,11 @@ classdef kWaveArray < handle
         end
 
         % compute distributed source signal
-        function distributed_source_signal = getDistributedSourceSignalCW(obj, kgrid, freq, el_amp, el_phase)
+        function distributed_source_signal = getDistributedSourceSignalCW(obj, kgrid, freq, el_amp, el_phase, apply_correction)
+
+            if nargin < 6
+                apply_correction = false;
+            end
 
             if ~obj.hasAllHologramElements
                 error('All elements must be holograms.')
@@ -1124,6 +1129,10 @@ classdef kWaveArray < handle
                         distributed_source_signal(local_ind, :) ...
                         + bsxfun(@times, source_weights(integration_mask_ind), source_signal(intg_ind, :));
 
+                end
+
+                if apply_correction
+                    distributed_source_signal = cos(2*pi*freq*kgrid.dt/2) .* distributed_source_signal;
                 end
 
                 disp(['completed in ' scaleTime(etime(clock, comp_start_time))]);
