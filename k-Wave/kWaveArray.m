@@ -1046,13 +1046,13 @@ classdef kWaveArray < handle
         % compute distributed source signal
         function distributed_source_signal = getDistributedSourceSignalCW(obj, kgrid, el_amp, el_phase, apply_correction)
 
-            if (nargin < 2) || (isempty(el_amp))
-                el_phase = ones(1, obj.number_elements);
+            if (nargin < 3) || (isempty(el_amp))
+                el_amp = ones(1, obj.number_elements);
             end
-            if (nargin < 3) || (isempty(el_phase))
+            if (nargin < 4) || (isempty(el_phase))
                 el_phase = zeros(1, obj.number_elements);
             end
-            if (nargin < 4) || (isempty(apply_correction))
+            if (nargin < 5) || (isempty(apply_correction))
                 apply_correction = false;
             end
 
