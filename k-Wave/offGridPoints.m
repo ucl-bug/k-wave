@@ -36,7 +36,10 @@ function mask = offGridPoints(kgrid, points, scale, varargin)
 %     points            - List of Cartesian points defined by a matrix with
 %                         dimensions num_dims x num_points.
 %     scale             - Scaling factor accounting for density of source
-%                         points relative to the density of kgrid nodes.
+%                         points relative to the density of kgrid nodes, or
+%                         to weight the BLI for each Cartesian point. Can
+%                         be real or complex. If complex, the returned mask
+%                         is also complex.
 %
 % OPTIONAL INPUTS:
 %     Optional 'string', value pairs that may be used to modify the default

@@ -992,21 +992,7 @@ classdef kWaveArray < handle
             Nt = size(source_signal, 2);
             
             % estimate size of the signal, and cast if needed
-            if obj.single_precision
-                data_type = 'single';
-                sz_bytes = num_source_points * Nt * 4;
-            else
-                data_type = 'double';
-                sz_bytes = num_source_points * Nt * 8;
-            end
-            sz_ind = 1;
-            while sz_bytes > 1024
-                sz_bytes = sz_bytes / 1024;
-                sz_ind = sz_ind + 1;
-            end
-            prefixes = {'', 'K', 'M', 'G', 'T'};
-            sz_bytes = round(sz_bytes, 2, 'significant');
-            disp(['  approximate size of source matrix:          ' num2str(sz_bytes) ' ' prefixes{sz_ind} 'B (' data_type ' precision)']);
+            data_type = estimateSourceSize(obj, num_source_points, Nt);
             
             % cast input source signal
             source_signal = cast(source_signal, data_type);
@@ -1015,12 +1001,12 @@ classdef kWaveArray < handle
             distributed_source_signal = zeros(num_source_points, Nt, data_type);
             
             % loop through the elements
-            for ind = 1:obj.number_elements
+            for element_num = 1:obj.number_elements
             
                 % get the offgrid source weights
                 comp_start_time = clock;
-                fprintf(['  calculating element ' num2str(ind) ' grid weights...       ']);
-                source_weights = obj.getElementGridWeights(kgrid, ind);
+                fprintf(['  calculating element ' num2str(element_num) ' grid weights...       ']);
+                source_weights = obj.getElementGridWeights(kgrid, element_num);
                 disp(['completed in ' scaleTime(etime(clock, comp_start_time))]);
                 
                 % get indices of the non-zero points 
@@ -1031,10 +1017,10 @@ classdef kWaveArray < handle
                 
                 % add to distributed source
                 comp_start_time = clock;
-                fprintf(['  calculating element ' num2str(ind) ' distributed source... ']);
+                fprintf(['  calculating element ' num2str(element_num) ' distributed source... ']);
                 distributed_source_signal(local_ind, :) = ...
                     distributed_source_signal(local_ind, :) ...
-                    + bsxfun(@times, source_weights(element_mask_ind), source_signal(ind, :));
+                    + bsxfun(@times, source_weights(element_mask_ind), source_signal(element_num, :));
                 disp(['completed in ' scaleTime(etime(clock, comp_start_time))]);
                 
             end
@@ -1084,31 +1070,26 @@ classdef kWaveArray < handle
             num_source_points = sum(mask(:));
             disp(['completed in ' scaleTime(etime(clock, comp_start_time))]);
             
-            % estimate size of the signal, and cast if needed
-            if obj.single_precision
-                data_type = 'single';
-                sz_bytes = num_source_points * kgrid.Nt * 4;
-            else
-                data_type = 'double';
-                sz_bytes = num_source_points * kgrid.Nt * 8;
-            end
-            sz_ind = 1;
-            while sz_bytes > 1024
-                sz_bytes = sz_bytes / 1024;
-                sz_ind = sz_ind + 1;
-            end
-            prefixes = {'', 'K', 'M', 'G', 'T'};
-            sz_bytes = round(sz_bytes, 2, 'significant');
-            disp(['  approximate size of source matrix:          ' num2str(sz_bytes) ' ' prefixes{sz_ind} 'B (' data_type ' precision)']);
-            
+            % estimate size of the signal
+            data_type = estimateSourceSize(obj, num_source_points, kgrid.Nt);
+
             % initialise the source signal
             distributed_source_signal = zeros(num_source_points, kgrid.Nt, data_type);
             
             % loop through the elements
             for element_num = 1:obj.number_elements
 
+                % get the offgrid source weights
                 comp_start_time = clock;
                 fprintf(['  calculating element ' num2str(element_num) ' grid weights...       ']);
+                source_weights = obj.getElementGridWeights(kgrid, element_num);
+                disp(['completed in ' scaleTime(etime(clock, comp_start_time))]);
+
+                % get indices of the non-zero points
+                element_mask_ind = find(source_weights ~= 0);
+
+                % convert these to indices in the distributed source
+                local_ind = ismember(mask_ind, element_mask_ind);
 
                 % source weighting
                 sw = 1;
@@ -1116,47 +1097,21 @@ classdef kWaveArray < handle
                     sw = cos(2 * pi * obj.elements{element_num}.frequency * kgrid.dt/2);
                 end
 
-                % create signals combining the element amplitude and phase
-                % with the amplitude of phase for the individual
-                % integration points
-                source_signal = createCWSignals(kgrid.t_array, obj.elements{element_num}.frequency, el_amp(element_num) .* obj.elements{element_num}.amplitude, el_phase(element_num) + obj.elements{element_num}.phase);
+                % create CW signals for the current element
+                comp_start_time = clock;
+                fprintf(['  calculating element ' num2str(element_num) ' distributed source... ']);
+                weight_amplitude = abs(source_weights(element_mask_ind));
+                weight_phase = angle(source_weights(element_mask_ind));
+                source_signal = createCWSignals(kgrid.t_array, obj.elements{element_num}.frequency, ...
+                   el_amp(element_num) * weight_amplitude, ...
+                   el_phase(element_num) + weight_phase);
                 source_signal = cast(source_signal, data_type);
-
-                % check there are no integration points which are outside grid
-                integration_points_trimmed = trimCartPoints(kgrid, obj.elements{element_num}.integration_points);
-                if any(size(integration_points_trimmed) ~= size(obj.elements{element_num}.integration_points))
-                    error('All integration points must be within the domain specified by kgrid.');
-                end
-                clear integration_points_trimmed;
                 
-                % compute scaling factor
-                number_integration_points = size(obj.elements{element_num}.integration_points, 2);
-                m_grid = obj.elements{element_num}.measure ./ (kgrid.dx).^(obj.elements{element_num}.dim);
-                scale = m_grid ./ number_integration_points;
-
-                % loop over integration points
-                for intg_ind = 1:number_integration_points
-
-                    % calculate grid weights from BLIs centered on the integration point
-                    source_weights = offGridPoints(kgrid, obj.affine(obj.elements{element_num}.integration_points(:, intg_ind)).', scale, ...
-                        'BLITolerance', obj.bli_tolerance, ...
-                        'BLIType', obj.bli_type, ...
-                        'MaskOnly', false, ...
-                        'SinglePrecision', obj.single_precision);
-                    
-                    % get indices of the non-zero points 
-                    integration_mask_ind = find(source_weights ~= 0);
-                    
-                    % convert these to indices in the distributed source
-                    local_ind = ismember(mask_ind, integration_mask_ind);
-                    
-                    % add to distributed source
-                    distributed_source_signal(local_ind, :) = ...
-                        distributed_source_signal(local_ind, :) ...
-                        + sw .* bsxfun(@times, source_weights(integration_mask_ind), source_signal(intg_ind, :));
-
-                end
-
+                % add to distributed source - the complex source_weights
+                % already include the amplitude and phase information from
+                % the hologram element
+                distributed_source_signal(local_ind, :) = ...
+                    distributed_source_signal(local_ind, :) + sw .* source_signal;
                 disp(['completed in ' scaleTime(etime(clock, comp_start_time))]);
                 
             end
@@ -1418,6 +1373,27 @@ classdef kWaveArray < handle
     % internal class methods only accessible by other functions 
     methods (Hidden = true, Access = 'protected') 
         
+        % estimate source matrix size
+        function data_type = estimateSourceSize(obj, num_source_points, num_time_points)
+
+            if obj.single_precision
+                data_type = 'single';
+                sz_bytes = num_source_points * num_time_points * 4;
+            else
+                data_type = 'double';
+                sz_bytes = num_source_points * num_time_points * 8;
+            end
+            sz_ind = 1;
+            while sz_bytes > 1024
+                sz_bytes = sz_bytes / 1024;
+                sz_ind = sz_ind + 1;
+            end
+            prefixes = {'', 'K', 'M', 'G', 'T'};
+            sz_bytes = round(sz_bytes, 2, 'significant');
+            disp(['  approximate size of source matrix:          ' num2str(sz_bytes) ' ' prefixes{sz_ind} 'B (' data_type ' precision)']);
+
+        end
+
         % check if the array has elements
         function checkForElements(obj, call_stack)
             if obj.number_elements == 0
@@ -1580,8 +1556,14 @@ classdef kWaveArray < handle
             else
                 
                 % remove integration points which are outside grid
-                integration_points = trimCartPoints(kgrid, integration_points);
-                
+                [integration_points, ind] = trimCartPoints(kgrid, integration_points);
+
+                % update scale to weight by the hologram amplitude and
+                % phase
+                if strcmp(obj.elements{element_num}.type, 'hologram')
+                    scale = scale .* obj.elements{element_num}.amplitude(ind) .* exp(1i * obj.elements{element_num}.phase(ind));
+                end
+
                 % calculate grid weights from BLIs centered on the integration points
                 grid_weights = offGridPoints(kgrid, integration_points, scale, ...
                     'BLITolerance', obj.bli_tolerance, ...

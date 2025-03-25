@@ -116,8 +116,8 @@ karray.addHologramElement(center_point_2, integration_points_2, source_freq, amp
 source_holograms.p_mask = karray.getArrayBinaryMask(kgrid);
 
 % Get distributed source signals
-el_amp = [1.0, 0.8];  % Element-level amplitudes
-el_phase = [0, pi/2]; % Element-level phases (second element 90 degrees out of phase)
+el_amp = [1.0, 3];  % Element-level amplitudes
+el_phase = [0, pi/4]; % Element-level phases
 source_holograms.p = karray.getDistributedSourceSignalCW(kgrid, el_amp, el_phase);
 
 % Run hologram simulation
