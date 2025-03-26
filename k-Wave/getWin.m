@@ -81,10 +81,10 @@ function [win, cg] = getWin(N, type, varargin)
 % ABOUT:
 %     author      - Bradley E. Treeby
 %     date        - 10th March 2010
-%     last update - 25th July 2019
+%     last update - 26th March 2025
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2010-2019 Bradley Treeby
+% Copyright (C) 2010-2025 Bradley Treeby
 %
 % See also spectrum
 
@@ -110,20 +110,20 @@ square = false;
 ylim = [0, 1];
 if strcmp(type, 'Tukey')
     param = 0.5;
-    param_ub = 1; 
+    param_ub = 1;
     param_lb = 0;
 elseif strcmp(type, 'Blackman')
     param = 0.16;
-    param_ub = 1; 
-    param_lb = 0;    
+    param_ub = 1;
+    param_lb = 0;
 elseif strcmp(type, 'Gaussian')
     param = 0.5;
-    param_ub = 0.5; 
-    param_lb = 0;   
+    param_ub = 100;
+    param_lb = 0;
 elseif strcmp(type, 'Kaiser')
     param = 3;
-    param_ub = 100; 
-    param_lb = 0;      
+    param_ub = 100;
+    param_lb = 0;
 else
     param = 0;
 end
@@ -139,8 +139,10 @@ elseif ~isempty(varargin)
             case 'Param'
                 param = varargin{input_index + 1}(1);
                 if param > param_ub
+                    warning('Input ''Param'' of %f is above upper bound. Truncating to %f.', param, param_ub);
                     param = param_ub;
                 elseif param < param_lb
+                    warning('Input ''Param'' of %f is below lower bound. Truncating to %f.', param, param_lb);
                     param = param_lb;
                 end
             case 'Rotation'
@@ -159,7 +161,7 @@ elseif ~isempty(varargin)
                 end   
                 
                 % check size
-                if ~((numel(symmetric) == 1) || (numel(symmetric) == numel(N)))
+                if ~((isscalar(symmetric)) || (numel(symmetric) == numel(N)))
                     error('Optional input Symmetric must have 1 or numel(N) elements.');
                 end
                 
