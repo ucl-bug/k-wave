@@ -6,7 +6,7 @@ function test_pass = kWaveArray_multiple_hologram_elements_3D(plot_comparisons, 
 % ABOUT:
 %       author      - Bradley Treeby
 %       date        - 4th March 2025
-%       last update - 24th March 2025
+%       last update - 26th March 2025
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
 % Copyright (C) 2025- Bradley Treeby
@@ -33,13 +33,6 @@ end
 
 % set pass variable
 test_pass = true;
-
-% check for image processing toolbox and fail gracefull
-v = ver;
-if ~any(strcmp('Image Processing Toolbox', {v.Name}))
-    warning('Skipping test, image processing toolbox not installed.');
-    return
-end
 
 % set comparison threshold
 comparison_thresh = 5;  % 5% error threshold

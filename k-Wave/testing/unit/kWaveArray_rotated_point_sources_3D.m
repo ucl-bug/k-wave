@@ -7,7 +7,7 @@ function test_pass = kWaveArray_rotated_point_sources_3D(plot_comparisons, plot_
 % ABOUT:
 %       author      - Bradley Treeby
 %       date        - 26th February 2025
-%       last update - 6th March 2025
+%       last update - 26th March 2025
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
 % Copyright (C) 2025- Bradley Treeby
@@ -35,10 +35,10 @@ end
 % set pass variable
 test_pass = true;
 
-% check for image processing toolbox and fail gracefull
+% check for image processing toolbox and fail gracefully
 v = ver;
 if ~any(strcmp('Image Processing Toolbox', {v.Name}))
-    warning('Skipping test, image processing toolbox not installed.');
+    warning('kWaveArray_rotated_point_sources_3D not tested. The MATLAB Image Processing Toolbox must be installed to run this test.');
     return
 end
 
