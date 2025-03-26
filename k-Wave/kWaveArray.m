@@ -242,6 +242,25 @@
 %                                functions for a sensor mask given by
 %                                getArrayBinaryMask. 
 %
+%     combined_sensor_data = combineSensorDataCW(kgrid, sensor_data_complex)
+% 
+%         When using karray.getArrayBinaryMask to define a sensor mask for
+%         the k-Wave simulation functions with hologram elements, this
+%         method combines the sensor data with the appropriate complex
+%         weights and returns a single complex value (amplitude and phase)
+%         for each physical array element (rather than each grid point).
+%         The data is returned in the same order as the transducer elements
+%         were added to the array.
+% 
+%         combined_sensor_data - Combined complex sensor data (one value 
+%                                per transducer element).
+%         kgrid                - Grid object returned by kWaveGrid.
+%         sensor_data_complex  - Complex sensor data (amplitude and phase)
+%                                processed using extractAmpPhase for the
+%                                sensor_data recorded from a simulation
+%                                where the sensor mask is defined using
+%                                getArrayBinaryMask.
+%
 %     mask = getArrayBinaryMask(kgrid)
 %
 %         Returns binary mask containing all grid points that form part of
@@ -1171,6 +1190,50 @@ classdef kWaveArray < handle
             end
             
         end
+
+        % combine sensor data for hologram elements in CW simulations
+        function combined_sensor_data = combineSensorDataCW(obj, kgrid, complex_sensor_data)
+           
+            % check the array has elements
+            obj.checkForElements(dbstack);
+            
+            % check for hologram elements
+            if ~obj.hasAllHologramElements
+                error('combineSensorDataCW can only be used with arrays containing hologram elements.');
+            end
+            
+            % get the binary mask and the indices of the active points
+            mask = obj.getArrayBinaryMask(kgrid);
+            mask_ind = find(mask);
+            
+            % initialize the combined sensor data (complex values)
+            combined_sensor_data = zeros(obj.number_elements, 1, 'like', complex_sensor_data);
+            
+            % loop through the array elements
+            for element_num = 1:obj.number_elements
+                
+                % get the offgrid source weights (complex for hologram elements)
+                source_weights = obj.getElementGridWeights(kgrid, element_num);
+                
+                % get indices of the non-zero points
+                element_mask_ind = find(source_weights ~= 0);
+                
+                % convert these to indices in the sensor data
+                local_ind = ismember(mask_ind, element_mask_ind);
+
+                % compute measure (area) in grid squares (assuming dx = dy = dz)
+                m_grid = obj.elements{element_num}.measure ./ (kgrid.dx).^(obj.elements{element_num}.dim);
+
+                % get the sensor data that belongs to this element,
+                % weighting by the source weights with the phase reversed
+                % Note: abs(weights).^2 ./ conj(weights)) flips the phase
+                weights = source_weights(element_mask_ind);
+                combined_sensor_data(element_num) = sum(complex_sensor_data(local_ind) ...
+                    .* (abs(weights).^2 ./ conj(weights))) ./ m_grid;
+
+            end
+        
+        end        
         
         % set the position and orientation of the array
         function setArrayPosition(obj, translation, rotation)
