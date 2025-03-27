@@ -24,19 +24,21 @@ function test_pass = kWaveDiffusion_compare_with_pde(~, plot_simulations)
 % You should have received a copy of the GNU Lesser General Public License
 % along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
 
+% set pass variable
+test_pass = true;
+
 % check for PDE toolbox
-if ~license('test', 'PDE_Toolbox')
-    error('The MATLAB Partial Differential Equation Toolbox must be installed to run this example.');
+v = ver;
+if ~any(strcmp('Partial Differential Equation Toolbox', {v.Name}))
+    warning('kWaveDiffusion_compare_with_pde not tested. The MATLAB Partial Differential Equation Toolbox must be installed to run this test.');
+    return
 end
 
 % check for dtt functions
 if ~exist('dtt1D', 'file') 
-    disp('WARNING: kWaveDiffusion_compare_with_pde not tested, as dtt library is not present on path');
+    warning('kWaveDiffusion_compare_with_pde not tested. The MATLAB dtt library must be installed to run this test.');
     return
 end
-
-% set pass variable
-test_pass = true;
 
 % set comparison threshold
 COMPARISON_THRESH = 0.01;

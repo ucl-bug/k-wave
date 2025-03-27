@@ -1,4 +1,4 @@
-function points = trimCartPoints(kgrid, points)
+function [points, ind] = trimCartPoints(kgrid, points)
 %TRIMCARTPOINTS Remove Cartesian points that are not within a kgrid.
 %
 % DESCRIPTION:
@@ -17,14 +17,16 @@ function points = trimCartPoints(kgrid, points)
 % OUTPUTS:
 %     points      - dim x num_points array of Cartesian coordinates that
 %                   lie within the grid defined by kgrid [m].
+%     ind         - Indices of the points which lie within the grid, where
+%                   points_out = points_in(:, ind).
 %
 % ABOUT:
 %     author      - Elliott Wise and Bradley Treeby
 %     date        - 16th March 2017
-%     last update - 4th February 2018
+%     last update - 25th March 2025
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2017-2018 Elliott Wise and Bradley Treeby
+% Copyright (C) 2017-2025 Elliott Wise and Bradley Treeby
 %
 % See also cart2grid, grid2cart
 

@@ -13,6 +13,15 @@ function cw_signal = createCWSignals(t_array, freq, amp, phase, ramp_length)
 %     four periods of the wave. The up-ramp can be turned off by setting
 %     the ramp_length to 0.
 %
+%     Note, this function generates signals using a sine function of the
+%     form sin(2πft + φ). When using extractAmpPhase to analyse these
+%     signals, it's important to note that the FFT-based phase extraction
+%     implicitly references a cosine basis. This creates a π/2 (90 degrees)
+%     phase difference between generation and analysis. Specifically, a
+%     sine wave with zero phase (φ = 0) will be detected as having a phase
+%     of -π/2 in extractAmpPhase. This should be considered when
+%     interpreting phase measurements between the two functions.
+%
 %     Example:
 %
 %         % define sampling parameters
@@ -50,10 +59,10 @@ function cw_signal = createCWSignals(t_array, freq, amp, phase, ramp_length)
 % ABOUT:
 %     author      - Bradley Treeby and Yan To Ling
 %     date        - 4th March 2015
-%     last update - 28th January 2018
+%     last update - 26th March 2025
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2015-2018 Bradley Treeby and Yan To Ling
+% Copyright (C) 2015-2025 Bradley Treeby and Yan To Ling
 %
 % See also extractAmpPhase, toneburst
 
@@ -71,7 +80,7 @@ function cw_signal = createCWSignals(t_array, freq, amp, phase, ramp_length)
 % along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
 
 % expand the phase value if given as a scalar
-if numel(phase) == 1
+if isscalar(phase)
     phase = phase .* ones(size(amp));
 end
 
@@ -125,6 +134,6 @@ cw_signal = squeeze(cw_signal);
 
 % if only a single amplitude and phase is given, force time to be the
 % second dimensions
-if numel(amp) == 1
+if isscalar(amp)
     cw_signal = reshape(cw_signal, 1, []);
 end
