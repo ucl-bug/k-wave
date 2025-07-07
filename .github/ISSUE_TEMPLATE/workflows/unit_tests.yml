@@ -1,0 +1,36 @@
+name: Run unit tests
+
+on:
+  push:
+    # For testing, run on every branch (remove 'branches' filter)
+    # branches:
+    #   - main
+
+env:
+  MLM_LICENSE_TOKEN: ${{ secrets.MATLAB_LIC }} 
+
+jobs:
+  unit-tests:
+    name: Run unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v2
+        with:
+          products: Signal_Processing_Toolbox
+          cache: true
+
+      - name: Make test script executable
+        run: chmod +x k-Wave/testing/run_custom_tests.sh
+
+      - name: Run custom tests
+        run: ./k-Wave/testing/run_unit_tests.sh
+
+      - name: Upload unit test results artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit_test_results
+          path: k-Wave/testing/unit/unit_test_results.json
