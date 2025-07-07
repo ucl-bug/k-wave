@@ -26,7 +26,7 @@ jobs:
       - name: Make test script executable
         run: chmod +x k-Wave/testing/run_unit_tests.sh
 
-      - name: Run custom tests
+      - name: Run unit tests
         run: ./k-Wave/testing/run_unit_tests.sh
 
       - name: Upload unit test results artifact
