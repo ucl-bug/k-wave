@@ -24,7 +24,7 @@ jobs:
           cache: true
 
       - name: Make test script executable
-        run: chmod +x k-Wave/testing/run_custom_tests.sh
+        run: chmod +x k-Wave/testing/run_unit_tests.sh
 
       - name: Run custom tests
         run: ./k-Wave/testing/run_unit_tests.sh
