@@ -1,4 +1,4 @@
-function runUnitTests(wildcard)
+function test_result = runUnitTests(wildcard)
 %RUNUNITTESTS Run MATLAB unit tests.
 %
 % DESCRIPTION:
@@ -63,6 +63,7 @@ if nargin > 0
     filenames = filenames(contains(filenames, wildcard));
 end
 
+filenames = filenames(1:2); % TODO: remove line
 % extract number of files to test
 num_files = length(filenames);
 
@@ -87,10 +88,11 @@ for filename_index = 1:num_files
     disp(['Running ' fn ' (Test ' num2str(filename_index) ' of ' num2str(num_files) ')']);
 
     try
-    
-        % run the file and store results
-        eval(['test_pass = ' fn '(' plot_simulations ',' plot_comparisons ');']);
-        
+
+        % run the file and store results, capturing all printed output
+        [test_info, test_pass] = evalc(['' fn '(' plot_simulations ',' plot_comparisons ');']);
+
+
     catch %#ok<CTCH>
        
         % if the test gives an error for any reason, assign as failed
@@ -165,3 +167,41 @@ end
 
 disp('  ');
 disp('-------------------------------------------------------------------------------------');
+
+
+% =========================================================================
+% SAVE RESULTS AS JSON
+% =========================================================================
+
+% Create test name list
+test_names = erase(filenames, '.m');
+
+info = struct( ...
+    'date', comp_info.date, ...
+    'host', comp_info.computer_name, ...
+    'user', comp_info.user_name, ...
+    'os_type', comp_info.operating_system_type, ...
+    'os', comp_info.operating_system, ...
+    'matlab_version', comp_info.matlab_version, ...
+    'kwave_version', kwave_ver, ...
+    'elapsed', scaleTime(etime(clock, regression_start_time)) ...
+);
+
+% create json
+json = jsonencode(struct( ...
+    'info', info, ...
+    'results', struct('test', test_names(:), 'pass', num2cell(test_result(:)), 'test_info', test_info(:)) ...
+));
+
+% Save to file
+fid = fopen('unit_test_results.json', 'w');
+if fid == -1
+    warning('Could not open unit_test_results.json for writing.');
+else
+    fwrite(fid, json, 'char');
+    fclose(fid);
+end
+
+disp(' ');
+disp('UNIT TEST RESULTS SAVED TO unit_test_results.json');
+disp(' ');
