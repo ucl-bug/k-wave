@@ -1,4 +1,4 @@
-function test_result = runUnitTests(wildcard)
+function test_results_json = runUnitTests(wildcard)
 %RUNUNITTESTS Run MATLAB unit tests.
 %
 % DESCRIPTION:
@@ -189,20 +189,20 @@ info = struct( ...
 );
 
 % create json
-json = jsonencode(struct( ...
+test_results_json = jsonencode(struct( ...
     'info', info, ...
     'results', struct('test', test_names(:), 'pass', num2cell(test_result(:)), 'test_info', test_info(:)) ...
 ));
 
 % Save to file
-fid = fopen('unit_test_results.json', 'w');
+fid = fopen('test_results.json', 'w');
 if fid == -1
-    warning('Could not open unit_test_results.json for writing.');
+    warning('Could not open test_results.json for writing.');
 else
-    fwrite(fid, json, 'char');
+    fwrite(fid, test_results_json, 'char');
     fclose(fid);
 end
 
 disp(' ');
-disp('UNIT TEST RESULTS SAVED TO unit_test_results.json');
+disp('UNIT TEST RESULTS SAVED TO test_results.json');
 disp(' ');
