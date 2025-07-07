@@ -90,8 +90,9 @@ for filename_index = 1:num_files
     try
 
         % run the file and store results, capturing all printed output
-        [test_info, test_pass] = evalc(['' fn '(' plot_simulations ',' plot_comparisons ');']);
-
+        [test_info, test_pass] = evalc([fn '(' plot_simulations ',' plot_comparisons ');']);
+        % print the captured output
+        fprintf('%s', test_info);
 
     catch %#ok<CTCH>
        
