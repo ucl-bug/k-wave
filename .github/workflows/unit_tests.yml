@@ -26,11 +26,8 @@ jobs:
       - name: Run statements
         uses: matlab-actions/run-command@v2
         with:
-       command: |
-          addpath("${{ github.workspace }}/k-Wave");
-          cd("${{ github.workspace }}/k-Wave/testing/unit");
-          test_results_json = runUnitTests();
-        startup-options: -nojvm -logfile output.log
+          command: addpath("${{ github.workspace }}/k-Wave");cd("${{ github.workspace }}/k-Wave/testing/unit"); test_results_json = runUnitTests(); 
+          startup-options: -nojvm -logfile output.log
 
       - name: Upload unit test results artifact
         uses: actions/upload-artifact@v4
