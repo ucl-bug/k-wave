@@ -33,7 +33,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: unit_test_results
-          path: k-Wave/testing/unit/unit_test_results.json
+          path: ${{ github.workspace }}/k-Wave/testing/unit/unit_test_results.json
 
       - name: Print MATLAB log
-        run: cat k-Wave/testing/unit/matlab.log
+        run: cat ${{ github.workspace }}/k-Wave/testing/unit/matlab.log
