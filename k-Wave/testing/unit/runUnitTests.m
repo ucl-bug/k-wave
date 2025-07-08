@@ -63,6 +63,9 @@ if nargin > 0
     filenames = filenames(contains(filenames, wildcard));
 end
 
+% test just two tests
+filenames = filenames(1:2)
+
 % extract number of files to test
 num_files = length(filenames);
 
@@ -206,3 +209,32 @@ end
 disp(' ');
 disp('UNIT TEST RESULTS SAVED TO test_results.json');
 disp(' ');
+
+
+% =========================================================================
+% OVERVIEW TEST RESULTS
+% =========================================================================
+
+test_struct=jsondecode(test_results_json)
+
+disp('  ');
+disp('SUMMARY TEST RESULTS');
+disp('-------------------------------------------------------------------------------------');
+fprintf('✅ passed: %d\n', sum([test_struct.results.pass{:}]));
+fprintf('❌ failed: %d\n', sum(~[test_struct.results.pass{:}]));
+disp('-------------------------------------------------------------------------------------');
+
+disp(' ');
+disp('|   | Test      | Details |');
+disp('|---|-----------|---------|');
+for i = 1:length(test_struct.results.test)
+    if test_struct.results.pass{i}
+        status = '✅';
+    else
+        status = '❌';
+    end
+    test_name = test_struct.results.test{i};
+    info = test_struct.results.test_info{i};
+    details_md = sprintf('<details><summary>Show</summary>\n\n```\n%s\n```\n</details>', info);
+    fprintf('| %s | %s | %s |\n', status, test_name, details_md);
+end
