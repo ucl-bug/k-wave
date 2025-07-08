@@ -23,11 +23,11 @@ jobs:
           products: Signal_Processing_Toolbox
           cache: true
 
-      - name: Run statements
-        uses: matlab-actions/run-command@v2
-        with:
-          command: cd("${{ github.workspace }}/k-Wave/testing/unit"); test_results_json = runUnitTests(); 
-          startup-options: -nojvm -logfile output.log
+      - name: Make test script executable
+        run: chmod +x k-Wave/testing/run_unit_tests.sh
+
+      - name: Run unit tests
+        run: ./k-Wave/testing/run_unit_tests.sh
 
       - name: Upload unit test results artifact
         uses: actions/upload-artifact@v4
