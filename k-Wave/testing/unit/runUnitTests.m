@@ -194,6 +194,10 @@ test_results_json = jsonencode(struct( ...
     'results', struct('test', test_names(:), 'pass', num2cell(test_result(:)), 'test_info', test_info(:)) ...
 ));
 
+% display string TEST INFO
+disp('TEST INFO');
+disp(test_info); % for GitHub Actions output
+
 % Save to file
 fid = fopen('test_results.json', 'w');
 if fid == -1
