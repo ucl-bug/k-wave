@@ -1,4 +1,4 @@
-function test_results_json = runUnitTests(wildcard)
+function test_struct = runUnitTests(wildcard)
 %RUNUNITTESTS Run MATLAB unit tests.
 %
 % DESCRIPTION:
@@ -115,6 +115,7 @@ end
 
 % get information about PC
 comp_info = getComputerInfo;
+completion_time = scaleTime(etime(clock, regression_start_time));
 
 % get k-Wave version
 eval('cur_dir = pwd; cd(getkWavePath(''private'')); kwave_ver = getkWaveVersion; cd(cur_dir);');
@@ -137,13 +138,12 @@ disp(['O/S TYPE:                 ' comp_info.operating_system_type]);
 disp(['O/S:                      ' comp_info.operating_system]);
 disp(['MATLAB VERSION:           ' comp_info.matlab_version]);
 disp(['TESTED K-WAVE VERSION:    ' comp_info.kwave_version]);
-disp(['TESTS COMPLETED IN:       ' scaleTime(etime(clock, regression_start_time))]);
+disp(['TESTS COMPLETED IN:       ' completion_time]);
 disp('  ');
 
 % display individual test results
 disp('UNIT TEST RESULTS:');
-n_pass = 0;
-n_fail = 0;
+
 for filename_index = 1:length(filenames)
     
     % trim the filename
@@ -156,41 +156,29 @@ for filename_index = 1:length(filenames)
     % append the test result
     if test_result(filename_index)
         disp(['✅  ' fn 'passed']);
-        n_pass = n_pass+1;
     else
         disp(['❌  ' fn 'failed']);
-        n_fail = n_fail +1;
     end
     
 end
+
 % display test summary
 disp('  ');
 disp('UNIT TEST SUMMARY:');
-disp(['✅ Number of tests passed: ' num2str(n_pass)]);
-disp(['❌ Number of tests failed: ' num2str(n_fail)]);
+disp(['✅ Number of tests passed: ' num2str(sum(test_result))]);
+disp(['❌ Number of tests failed: ' num2str( numel(test_result) - n_pass)]);
 disp('  ');
 disp('-------------------------------------------------------------------------------------');
 
+% =========================================================================
+% CREATE OUTPUT
+% =========================================================================
 
-% =========================================================================
-% SAVE TEST RESULTS AS JSON
-% =========================================================================
+% add completion_time to comp_info
+comp_info.completion_time = completion_time;
 
 % create results struct
 test_struct = struct( ...
     'info', comp_info, ...
     'results', struct('test', filenames(:), 'pass', num2cell(test_result(:)), 'test_info', test_info(:)) ...
 );
-
-% Save to file
-fid = fopen('test_results.json', 'w');
-if fid == -1
-    warning('Could not open test_results.json for writing.');
-else
-    fwrite(fid, jsonencode(test_struct), 'char');
-    fclose(fid);
-end
-
-disp(' ');
-disp('UNIT TEST RESULTS SAVED TO test_results.json');
-disp(' ');
