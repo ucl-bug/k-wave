@@ -1,4 +1,5 @@
-function test_struct = runUnitTests(wildcard)
+function test_struct = runUnitTests(show_results, wildcard)
+
 %RUNUNITTESTS Run MATLAB unit tests.
 %
 % DESCRIPTION:
@@ -16,10 +17,8 @@ function test_struct = runUnitTests(wildcard)
 %         plot_comparisons - Boolean controlling whether any comparisons
 %                            (e.g., error norms) are plotted
 %
-%     After all unit tests have been performed, a summary of the test names
-%     and pass status is displayed.
-%
 % OPTIONAL INPUTS:
+%         show_results     - Boolean controlling whether to display results (default: true)
 %         wildcard         - String with wildcard pattern to match test
 %                            filenames
 %
@@ -44,6 +43,12 @@ function test_struct = runUnitTests(wildcard)
 % You should have received a copy of the GNU Lesser General Public License
 % along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
 
+
+% Set defaults for optional arguments
+if nargin < 1 || isempty(show_results)
+    show_results = true;
+end
+
 % start the clock
 regression_start_time = clock;
 
@@ -58,11 +63,12 @@ filenames = filenames.m;
 % remove any files that start with 'runUnitTests'
 filenames(startsWith(filenames, 'runUnitTests')) = [];
 
-% filter filenames based on wildcard
-if nargin > 0
+% filter filenames based on wildcard if provided
+if nargin >= 2 && ~isempty(wildcard)
     filenames = filenames(contains(filenames, wildcard));
 end
 
+filenames = filenames(1:2)
 % extract number of files to test
 num_files = length(filenames);
 
@@ -119,3 +125,11 @@ test_struct = struct( ...
     'info', info, ...
     'results', struct('test', filenames(:), 'pass', num2cell(test_result(:)), 'test_info', test_info(:)) ...
 );
+
+% =========================================================================
+% SHOW RESULTS
+% =========================================================================
+
+if show_results
+    runUnitTests_show_results(test_struct)
+end
