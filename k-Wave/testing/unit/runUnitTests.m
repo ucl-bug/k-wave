@@ -63,9 +63,6 @@ if nargin > 0
     filenames = filenames(contains(filenames, wildcard));
 end
 
-% test just two tests
-filenames = filenames(1:2)
-
 % extract number of files to test
 num_files = length(filenames);
 
