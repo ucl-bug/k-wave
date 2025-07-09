@@ -68,7 +68,6 @@ if nargin >= 2 && ~isempty(wildcard)
     filenames = filenames(contains(filenames, wildcard));
 end
 
-filenames = filenames(1:2)
 % extract number of files to test
 num_files = length(filenames);
 
@@ -131,5 +130,5 @@ test_struct = struct( ...
 % =========================================================================
 
 if show_results
-    runUnitTests_show_results(test_struct)
+    runUnitTests_show_results(test_struct);
 end
