@@ -1,16 +1,18 @@
 function runUnitTests_show_results(test_struct)
-%RUNUNITTESTS_ACTIONS Run MATLAB unit tests and format results for GitHub Actions.
+%RUNUNITTESTS_SHOW_RESULTS Display MATLAB unit test results in a formatted summary.
 %
 % DESCRIPTION:
-%     runUnitTests_actions processes the provided test_struct, saves the results
-%     as a test_results.json artifact.
+%     runUnitTests_show_results displays the results from the provided test_struct
+%     in a formatted summary, including test details, individual test outcomes,
+%     and a summary of passed and failed tests.
 %
 
 % =========================================================================
 % DISPLAY SUMMARY
 % =========================================================================
 
-info = test_struct.info
+info = test_struct.info;
+results = test_struct.results;
 
 % display test header
 disp('   ');
@@ -36,17 +38,17 @@ disp('  ');
 % display individual test results
 disp('UNIT TEST RESULTS:');
 
-for filename_index = 1:length(filenames)
+for i = 1:length(results)
     
     % trim the filename
-    fn = filenames{filename_index};
+    fn = results(i).test;
     fn = [fn(1:end - 2), ':'];
     
     % add some spaces to align results
     fn = sprintf('%-70s', fn);
     
     % append the test result
-    if test_result(filename_index)
+    if results(i).pass
         disp(['  ' fn 'passed']);
     else
         disp(['  ' fn 'failed']);
@@ -57,21 +59,23 @@ end
 % display test summary
 disp('  ');
 disp('UNIT TEST SUMMARY:');
-disp(['✅ Number of tests passed: ' num2str(sum(test_result))]);
-disp(['❌ Number of tests failed: ' num2str( numel(test_result) - sum(test_result))]);
+num_passed = sum([results.pass]);
+num_failed = numel(results) - num_passed;
+disp(['✅ Number of tests passed: ' num2str(num_passed)]);
+disp(['❌ Number of tests failed: ' num2str(num_failed)]);
 disp('  ');
 
-if any(~test_result)
+% Show failed tests using test_struct
+failed_idx = find(~[results.pass]);
+if ~isempty(failed_idx)
     disp('❌ FAILED TESTS:');
-    for filename_index = 1:length(filenames)
-        if ~test_result(filename_index)
-            fn = filenames{filename_index};
-            fn = fn(1:end - 2);
-            disp(fn);
-            if ~isempty(test_info)
-                fprintf(test_info);
-                disp('  ');
-            end
+    for i = failed_idx
+        fn = results(i).test;
+        fn = fn(1:end - 2);
+        disp(fn);
+        if ~isempty(results(i).test_info)
+            fprintf('%s\n', results(i).test_info);
+            disp('  ');
         end
     end
 end
