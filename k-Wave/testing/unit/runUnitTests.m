@@ -136,12 +136,14 @@ disp(['USER NAME:                ' comp_info.user_name]);
 disp(['O/S TYPE:                 ' comp_info.operating_system_type]);
 disp(['O/S:                      ' comp_info.operating_system]);
 disp(['MATLAB VERSION:           ' comp_info.matlab_version]);
-disp(['TESTED K-WAVE VERSION:    ' kwave_ver]);
+disp(['TESTED K-WAVE VERSION:    ' comp_info.kwave_version]);
 disp(['TESTS COMPLETED IN:       ' scaleTime(etime(clock, regression_start_time))]);
 disp('  ');
 
 % display individual test results
 disp('UNIT TEST RESULTS:');
+n_pass = 0;
+n_fail = 0;
 for filename_index = 1:length(filenames)
     
     % trim the filename
@@ -153,88 +155,42 @@ for filename_index = 1:length(filenames)
     
     % append the test result
     if test_result(filename_index)
-        disp(['  ' fn 'passed']);
+        disp(['✅  ' fn 'passed']);
+        n_pass = n_pass+1;
     else
-        disp(['  ' fn 'failed']);
+        disp(['❌  ' fn 'failed']);
+        n_fail = n_fail +1;
     end
     
 end
-
 % display test summary
 disp('  ');
-if all(test_result)
-    disp('ALL UNIT TESTS PASSED!');
-else
-    disp('UNIT TESTING FAILED...');
-end
-
+disp('UNIT TEST SUMMARY:');
+disp(['✅ Number of tests passed: ' num2str(n_pass)]);
+disp(['❌ Number of tests failed: ' num2str(n_fail)]);
 disp('  ');
 disp('-------------------------------------------------------------------------------------');
 
 
 % =========================================================================
-% SAVE RESULTS AS JSON
+% SAVE TEST RESULTS AS JSON
 % =========================================================================
 
-% Create test name list
-test_names = erase(filenames, '.m');
-
-info = struct( ...
-    'date', comp_info.date, ...
-    'host', comp_info.computer_name, ...
-    'user', comp_info.user_name, ...
-    'os_type', comp_info.operating_system_type, ...
-    'os', comp_info.operating_system, ...
-    'matlab_version', comp_info.matlab_version, ...
-    'kwave_version', kwave_ver, ...
-    'elapsed', scaleTime(etime(clock, regression_start_time)) ...
+% create results struct
+test_struct = struct( ...
+    'info', comp_info, ...
+    'results', struct('test', filenames(:), 'pass', num2cell(test_result(:)), 'test_info', test_info(:)) ...
 );
-
-% create json
-test_results_json = jsonencode(struct( ...
-    'info', info, ...
-    'results', struct('test', test_names(:), 'pass', num2cell(test_result(:)), 'test_info', test_info(:)) ...
-));
-
 
 % Save to file
 fid = fopen('test_results.json', 'w');
 if fid == -1
     warning('Could not open test_results.json for writing.');
 else
-    fwrite(fid, test_results_json, 'char');
+    fwrite(fid, jsonencode(test_struct), 'char');
     fclose(fid);
 end
 
 disp(' ');
 disp('UNIT TEST RESULTS SAVED TO test_results.json');
 disp(' ');
-
-
-% =========================================================================
-% OVERVIEW TEST RESULTS
-% =========================================================================
-
-test_struct=jsondecode(test_results_json)
-
-disp('  ');
-disp('SUMMARY TEST RESULTS');
-disp('-------------------------------------------------------------------------------------');
-fprintf('✅ passed: %d\n', sum([test_struct.results.pass{:}]));
-fprintf('❌ failed: %d\n', sum(~[test_struct.results.pass{:}]));
-disp('-------------------------------------------------------------------------------------');
-
-disp(' ');
-disp('|   | Test      | Details |');
-disp('|---|-----------|---------|');
-for i = 1:length(test_struct.results.test)
-    if test_struct.results.pass{i}
-        status = '✅';
-    else
-        status = '❌';
-    end
-    test_name = test_struct.results.test{i};
-    info = test_struct.results.test_info{i};
-    details_md = sprintf('<details><summary>Show</summary>\n\n```\n%s\n```\n</details>', info);
-    fprintf('| %s | %s | %s |\n', status, test_name, details_md);
-end
