@@ -166,7 +166,7 @@ end
 disp('  ');
 disp('UNIT TEST SUMMARY:');
 disp(['✅ Number of tests passed: ' num2str(sum(test_result))]);
-disp(['❌ Number of tests failed: ' num2str( numel(test_result) - n_pass)]);
+disp(['❌ Number of tests failed: ' num2str( numel(test_result) - sum(test_result))]);
 disp('  ');
 disp('-------------------------------------------------------------------------------------');
 
