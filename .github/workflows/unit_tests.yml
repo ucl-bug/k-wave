@@ -26,7 +26,7 @@ jobs:
       - name: Run unit tests
         uses: matlab-actions/run-command@v2
         with:
-          command: addpath("${{ github.workspace }}/k-Wave");cd("${{ github.workspace }}/k-Wave/testing/unit"); test_struct = runUnitTests();runUnitTests_actions(test_struct); 
+          command: addpath("${{ github.workspace }}/k-Wave");cd("${{ github.workspace }}/k-Wave/testing/unit"); test_struct = runUnitTests();runUnitTests_show_results(test_struct);runUnitTests_actions(test_struct); 
           startup-options: -nojvm -logfile output.log
  
 

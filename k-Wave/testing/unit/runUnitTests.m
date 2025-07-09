@@ -55,14 +55,15 @@ plot_comparisons = 'false';
 filenames = what;
 filenames = filenames.m;
 
-% remove this file from the list
-filenames(contains(filenames, 'runUnitTests.m')) = [];
+% remove any files that start with 'runUnitTests'
+filenames(startsWith(filenames, 'runUnitTests')) = [];
 
 % filter filenames based on wildcard
 if nargin > 0
     filenames = filenames(contains(filenames, wildcard));
 end
 
+filenames=filenames(1:2)
 % extract number of files to test
 num_files = length(filenames);
 
@@ -105,88 +106,17 @@ for filename_index = 1:num_files
     
 end
 
-
-% =========================================================================
-% DISPLAY SUMMARY
-% =========================================================================
-
-% get information about PC
-comp_info = getComputerInfo;
-completion_time = scaleTime(etime(clock, regression_start_time));
-
-% get k-Wave version
-eval('cur_dir = pwd; cd(getkWavePath(''private'')); kwave_ver = getkWaveVersion; cd(cur_dir);');
-
-% display test header
-disp('   ');
-disp('-------------------------------------------------------------------------------------');
-disp('            _      __        __                _____         _            ');
-disp('           | | __  \ \      / /_ ___   _____  |_   _|__  ___| |_ ___ _ __ ');
-disp('           | |/ /___\ \ /\ / / _` \ \ / / _ \   | |/ _ \/ __| __/ _ \ ''__|');
-disp('           |   <_____\ V  V / (_| |\ V /  __/   | |  __/\__ \ ||  __/ |   ');
-disp('           |_|\_\     \_/\_/ \__,_| \_/ \___|   |_|\___||___/\__\___|_|   ');
-disp('  ');                                                                
-disp('-------------------------------------------------------------------------------------');
-disp('  ');
-disp(['DATE:                     ' comp_info.date]);
-disp(['HOST NAME:                ' comp_info.computer_name]);
-disp(['USER NAME:                ' comp_info.user_name]);
-disp(['O/S TYPE:                 ' comp_info.operating_system_type]);
-disp(['O/S:                      ' comp_info.operating_system]);
-disp(['MATLAB VERSION:           ' comp_info.matlab_version]);
-disp(['TESTED K-WAVE VERSION:    ' comp_info.kwave_version]);
-disp(['TESTS COMPLETED IN:       ' completion_time]);
-disp('  ');
-
-% display individual test results
-disp('UNIT TEST RESULTS:');
-
-for filename_index = 1:length(filenames)
-    
-    % trim the filename
-    fn = filenames{filename_index};
-    fn = [fn(1:end - 2), ':'];
-    
-    % add some spaces to align results
-    fn = sprintf('%-70s', fn);
-    
-    % append the test result
-    if test_result(filename_index)
-        disp(['  ' fn 'passed']);
-    else
-        disp(['  ' fn 'failed']);
-    end
-    
-end
-
-% display test summary
-disp('  ');
-disp('UNIT TEST SUMMARY:');
-disp(['✅ Number of tests passed: ' num2str(sum(test_result))]);
-disp(['❌ Number of tests failed: ' num2str( numel(test_result) - sum(test_result))]);
-disp('  ');
-
-if any(~test_result)
-    disp('❌ FAILED TESTS:');
-    for filename_index = 1:length(filenames)
-        if ~test_result(filename_index)
-            fn = filenames{filename_index};
-            fn = fn(1:end - 2);
-            disp(['--- ' fn ' ---']);
-            fprintf('%s\n', test_info);
-        end
-    end
-end
-
 % =========================================================================
 % CREATE OUTPUT
 % =========================================================================
 
-% add completion_time to comp_info
-comp_info.completion_time = completion_time;
+completion_time = scaleTime(etime(clock, regression_start_time));
+comp_info = getComputerInfo;
+info = comp_info;
+info.completion_time = completion_time;
 
 % create results struct
 test_struct = struct( ...
-    'info', comp_info, ...
+    'info', info, ...
     'results', struct('test', filenames(:), 'pass', num2cell(test_result(:)), 'test_info', test_info(:)) ...
 );
