@@ -155,9 +155,9 @@ for filename_index = 1:length(filenames)
     
     % append the test result
     if test_result(filename_index)
-        disp(['✅  ' fn 'passed']);
+        disp(['  ' fn 'passed']);
     else
-        disp(['❌  ' fn 'failed']);
+        disp(['  ' fn 'failed']);
     end
     
 end
@@ -168,7 +168,18 @@ disp('UNIT TEST SUMMARY:');
 disp(['✅ Number of tests passed: ' num2str(sum(test_result))]);
 disp(['❌ Number of tests failed: ' num2str( numel(test_result) - sum(test_result))]);
 disp('  ');
-disp('-------------------------------------------------------------------------------------');
+
+if any(~test_result)
+    disp('❌ FAILED TESTS:');
+    for filename_index = 1:length(filenames)
+        if ~test_result(filename_index)
+            fn = filenames{filename_index};
+            fn = fn(1:end - 2);
+            disp(['--- ' fn ' ---']);
+            fprintf('%s\n', test_info);
+        end
+    end
+end
 
 % =========================================================================
 % CREATE OUTPUT
