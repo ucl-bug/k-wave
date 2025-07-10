@@ -67,12 +67,14 @@ filenames(startsWith(filenames, 'runUnitTests')) = [];
 if nargin >= 1 && ~isempty(wildcard)
     filenames = filenames(contains(filenames, wildcard));
 end
-
 % extract number of files to test
 num_files = length(filenames);
 
 % keep a list of whether the test passed or failed
 test_result = false(num_files, 1);
+
+% preallocate cell array for test_info
+test_info = cell(num_files, 1);
 
 % =========================================================================
 % RUN TESTS
@@ -83,31 +85,32 @@ for filename_index = 1:num_files
 
     % remove test pass variable
     clear test_pass;
-    
+
     % trim the .m extension
     fn = filenames{filename_index};
     fn = fn(1:end - 2);
-    
+
     % display the filename
     disp(['Running ' fn ' (Test ' num2str(filename_index) ' of ' num2str(num_files) ')']);
 
     try
-
         % run the file and store results, capturing all printed output
-        [test_info, test_pass] = evalc([fn '(' plot_simulations ',' plot_comparisons ');']);
-        % print the captured output
-        fprintf('%s', test_info);
-
+        [captured_output, test_pass] = evalc([fn '(' plot_simulations ',' plot_comparisons ');']);
+        if isempty(strtrim(captured_output))
+            captured_output = 'No information available';
+        end
+        fprintf('%s', captured_output);
+        disp('  ');
     catch %#ok<CTCH>
-       
         % if the test gives an error for any reason, assign as failed
         test_pass = false;
-        
+        captured_output = 'No information available';
     end
-    
-    % store test result
+
+    % store test result and info
     test_result(filename_index) = test_pass;
-    
+    test_info{filename_index} = captured_output;
+
 end
 
 % =========================================================================
