@@ -1,14 +1,10 @@
-function runUnitTests_actions(test_struct)
-%RUNUNITTESTS_ACTIONS Run MATLAB unit tests and format results for GitHub Actions.
+function runUnitTests_artifact(test_struct)
+%RUNUNITTESTS_ARTIFACT 
 %
 % DESCRIPTION:
 %     runUnitTests_actions processes the provided test_struct, saves the results
 %     as a test_results.json artifact.
 %
-
-% =========================================================================
-% CREATE ARTIFACT
-% =========================================================================
 
 fid = fopen('test_results.json', 'w');
 if fid == -1
