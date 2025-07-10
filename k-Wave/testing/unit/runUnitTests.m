@@ -1,4 +1,4 @@
-function test_struct = runUnitTests(show_results, wildcard)
+function test_struct = runUnitTests(wildcard, show_results)
 
 %RUNUNITTESTS Run MATLAB unit tests.
 %
@@ -18,9 +18,9 @@ function test_struct = runUnitTests(show_results, wildcard)
 %                            (e.g., error norms) are plotted
 %
 % OPTIONAL INPUTS:
-%         show_results     - Boolean controlling whether to display results (default: true)
 %         wildcard         - String with wildcard pattern to match test
 %                            filenames
+%         show_results     - Boolean controlling whether to display test results (default: true)
 %
 % ABOUT:
 %     author        - Bradley Treeby
@@ -45,7 +45,7 @@ function test_struct = runUnitTests(show_results, wildcard)
 
 
 % Set defaults for optional arguments
-if nargin < 1 || isempty(show_results)
+if nargin < 2 || isempty(show_results)
     show_results = true;
 end
 
@@ -64,7 +64,7 @@ filenames = filenames.m;
 filenames(startsWith(filenames, 'runUnitTests')) = [];
 
 % filter filenames based on wildcard if provided
-if nargin >= 2 && ~isempty(wildcard)
+if nargin >= 1 && ~isempty(wildcard)
     filenames = filenames(contains(filenames, wildcard));
 end
 

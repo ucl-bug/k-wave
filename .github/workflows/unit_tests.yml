@@ -2,9 +2,11 @@ name: Run unit tests
 
 on:
   push:
-    # For testing, run on every branch 
-    # branches:
-    #   - main
+    branches:
+       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   unit-tests:
