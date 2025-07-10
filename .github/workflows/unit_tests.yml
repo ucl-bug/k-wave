@@ -2,11 +2,11 @@ name: Run unit tests
 
 on:
   push:
-    branches:
-       - main
-  pull_request:
-    branches:
-       - main
+  #   branches:
+  #      - main
+  # pull_request:
+  #   branches:
+  #      - main
 
 jobs:
   unit-tests:
@@ -32,7 +32,7 @@ jobs:
             save('test_struct.mat', 'test_struct');
           startup-options: -nojvm -logfile output.log
 
-      - name: Test results
+      - name: Show test results & create artifact
         uses: matlab-actions/run-command@v2
         with:
           command: |
@@ -40,16 +40,7 @@ jobs:
             cd("${{ github.workspace }}/k-Wave/testing/unit");
             load('test_struct.mat', 'test_struct');
             runUnitTests_show_results(test_struct);
-          startup-options: -nojvm 
-
-      - name: Create json artifact
-        uses: matlab-actions/run-command@v2
-        with:
-          command: |
-            addpath("${{ github.workspace }}/k-Wave");
-            cd("${{ github.workspace }}/k-Wave/testing/unit");
-            load('test_struct.mat', 'test_struct');
-            runUnitTests_actions(test_struct);
+            runUnitTests_artifact(test_struct);
           startup-options: -nojvm 
 
       - name: Upload artifact
