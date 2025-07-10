@@ -2,11 +2,11 @@ name: Run unit tests
 
 on:
   push:
-    branches:
-       - main
-  pull_request:
-    branches:
-       - main
+  #   branches:
+  #      - main
+  # pull_request:
+  #   branches:
+  #      - main
 
 jobs:
   unit-tests:
@@ -28,7 +28,7 @@ jobs:
           command: |
             addpath("${{ github.workspace }}/k-Wave");
             cd("${{ github.workspace }}/k-Wave/testing/unit");
-            test_struct = runUnitTests(false);
+            test_struct = runUnitTests("",false);
             save('test_struct.mat', 'test_struct');
           startup-options: -nojvm -logfile output.log
 
