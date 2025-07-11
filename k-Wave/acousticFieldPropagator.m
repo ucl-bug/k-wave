@@ -115,7 +115,7 @@ function varargout = acousticFieldPropagator(amp_in, phase_in, dx, f0, c0, varar
 %#ok<*UNRCH>
 
 % start the timer
-start_time = clock;
+start_time = datetime('now');
 
 % =========================================================================
 % DEFINE LITERALS
@@ -436,7 +436,7 @@ if save_to_disk
     end
     
     % update command line status
-    disp(['  computation completed in ' scaleTime(etime(clock, start_time))]);
+    disp(['  computation completed in ' scaleTime(seconds(datetime('now') - start_time))]);
     
     % stop evaluation
     return
@@ -555,7 +555,7 @@ switch nargout
 end
    
 % update command line status
-disp(['  computation completed in ' scaleTime(etime(clock, start_time))]);
+disp(['  computation completed in ' scaleTime(seconds(datetime('now') - start_time))]);
 
 % plot the propagator
 if plot_propagator

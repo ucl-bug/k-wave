@@ -17,7 +17,7 @@ function date_string = getDateString()
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
 % Copyright (C) 2009-2017 Bradley Treeby
 %
-% See also clock, date, datestr
+% See also: datetime
 
 % This file is part of k-Wave. k-Wave is free software: you can
 % redistribute it and/or modify it under the terms of the GNU Lesser
@@ -32,8 +32,8 @@ function date_string = getDateString()
 % You should have received a copy of the GNU Lesser General Public License
 % along with k-Wave. If not, see <http://www.gnu.org/licenses/>. 
 
-% get the current time
-date_string = datestr(clock);
+% get the current time using datetime
+date_string = char(datetime('now', 'Format', 'yyyy-MM-dd-HH-mm-ss'));
 
 % replace the space and : characters with -
 date_string = strrep(date_string, ' ', '-');

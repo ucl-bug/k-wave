@@ -106,7 +106,7 @@ function pressure = angularSpectrumCW(input_plane, dx, z_pos, f0, medium, vararg
 % along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
 
 % start timer
-start_time = clock;
+start_time = datetime('now');
 
 % =========================================================================
 % INPUT CHECKING
@@ -256,7 +256,7 @@ Nz = length(z_pos);
 
 % update command line status
 disp('Running CW angular spectrum projection...');
-disp(['  start time: ' datestr(start_time)]);
+disp(['  start time: ' char(start_time)]);
 disp(['  input plane size: ' num2str(Nx) ' by ' num2str(Ny) ' grid points (' num2str(scale * Nx * dx) ' by ' num2str(scale * Ny * dx) prefix 'm)']);
 disp(['  grid expansion: ' num2str(grid_expansion) ' grid points']);
 
@@ -347,8 +347,8 @@ end
 % =========================================================================
 
 % update command line status
-loop_start_time = clock;
-disp(['  precomputation completed in ' scaleTime(etime(loop_start_time, start_time))]);
+loop_start_time = datetime('now');
+disp(['  precomputation completed in ' scaleTime(seconds(datetime('now') - start_time))]);
 disp('  starting time loop...');
 
 % loop over z-positions
@@ -395,13 +395,13 @@ for z_index = 1:Nz
     
     % update command line status
     if z_index == loops_for_time_est
-        disp(['  estimated simulation time ' scaleTime(etime(clock, loop_start_time) * Nz / z_index) '...']);
+        disp(['  estimated simulation time ' scaleTime(seconds(datetime('now') - loop_start_time) * Nz / z_index) '...']);
     end
     
 end
 
 % update command line status
-disp(['  simulation completed in ' scaleTime(etime(clock, loop_start_time))]);
+disp(['  simulation completed in ' scaleTime(seconds(datetime('now') - loop_start_time))]);
 
 % =========================================================================
 % POST PROCESSING
@@ -427,4 +427,4 @@ if data_recast
 end
 
 % update command line status
-disp(['  total computation time ' scaleTime(etime(clock, start_time))]);
+disp(['  total computation time ' scaleTime(seconds(datetime('now') - start_time))]);
