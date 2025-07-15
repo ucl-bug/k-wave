@@ -1,6 +1,10 @@
-% filepath: fix_matlab_links_in_helpfiles.m
+
 % Replace broken MATLAB editor/run HTML links with plain text instructions.
-% Only targets <ul>...</ul> blocks inside <p>...</p> that contain both edit and run links.
+%
+% To address issue #5
+% 
+% In short, MATLAB 2024b+ opens help files in the system browser, breaking direct links.
+% This script updates HTML files to show manual command instructions instead.
 
 rootDir = pwd; % or specify your root directory
 htmlFiles = dir(fullfile(rootDir, '**', '*.html'));
