@@ -20,7 +20,6 @@ function test_struct = runUnitTests(wildcard)
 % OPTIONAL INPUTS:
 %         wildcard         - String with wildcard pattern to match test
 %                            filenames
-%         show_results     - Boolean controlling whether to display test results (default: true)
 %
 % ABOUT:
 %     author        - Bradley Treeby
