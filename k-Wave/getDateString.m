@@ -17,7 +17,6 @@ function date_string = getDateString()
 % Copyright (C) 2009-2017 Bradley Treeby
 %
 % See also: datetime
-
 % This file is part of k-Wave. k-Wave is free software: you can
 % redistribute it and/or modify it under the terms of the GNU Lesser
 % General Public License as published by the Free Software Foundation,
@@ -31,5 +30,5 @@ function date_string = getDateString()
 % You should have received a copy of the GNU Lesser General Public License
 % along with k-Wave. If not, see <http://www.gnu.org/licenses/>. 
 
-% get the current time using datetime
-date_string = char(datetime('now', 'Format', 'dd-MMM-yyyy-HH-mm-ss'));
+% get the current time
+date_string = char(datetime("now", "Format", "dd-MMM-yyyy-HH-mm-ss"));

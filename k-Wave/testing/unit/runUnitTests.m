@@ -1,4 +1,5 @@
-function runUnitTests(wildcard)
+function test_struct = runUnitTests(wildcard)
+
 %RUNUNITTESTS Run MATLAB unit tests.
 %
 % DESCRIPTION:
@@ -16,12 +17,10 @@ function runUnitTests(wildcard)
 %         plot_comparisons - Boolean controlling whether any comparisons
 %                            (e.g., error norms) are plotted
 %
-%     After all unit tests have been performed, a summary of the test names
-%     and pass status is displayed.
-%
 % OPTIONAL INPUTS:
 %         wildcard         - String with wildcard pattern to match test
 %                            filenames
+%         show_results     - Boolean controlling whether to display test results (default: true)
 %
 % ABOUT:
 %     author        - Bradley Treeby
@@ -44,7 +43,7 @@ function runUnitTests(wildcard)
 % You should have received a copy of the GNU Lesser General Public License
 % along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
 
-% start the clock
+% start the timer
 regression_start_time = datetime('now');
 
 % literals
@@ -55,19 +54,21 @@ plot_comparisons = 'false';
 filenames = what;
 filenames = filenames.m;
 
-% remove this file from the list
-filenames(contains(filenames, 'runUnitTests.m')) = [];
+% remove any files that start with 'runUnitTests'
+filenames(startsWith(filenames, 'runUnitTests')) = [];
 
-% filter filenames based on wildcard
-if nargin > 0
+% filter filenames based on wildcard if provided
+if nargin >= 1 && ~isempty(wildcard)
     filenames = filenames(contains(filenames, wildcard));
 end
-
 % extract number of files to test
 num_files = length(filenames);
 
 % keep a list of whether the test passed or failed
 test_result = false(num_files, 1);
+
+% preallocate cell array for test_info
+test_info = cell(num_files, 1);
 
 % =========================================================================
 % RUN TESTS
@@ -78,38 +79,42 @@ for filename_index = 1:num_files
 
     % remove test pass variable
     clear test_pass;
-    
+
     % trim the .m extension
     fn = filenames{filename_index};
     fn = fn(1:end - 2);
-    
+
     % display the filename
     disp(['Running ' fn ' (Test ' num2str(filename_index) ' of ' num2str(num_files) ')']);
 
     try
-    
-        % run the file and store results
-        eval(['test_pass = ' fn '(' plot_simulations ',' plot_comparisons ');']);
-        
+        % run the file and store results, capturing all printed output
+        [captured_output, test_pass] = evalc([fn '(' plot_simulations ',' plot_comparisons ');']);
+        if isempty(strtrim(captured_output))
+            captured_output = 'No information available';
+        end
+        fprintf('%s', captured_output);
+        disp('  ');
     catch %#ok<CTCH>
-       
         % if the test gives an error for any reason, assign as failed
         test_pass = false;
-        
+        captured_output = 'No information available';
     end
-    
-    % store test result
+
+    % store test result and info
     test_result(filename_index) = test_pass;
-    
+    test_info{filename_index} = captured_output;
+
 end
 
-
 % =========================================================================
-% DISPLAY SUMMARY
+% CREATE OUTPUT
 % =========================================================================
 
-% get information about PC
+completion_time = scaleTime(seconds(datetime('now') - regression_start_time));
 comp_info = getComputerInfo;
+info = comp_info;
+info.completion_time = completion_time;
 
 % get k-Wave version
 eval('cur_dir = pwd; cd(getkWavePath(''private'')); kwave_ver = getkWaveVersion; cd(cur_dir);');
@@ -154,14 +159,3 @@ for filename_index = 1:length(filenames)
     end
     
 end
-
-% display test summary
-disp('  ');
-if all(test_result)
-    disp('ALL UNIT TESTS PASSED!');
-else
-    disp('UNIT TESTING FAILED...');
-end
-
-disp('  ');
-disp('-------------------------------------------------------------------------------------');

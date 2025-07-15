@@ -1148,9 +1148,7 @@ for t_index = index_start:index_step:index_end
     if t_index == ESTIMATE_SIM_TIME_STEPS
         
         % display estimated simulation time
-        elapsed_time = seconds(datetime('now') - loop_start_time);
-        estimated_total_time = elapsed_time * index_end / t_index;
-        disp(['  estimated simulation time ' scaleTime(seconds(estimated_total_time)) '...']);
+        disp(['  estimated simulation time ' scaleTime(seconds(datetime('now') - loop_start_time) * index_end / t_index) '...']);
 
         % check memory usage
         kspaceFirstOrder_checkMemoryUsage; 

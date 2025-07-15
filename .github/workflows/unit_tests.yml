@@ -1,0 +1,46 @@
+name: Run unit tests
+
+on:
+  push:
+
+
+jobs:
+  unit-tests:
+    name: Run unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v2
+        with:
+          products: Signal_Processing_Toolbox
+          cache: true
+
+      - name: Run unit tests
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            addpath("${{ github.workspace }}/k-Wave");
+            cd("${{ github.workspace }}/k-Wave/testing/unit");
+            test_struct = runUnitTests("",false);
+            save('test_struct.mat', 'test_struct');
+          startup-options: -nojvm -logfile output.log
+
+      - name: Show test results & create artifact
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            addpath("${{ github.workspace }}/k-Wave");
+            cd("${{ github.workspace }}/k-Wave/testing/unit");
+            load('test_struct.mat', 'test_struct');
+            runUnitTests_show_results(test_struct);
+            runUnitTests_artifact(test_struct);
+          startup-options: -nojvm 
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit_test_results
+          path: ${{ github.workspace }}/k-Wave/testing/unit/test_results.json

@@ -44,7 +44,7 @@ function runRegressionTests(data_folder)
 %#ok<*NASGU>
 %#ok<*IDISVAR>
 
-% start the clock
+% start the timer
 regression_start_time = datetime('now');
 
 % check for data_folder input and change directories

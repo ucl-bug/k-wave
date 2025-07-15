@@ -56,7 +56,7 @@ function binary_sensor_data = interpCartData(kgrid, cart_sensor_data, cart_senso
 % You should have received a copy of the GNU Lesser General Public License
 % along with k-Wave. If not, see <http://www.gnu.org/licenses/>. 
 
-% start the clock
+% start the timer
 tic;
 
 % assign defaults to optional inputs

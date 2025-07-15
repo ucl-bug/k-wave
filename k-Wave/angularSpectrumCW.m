@@ -348,7 +348,7 @@ end
 
 % update command line status
 loop_start_time = datetime('now');
-disp(['  precomputation completed in ' scaleTime(seconds(datetime('now') - start_time))]);
+disp(['  precomputation completed in ' scaleTime(seconds(loop_start_time - start_time))]);
 disp('  starting time loop...');
 
 % loop over z-positions
