@@ -13,11 +13,15 @@
 
 <p>This example illustrates how k-Wave can be used for the simulation of B-mode ultrasound images using a phased-array or sector transducer. It builds on the <a href="example_us_bmode_linear_transducer.html">Simulating B-mode Ultrasound Images Example</a>.</p>
 
-<p>
-    <ul>
-        <li><a href="matlab:edit([getkWavePath('examples') 'example_us_bmode_phased_array.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
-        <li><a href="matlab:run([getkWavePath('examples') 'example_us_bmode_phased_array']);" target="_top">Run the file in MATLAB</a></li>
-    </ul>
+
+To open the file in MATLAB, enter the following command in the MATLAB Command Window.
+<pre class="codeinput">
+edit(getkWavePath('examples') 'example_us_bmode_phased_array.m');
+</pre>
+To run the file, enter the following command in the MATLAB Command Window.
+<pre class="codeinput">
+run(getkWavePath('examples') 'example_us_bmode_phased_array');
+</pre>
 </p>
 
 <p>To allow the simulated scan line data to be processed multiple times with different settings, the simulated RF data is saved to disk. This can be reloaded by setting <code>run_simulation = false</code> within the example m-file. The data can also be downloaded from <a href="http://www.k-wave.org/datasets/example_us_phased_array_scan_lines.mat">http://www.k-wave.org/datasets/example_us_phased_array_scan_lines.mat</a></p>

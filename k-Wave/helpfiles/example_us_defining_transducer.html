@@ -13,11 +13,15 @@
 
 <p>In principle, simulations using diagnostic ultrasound transducers can be run following the examples given under <a href="k-wave_time_varying_source_problems.html">Time Varying Source Problems</a>. However, assigning the grid points that belong to each transducer element, and then assigning the correctly delayed input signals to each point of each element can be a laborious task. For this purpose, a special input object created using the <code><a href="kWaveTransducer.html">kWaveTransducer</a></code> class can be substituted for either the <code>source</code> or <code>sensor</code> inputs (or both). This example illustrates how this object is created and can be used to simulate the field produced by an ultrasound transducer.</p>
 
-<p>
-    <ul>
-        <li><a href="matlab:edit([getkWavePath('examples') 'example_us_defining_transducer.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
-        <li><a href="matlab:run([getkWavePath('examples') 'example_us_defining_transducer']);" target="_top">Run the file in MATLAB</a></li>
-    </ul>
+
+To open the file in MATLAB, enter the following command in the MATLAB Command Window.
+<pre class="codeinput">
+edit(getkWavePath('examples') 'example_us_defining_transducer.m');
+</pre>
+To run the file, enter the following command in the MATLAB Command Window.
+<pre class="codeinput">
+run(getkWavePath('examples') 'example_us_defining_transducer');
+</pre>
 </p>
 
 <p>Note, transducer inputs can only be used in 3D simulations and thus these examples are inherently memory and CPU intensive. Whilst the grid sizes and source frequencies used in the examples have been scaled down for the purpose of demonstrating the capabilities of the toolbox (the inputs do not necessarily represent realistic ultrasound settings), they still require a comparatively large amount of computational resources. To reduce this load, it is advised to run the simulations in single precision by setting the optional input <code>'DataCast'</code> to <code>'single'</code>. Similarly, if you have access to a recent model GPU and the MATLAB Parallel Computing Toolbox R2012a or later, the simulation times can be significantly reduced by setting <code>'DataCast'</code> to <code>'gpuArray-single'</code>. Alternatively, the simulations can be run using the optimised C++ code. See the k-Wave Manual for more information.</p> 
