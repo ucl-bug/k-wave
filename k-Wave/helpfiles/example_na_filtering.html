@@ -23,11 +23,15 @@
 <a name="heading2"></a>
 <h2>Truncated frequency content</h2>
 
-<p>
-    <ul>
-        <li><a href="matlab:edit([getkWavePath('examples') 'example_na_filtering_part_1.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
-        <li><a href="matlab:run([getkWavePath('examples') 'example_na_filtering_part_1']);" target="_top">Run the file in MATLAB</a></li>
-    </ul>
+
+To open the file in MATLAB, enter the following command in the MATLAB Command Window.
+<pre class="codeinput">
+edit([getkWavePath('examples') 'example_na_filtering_part_1.m']);
+</pre>
+To run the file, enter the following command in the MATLAB Command Window.
+<pre class="codeinput">
+run([getkWavePath('examples') 'example_na_filtering_part_1']);
+</pre>
 </p>
 
 <p>When a short temporal pressure pulse is applied in a k-Wave simulation, the frequency content of the pulse will typically exceed that supported by the simulation grid. This is because the maximum temporal frequency component of the input signal will be larger than the equivalent maximum spatial frequency component supported by the simulation grid. As the grid cannot propagate these higher frequencies, the frequency content is truncated which distorts the input signal. This can be clearly illustrated in one-dimension by applying a temporal delta function pressure pulse at a single position after some time delay. The figure below shows an input delta pulse and the temporal signal recorded at a sensor position some distance away. By examining the amplitude spectrum of the two signals, it is clear that the frequency content of the pressure field that propagates through the medium is truncated to the maximum frequency supported by the simulation grid. This distorts the propagating wave field.</p>
@@ -38,11 +42,15 @@
 <a name="heading3"></a>
 <h2>Smoothing the source mask</h2>
 
-<p>
-    <ul>
-        <li><a href="matlab:edit([getkWavePath('examples') 'example_na_filtering_part_2.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
-        <li><a href="matlab:run([getkWavePath('examples') 'example_na_filtering_part_2']);" target="_top">Run the file in MATLAB</a></li>
-    </ul>
+
+To open the file in MATLAB, enter the following command in the MATLAB Command Window.
+<pre class="codeinput">
+edit([getkWavePath('examples') 'example_na_filtering_part_2.m']);
+</pre>
+To run the file, enter the following command in the MATLAB Command Window.
+<pre class="codeinput">
+run([getkWavePath('examples') 'example_na_filtering_part_2']);
+</pre>
 </p>
 
 <p>When running a photoacoustic simulation (where an initial pressure is defined), k-Wave avoids oscillations by spatially smoothing the source mask (see the <a href="example_na_source_smoothing.html">Source Smoothing Example</a>). The smoothing function rolls off gradually from DC to the maximum frequency supported by the grid. This approach can also be applied when using a simple time varying pressure input by smoothing the source mask and using a scaled version of the input signal according to the values in the source mask. The recorded temporal signal and its amplitude spectrum are shown below (compare these with the time series shown in the preceding example).</p>
@@ -53,11 +61,15 @@
 <a name="heading4"></a>
 <h2>Filtering the input time series</h2>
 
-<p>
-    <ul>
-        <li><a href="matlab:edit([getkWavePath('examples') 'example_na_filtering_part_3.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
-        <li><a href="matlab:run([getkWavePath('examples') 'example_na_filtering_part_3']);" target="_top">Run the file in MATLAB</a></li>
-    </ul>
+
+To open the file in MATLAB, enter the following command in the MATLAB Command Window.
+<pre class="codeinput">
+edit([getkWavePath('examples') 'example_na_filtering_part_3.m']);
+</pre>
+To run the file, enter the following command in the MATLAB Command Window.
+<pre class="codeinput">
+run([getkWavePath('examples') 'example_na_filtering_part_3']);
+</pre>
 </p>
 
 <p>More control over the frequency content of the input signal can be obtained by temporally filtering the input time series (rather than spatially smoothing the source as in the previous example). This can be achieved using <code><a href="filterTimeSeries.html">filterTimeSeries</a></code>. By default, this uses a causal FIR filter designed using the Kaiser windowing method (set <code>example_number = 1</code> within the example m-file). The causal nature of the filter means that temporal signals will become offset from their original position.</p>
