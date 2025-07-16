@@ -13,11 +13,15 @@
 
 <p>The first-order simulation codes included within the k-Wave Toolbox (<code><a href="kspaceFirstOrder1D.html">kspaceFirstOrder1D</a></code>, <code><a href="kspaceFirstOrder2D.html">kspaceFirstOrder2D</a></code>, and <code><a href="kspaceFirstOrder3D.html">kspaceFirstOrder3D</a></code>) use a special type of anisotropic absorbing boundary layer known as a <em>perfectly matched layer</em> (PML) to absorb acoustic waves when they reach the edge of the computational domain. By default, this layer occupies a strip around the edge of the domain of 20 grid points in 1D and 2D, and 10 grid points in 3D. Without this boundary layer, the computation of the spatial derivates via the FFT causes waves leaving one side of the domain to reappear at the opposite side. The use of the PML thus facilitates infinite domain simulations without the need to increase in the size of the computational grid. This example demonstrates how to control the parameters of the PML within k-Wave via optional input parameters.</p>
 
-<p>
-    <ul>
-        <li><a href="matlab:edit([getkWavePath('examples') 'example_na_controlling_the_PML.m']);" target="_top">Open the file in the MATLAB Editor</a></li>
-        <li><a href="matlab:run([getkWavePath('examples') 'example_na_controlling_the_PML']);" target="_top">Run the file in MATLAB</a></li>
-    </ul>
+
+To open the file in MATLAB, enter the following command in the MATLAB Command Window.
+<pre class="codeinput">
+edit([getkWavePath('examples') 'example_na_controlling_the_PML.m']);
+</pre>
+To run the file, enter the following command in the MATLAB Command Window.
+<pre class="codeinput">
+run([getkWavePath('examples') 'example_na_controlling_the_PML']);
+</pre>
 </p>
 
 <h2>Contents</h2>
