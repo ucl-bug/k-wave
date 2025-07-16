@@ -1409,7 +1409,15 @@ classdef kWaveArray < handle
                         
                         % plot
                         plot(arc(2, :), arc(1, :), '-', 'Color', obj.element_plot_colour);
-                        
+                    
+                    case 'line'
+                        coords = [obj.elements{element_num}.start_point; obj.elements{element_num}.end_point]';
+                        switch size(coords, 1)
+                            case 1, plot(coords, [0 0], '-', 'Color', obj.element_plot_colour, 'LineWidth', 2);
+                            case 2, plot(coords(1,:), coords(2,:), '-', 'Color', obj.element_plot_colour, 'LineWidth', 2);
+                            case 3, plot3(coords(1,:), coords(2,:), coords(3,:), '-', 'Color', obj.element_plot_colour, 'LineWidth', 2);
+                        end
+                                             
                     otherwise
                         error([obj.elements{element_num}.type ' is not a valid array element type.']);
                 end
