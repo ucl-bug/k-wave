@@ -12,7 +12,7 @@ function affine = getAffineMatrix(translation, rotation)
 %     translation         - translation given as [dx, dy] in 2D and 
 %                           [dx, dy, dz] in 3D
 %     rotation            - rotation angle/s in degrees given as 
-%                           [th] in 2D (counter-clockwise) and 
+%                           [th] in 2D (counter-clockwise)and 
 %                           [x_th, y_th, z_th] in 3D (rotate about x
 %                           then y' then z'') [degrees] 
 %

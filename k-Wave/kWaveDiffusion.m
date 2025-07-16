@@ -718,7 +718,7 @@ classdef kWaveDiffusion < handle
             % start the timer, store the start time, and display
             % computational parameters
             if obj.display_updates
-                start_time = clock;
+                start_time = datetime('now');
                 tic;
                 obj.displayUpdate(Nt, dt, start_time);
             end
@@ -857,7 +857,7 @@ classdef kWaveDiffusion < handle
                 disp('  starting time loop...');
 
                 % restart timing variables
-                loop_start_time = clock;
+                loop_start_time = datetime('now');
                 tic;
                 
             end
@@ -942,7 +942,7 @@ classdef kWaveDiffusion < handle
                 if (obj.display_updates) && (t_index == obj.num_time_steps_before_simulation_time_estimate)
 
                     % display estimated simulation time
-                    disp(['  estimated simulation time ' scaleTime(etime(clock, loop_start_time) .* Nt ./ t_index) '...']);
+                    disp(['  estimated simulation time ' scaleTime(seconds(datetime('now') - loop_start_time) .* Nt ./ t_index) '...']);
 
                 end                 
                                 
@@ -970,7 +970,7 @@ classdef kWaveDiffusion < handle
             
             % update command line status
             if obj.display_updates
-                disp(['  total computation time ' scaleTime(etime(clock, start_time))]);
+                disp(['  total computation time ' scaleTime(seconds(datetime('now') - start_time))]);
             end
             
         end
@@ -1403,7 +1403,7 @@ classdef kWaveDiffusion < handle
            
             % display start time and time steps
             disp('Running k-Wave thermal simulation...');
-            disp(['  start time: ' datestr(start_time)]);
+            disp(['  start time: ' char(start_time)]);
             disp(['  dt: ' scaleSI(dt) 's, t_end: ' scaleSI(dt*Nt) 's, time steps: ' num2str(Nt)]);
             
             % get suitable scaling factor

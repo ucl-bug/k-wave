@@ -559,7 +559,7 @@ function [sensor_data, mem_usage] = kspaceFirstOrder3D(kgrid, medium, source, se
 % =========================================================================
 
 % start the timer and store the start time
-start_time = clock;
+start_time = datetime('now');
 tic;
 
 % set the name of the simulation code
@@ -760,7 +760,7 @@ disp(['  precomputation completed in ' scaleTime(toc)]);
 disp('  starting time loop...');
 
 % restart timing variables
-loop_start_time = clock;
+loop_start_time = datetime('now');
 tic;
 
 % start time loop
@@ -1148,7 +1148,7 @@ for t_index = index_start:index_step:index_end
     if t_index == ESTIMATE_SIM_TIME_STEPS
         
         % display estimated simulation time
-        disp(['  estimated simulation time ' scaleTime(etime(clock, loop_start_time) * index_end / t_index) '...']);
+        disp(['  estimated simulation time ' scaleTime(seconds(datetime('now') - loop_start_time) * index_end / t_index) '...']);
 
         % check memory usage
         kspaceFirstOrder_checkMemoryUsage; 
@@ -1199,7 +1199,7 @@ for t_index = index_start:index_step:index_end
         % update variable used for timing variable to exclude the first
         % time step if plotting is enabled
         if t_index == 1
-            loop_start_time = clock;
+            loop_start_time = datetime('now');
         end  
         
     end
@@ -1381,7 +1381,7 @@ elseif ~isfield(sensor, 'record') && ~flags.cuboid_corners
 end
 
 % update command line status
-disp(['  total computation time ' scaleTime(etime(clock, start_time))]);
+disp(['  total computation time ' scaleTime(seconds(datetime('now') - start_time))]);
 
 % switch off log
 if flags.create_log

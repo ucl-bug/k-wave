@@ -84,7 +84,7 @@ function I_out = vesselFilter(I_in, grid_spacing, scales, varargin)
 % along with k-Wave. If not, see <http://www.gnu.org/licenses/>. 
 
 % start timer
-start_time = clock;
+start_time = datetime('now');
 
 % set default parameters
 num_req_input_variables = 3;    % minimum number of input variables
@@ -270,7 +270,7 @@ end
 
 % display total time elapsed
 if disp_updates
-    disp(['  Total computation time ' scaleTime(etime(clock, start_time))]);
+    disp(['  Total computation time ' scaleTime(seconds(datetime('now') - start_time))]);
 end
 
 % end of function

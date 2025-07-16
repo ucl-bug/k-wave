@@ -44,8 +44,8 @@ function runRegressionTests(data_folder)
 %#ok<*NASGU>
 %#ok<*IDISVAR>
 
-% start the clock
-regression_start_time = clock;
+% start the timer
+regression_start_time = datetime('now');
 
 % check for data_folder input and change directories
 if nargin == 1
@@ -287,7 +287,7 @@ disp(['O/S TYPE:                 ' comp_info.operating_system_type]);
 disp(['O/S:                      ' comp_info.operating_system]);
 disp(['MATLAB VERSION:           ' comp_info.matlab_version]);
 disp(['TESTED K-WAVE VERSION:    ' kwave_ver]);
-disp(['TESTS COMPLETED IN:       ' scaleTime(etime(clock, regression_start_time))]);
+disp(['TESTS COMPLETED IN:       ' scaleTime(seconds(datetime('now') - regression_start_time))]);
 disp('  ');
 
 % display individual test results

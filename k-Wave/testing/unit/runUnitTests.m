@@ -43,14 +43,13 @@ function test_struct = runUnitTests(wildcard, show_results)
 % You should have received a copy of the GNU Lesser General Public License
 % along with k-Wave. If not, see <http://www.gnu.org/licenses/>.
 
-
 % Set defaults for optional arguments
 if nargin < 2 || isempty(show_results)
     show_results = true;
 end
 
-% start the clock
-regression_start_time = clock;
+% start the timer
+regression_start_time = datetime('now');
 
 % literals
 plot_simulations = 'false';
@@ -117,7 +116,7 @@ end
 % CREATE OUTPUT
 % =========================================================================
 
-completion_time = scaleTime(etime(clock, regression_start_time));
+completion_time = scaleTime(seconds(datetime('now') - regression_start_time));
 comp_info = getComputerInfo;
 info = comp_info;
 info.completion_time = completion_time;

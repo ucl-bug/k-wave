@@ -66,7 +66,7 @@ function varargout = acousticFieldPropagatorC(amp_in, phase_in, dx, f0, c0, vara
 %#ok<*AGROW>
 
 % start time
-global_start_time = clock;
+global_start_time = datetime('now');
 
 % check the inputs are 3D
 if numDim(amp_in) ~= 3
@@ -224,10 +224,10 @@ end
 acousticFieldPropagator(amp_in, phase_in, dx, f0, c0, 'SaveToDisk', input_filename, input_args{:});
 
 % store time to save input
-compute_time.save_input = etime(clock, global_start_time);
+compute_time.save_input = seconds(datetime('now') - global_start_time);
 
 % start timer
-compute_start_time = clock;
+compute_start_time = datetime('now');
 
 % run the simulation in C++ and print outputs to the MATLAB command line
 if isunix
@@ -250,10 +250,10 @@ else
 end
 
 % store time to run simulation
-compute_time.simulation = etime(clock, compute_start_time);
+compute_time.simulation = seconds(datetime('now') - compute_start_time);
 
 % start timer
-load_start_time = clock;
+load_start_time = datetime('now');
 
 % load the C++ data back from disk using h5read
 pressure = h5read(output_filename, '/pressure_out');
@@ -274,10 +274,10 @@ if delete_data
 end
 
 % store time to load output
-compute_time.load_output = etime(clock, load_start_time);
+compute_time.load_output = seconds(datetime('now') - load_start_time);
 
 % store total time
-compute_time.total = etime(clock, global_start_time);
+compute_time.total = seconds(datetime('now') - global_start_time);
 
 % assign outputs
 switch nargout
