@@ -83,7 +83,7 @@ if flags.elastic_code
 else
     disp('Running k-Wave simulation...');
 end
-disp(['  start time: ' datestr(start_time)]);
+disp(['  start time: ' char(start_time)]);
 
 % =========================================================================
 % INDEX DATA TYPES

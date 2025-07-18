@@ -992,7 +992,7 @@ classdef kWaveArray < handle
             end
 
             % update command line
-            func_start_time = clock;
+            func_start_time = datetime('now');
             disp('Computing distributed source signal...');
             
             % check the array has elements
@@ -1000,12 +1000,12 @@ classdef kWaveArray < handle
             
             % get the binary mask to count how many points contribute to
             % the source
-            comp_start_time = clock;
+            comp_start_time = datetime('now');
             fprintf('  calculating binary mask...                  ');
             mask = obj.getArrayBinaryMask(kgrid);
             mask_ind = find(mask);
             num_source_points = sum(mask(:));
-            disp(['completed in ' scaleTime(etime(clock, comp_start_time))]);
+            disp(['completed in ' scaleTime(seconds(datetime('now') - comp_start_time))]);
           
             % number of time points in the signal
             Nt = size(source_signal, 2);
@@ -1023,10 +1023,10 @@ classdef kWaveArray < handle
             for element_num = 1:obj.number_elements
             
                 % get the offgrid source weights
-                comp_start_time = clock;
+                comp_start_time = datetime('now');
                 fprintf(['  calculating element ' num2str(element_num) ' grid weights...       ']);
                 source_weights = obj.getElementGridWeights(kgrid, element_num);
-                disp(['completed in ' scaleTime(etime(clock, comp_start_time))]);
+                disp(['completed in ' scaleTime(seconds(datetime('now') - comp_start_time))]);
                 
                 % get indices of the non-zero points 
                 element_mask_ind = find(source_weights ~= 0);
@@ -1035,16 +1035,16 @@ classdef kWaveArray < handle
                 local_ind = ismember(mask_ind, element_mask_ind);
                 
                 % add to distributed source
-                comp_start_time = clock;
+                comp_start_time = datetime('now');
                 fprintf(['  calculating element ' num2str(element_num) ' distributed source... ']);
                 distributed_source_signal(local_ind, :) = ...
                     distributed_source_signal(local_ind, :) ...
                     + bsxfun(@times, source_weights(element_mask_ind), source_signal(element_num, :));
-                disp(['completed in ' scaleTime(etime(clock, comp_start_time))]);
+                disp(['completed in ' scaleTime(seconds(datetime('now') - comp_start_time))]);
                 
             end
             
-            disp(['  total computation time ' scaleTime(etime(clock, func_start_time))]); %#ok<*DETIM,*CLOCK>
+            disp(['  total computation time ' scaleTime(seconds(datetime('now') - func_start_time))]); %#ok<*DETIM,*CLOCK>
             
         end
 
@@ -1074,7 +1074,7 @@ classdef kWaveArray < handle
             end
 
             % update command line
-            func_start_time = clock;
+            func_start_time = datetime('now');
             disp('Computing distributed source signal CW...');
             
             % check the array has elements
@@ -1082,12 +1082,12 @@ classdef kWaveArray < handle
             
             % get the binary mask to count how many points contribute to
             % the source
-            comp_start_time = clock;
+            comp_start_time = datetime('now');
             fprintf('  calculating binary mask...                  ');
             mask = obj.getArrayBinaryMask(kgrid);
             mask_ind = find(mask);
             num_source_points = sum(mask(:));
-            disp(['completed in ' scaleTime(etime(clock, comp_start_time))]);
+            disp(['completed in ' scaleTime(seconds(datetime('now') - comp_start_time))]);
             
             % estimate size of the signal
             data_type = estimateSourceSize(obj, num_source_points, kgrid.Nt);
@@ -1099,10 +1099,10 @@ classdef kWaveArray < handle
             for element_num = 1:obj.number_elements
 
                 % get the offgrid source weights
-                comp_start_time = clock;
+                comp_start_time = datetime('now');
                 fprintf(['  calculating element ' num2str(element_num) ' grid weights...       ']);
                 source_weights = obj.getElementGridWeights(kgrid, element_num);
-                disp(['completed in ' scaleTime(etime(clock, comp_start_time))]);
+                disp(['completed in ' scaleTime(seconds(datetime('now') - comp_start_time))]);
 
                 % get indices of the non-zero points
                 element_mask_ind = find(source_weights ~= 0);
@@ -1117,7 +1117,7 @@ classdef kWaveArray < handle
                 end
 
                 % create CW signals for the current element
-                comp_start_time = clock;
+                comp_start_time = datetime('now');
                 fprintf(['  calculating element ' num2str(element_num) ' distributed source... ']);
                 weight_amplitude = abs(source_weights(element_mask_ind));
                 weight_phase = angle(source_weights(element_mask_ind));
@@ -1131,11 +1131,11 @@ classdef kWaveArray < handle
                 % the hologram element
                 distributed_source_signal(local_ind, :) = ...
                     distributed_source_signal(local_ind, :) + sw .* source_signal;
-                disp(['completed in ' scaleTime(etime(clock, comp_start_time))]);
+                disp(['completed in ' scaleTime(seconds(datetime('now') - comp_start_time))]);
                 
             end
             
-            disp(['  total computation time ' scaleTime(etime(clock, func_start_time))]);
+            disp(['  total computation time ' scaleTime(seconds(datetime('now') - func_start_time))]);
             
         end
         
