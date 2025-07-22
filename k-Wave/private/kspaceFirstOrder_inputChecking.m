@@ -213,7 +213,7 @@ if isfield(medium, 'alpha_coeff') || isfield(medium, 'alpha_power')
         end
 
         % check y is real and within 0 to 3
-        if ~isreal(medium.alpha_coeff) || (medium.alpha_power >= 3 || medium.alpha_power < 0)
+        if ~isreal(medium.alpha_power) || (medium.alpha_power >= 3 || medium.alpha_power < 0)
             error('medium.alpha_power must be a real number between 0 and 3.');
         end
 
