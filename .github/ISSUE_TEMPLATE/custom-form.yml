@@ -1,12 +1,12 @@
 name: Custom Issue
 description: Customisable issue report
-title: "Custom: "
+title: ""
 body:
   - type: textarea
     id: custom-description
     attributes:
       label: Description
       description: A clear and detailed description of the issue.
-      placeholder: Please describe your issue or suggestion in detail. Be as contained and specific as possible.
+      placeholder: Please provide a detailed and specific description of your issue or suggestion, including any relevant context or steps to reproduce.
     validations:
       required: true
