@@ -1,12 +1,16 @@
 name: Custom Issue
-description: Customisable issue report
+description: Custom issue template
 title: "Issue: "
 body:
+  - type: markdown
+    attributes:
+      value: |
+        **Note:** For Bug Reports or Feature Requests, please use the dedicated forms instead of this custom issue template.
   - type: textarea
     id: custom-description
     attributes:
       label: Description
       description: A clear and detailed description of the issue.
-      placeholder: Please provide a detailed and specific description of your issue or suggestion, including any relevant context or steps to reproduce.
+      placeholder: Please use provide a detailed and specific description of your issue or suggestion, including any relevant context or steps to reproduce.
     validations:
       required: true
