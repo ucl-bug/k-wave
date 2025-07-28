@@ -1,0 +1,12 @@
+name: Custom Issue
+description: Submit a custom issue
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this issue form.
+  - type: textarea
+    id: description
+    attributes:
+      description: Please describe your issue or suggestion in detail. Be as contained and specific as possible.
+ 
