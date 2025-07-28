@@ -49,9 +49,9 @@ for i = 1:length(results)
     
     % append the test result
     if results(i).pass
-        disp(['  ' fn 'passed']);
+        disp(['✅  ' fn 'passed']);
     else
-        disp(['  ' fn 'failed']);
+        disp(['❌  ' fn 'failed']);
     end
     
 end
@@ -73,9 +73,5 @@ if ~isempty(failed_idx)
         fn = results(i).test;
         fn = fn(1:end - 2);
         disp(fn);
-        if ~isempty(results(i).test_info)
-            fprintf('%s\n', results(i).test_info);
-            disp('  ');
-        end
     end
 end
