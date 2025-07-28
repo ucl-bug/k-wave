@@ -1,17 +1,12 @@
 name: Custom Issue
-description: Submit a custom issue
-title: ""
-labels: []
+description: Customisable issue report
+title: "Custom: "
 body:
-  - type: markdown
-    attributes:
-      value: |
-        Thanks for taking the time to fill out this issue form.
   - type: textarea
-    id: description
+    id: custom-description
     attributes:
       label: Description
-      description: Please describe your issue or suggestion in detail. Be as contained and specific as possible.
-      placeholder: Enter your issue or suggestion here.
+      description: A clear and detailed description of the issue.
+      placeholder: Please describe your issue or suggestion in detail. Be as contained and specific as possible.
     validations:
       required: true
