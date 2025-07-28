@@ -1,5 +1,7 @@
 name: Custom Issue
 description: Submit a custom issue
+title: ""
+labels: []
 body:
   - type: markdown
     attributes:
@@ -8,5 +10,8 @@ body:
   - type: textarea
     id: description
     attributes:
+      label: Description
       description: Please describe your issue or suggestion in detail. Be as contained and specific as possible.
- 
+      placeholder: Enter your issue or suggestion here.
+    validations:
+      required: true
