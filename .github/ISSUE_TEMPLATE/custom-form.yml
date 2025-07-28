@@ -1,6 +1,6 @@
 name: Custom Issue
 description: Customisable issue report
-title: ""
+title: " "
 body:
   - type: textarea
     id: custom-description
