@@ -11,6 +11,6 @@ body:
     attributes:
       label: Description
       description: A clear and detailed description of the issue.
-      placeholder: Please use provide a detailed and specific description of your issue or suggestion, including any relevant context or steps to reproduce.
+      placeholder: Please use provide a detailed and specific description of your issue.
     validations:
       required: true
