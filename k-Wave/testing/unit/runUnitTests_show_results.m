@@ -84,6 +84,6 @@ if num_failed > 0
     disp('Some of the tests have failed.');
     disp('For details see the above.');
     disp('  ');
-    exit(0);
+    exit(1);
 end
 end
