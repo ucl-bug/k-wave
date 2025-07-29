@@ -23,7 +23,7 @@ jobs:
           command: |
             addpath("${{ github.workspace }}/k-Wave");
             cd("${{ github.workspace }}/k-Wave/testing/unit");
-            test_struct = runUnitTests("kWaveDiffusion_compare_3D_heterog",false);
+            test_struct = runUnitTests("",false);
             save('test_struct.mat', 'test_struct');
           startup-options: -nojvm -logfile output.log
 
