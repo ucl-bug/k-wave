@@ -79,5 +79,5 @@ disp('You can also download a JSON summary from the "Upload Artifact" section in
 
 % Fail if any tests failed (for CI integration)
 if num_failed > 0
-    exit(1);
+    error('Some unit tests failed. See above for details.');
 end
