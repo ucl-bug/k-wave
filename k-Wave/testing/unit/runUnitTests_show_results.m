@@ -71,6 +71,7 @@ for i = 1:length(results)
     end
     
 end
+disp('  ');
 
 % display test summary
 disp('NOTE:');
@@ -79,5 +80,6 @@ disp('You can also download a JSON summary from the "Upload Artifact" section in
 
 % Fail if any tests failed (for CI integration)
 if num_failed > 0
+    disp('  ');
     error('Some unit tests failed. See above for details.');
 end
