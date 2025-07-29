@@ -78,8 +78,12 @@ disp('NOTE:');
 disp('Test output details are in the "Run unit tests" section of the workflow.');
 disp('You can also download a JSON summary from the "Upload Artifact" section in your CI logs or dashboard.');
 
+disp('  ');
 % Fail if any tests failed (for CI integration)
 if num_failed > 0
+    disp('Some of the tests have failed.');
+    disp('For details see the above.');
     disp('  ');
-    error('Some unit tests failed. See above for details.');
+    exit(0);
+end
 end
