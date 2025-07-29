@@ -84,6 +84,7 @@ if num_failed > 0
     disp('Some of the tests have failed.');
     disp('For details see the above.');
     disp('  ');
+    disp('Exiting so that CI detects failed tests.');
     exit(1);
 end
 end
