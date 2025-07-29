@@ -14,6 +14,3 @@ else
     fclose(fid);
 end
 
-disp(' ');
-disp('UNIT TEST RESULTS SAVED TO test_results.json');
-disp(' ');
