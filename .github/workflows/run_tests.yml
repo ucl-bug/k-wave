@@ -78,6 +78,7 @@ jobs:
         uses: matlab-actions/run-command@v2
         with:
           command: |
+            addpath("${{ github.workspace }}/k-Wave");  
             cd("${{ github.workspace }}/k-Wave/testing/regression");
             generateRegressionData
           startup-options: -nojvm 
