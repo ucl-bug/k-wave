@@ -32,25 +32,6 @@ disp(['TESTED K-WAVE VERSION:    ' info.kwave_version]);
 disp(['TESTS COMPLETED IN:       ' info.completion_time]);
 disp('  ');
 
-% display test summary
-disp('  ');
-num_passed = sum([results.pass]);
-num_failed = numel(results) - num_passed;
-disp(['✅ Number of tests passed: ' num2str(num_passed)]);
-disp(['❌ Number of tests failed: ' num2str(num_failed)]);
-disp('  ');
-
-% Show failed tests using test_struct
-failed_idx = find(~[results.pass]);
-if ~isempty(failed_idx)
-    disp('FAILED TESTS:');
-    for i = failed_idx
-        fn = results(i).test;
-        fn = fn(1:end - 2);
-        disp(['❌  ' fn 'failed']);
-    end
-    disp('  ');
-end
 
 % display individual test results
 disp('TEST RESULTS:');
@@ -71,6 +52,26 @@ for i = 1:length(results)
         disp(['❌  ' fn 'failed']);
     end
     
+end
+
+% display test summary
+disp('  ');
+num_passed = sum([results.pass]);
+num_failed = numel(results) - num_passed;
+disp(['✅ Number of tests passed: ' num2str(num_passed)]);
+disp(['❌ Number of tests failed: ' num2str(num_failed)]);
+disp('  ');
+
+% Show failed tests using test_struct
+failed_idx = find(~[results.pass]);
+if ~isempty(failed_idx)
+    disp('FAILED TESTS:');
+    for i = failed_idx
+        fn = results(i).test;
+        fn = fn(1:end - 2);
+        disp(['❌  ' fn 'failed']);
+    end
+    disp('  ');
 end
 
 disp('  ');
