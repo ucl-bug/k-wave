@@ -1,4 +1,4 @@
-function runRegressionTests(data_folder)
+function runRegressionTests(data_folder, show_results)
 %RUNREGRESSIONTESTS Run MATLAB regression tests.
 %
 % DESCRIPTION:
@@ -18,6 +18,7 @@ function runRegressionTests(data_folder)
 %
 % INPUTS:
 %     data_folder   - string of folder containing regression data
+%     show_results  - logical flag to display results (default: true)
 %
 % ABOUT:
 %     author        - Bradley Treeby
@@ -43,6 +44,11 @@ function runRegressionTests(data_folder)
 %#ok<*NODEF>
 %#ok<*NASGU>
 %#ok<*IDISVAR>
+
+% Set defaults for optional arguments
+if nargin < 2 || isempty(show_results)
+    show_results = true;
+end
 
 % start the timer
 regression_start_time = datetime('now');
@@ -260,65 +266,24 @@ for filename_index = 1:num_files
 end
 
 % =========================================================================
-% DISPLAY SUMMARY
+% CREATE OUTPUT
 % =========================================================================
 
-% get information about PC
+completion_time = scaleTime(seconds(datetime('now') - regression_start_time));
 comp_info = getComputerInfo;
+info = comp_info;
+info.completion_time = completion_time;
 
-% get k-Wave version
-eval('cur_dir = pwd; cd(getkWavePath(''private'')); kwave_ver = getkWaveVersion; cd(cur_dir);');
+% create results struct
+test_struct = struct( ...
+    'info', info, ...
+    'results', struct('test', filenames(:), 'pass', num2cell(test_result(:)), 'test_info', test_info(:)) ...
+);
 
-% display test header
-disp('   ');
-disp('-------------------------------------------------------------------------------------');
-disp('            _      __        __                _____         _            ');
-disp('           | | __  \ \      / /_ ___   _____  |_   _|__  ___| |_ ___ _ __ ');
-disp('           | |/ /___\ \ /\ / / _` \ \ / / _ \   | |/ _ \/ __| __/ _ \ ''__|');
-disp('           |   <_____\ V  V / (_| |\ V /  __/   | |  __/\__ \ ||  __/ |   ');
-disp('           |_|\_\     \_/\_/ \__,_| \_/ \___|   |_|\___||___/\__\___|_|   ');
-disp('  ');                                                                
-disp('-------------------------------------------------------------------------------------');
-disp('  ');
-disp(['DATE:                     ' comp_info.date]);
-disp(['HOST NAME:                ' comp_info.computer_name]);
-disp(['USER NAME:                ' comp_info.user_name]);
-disp(['O/S TYPE:                 ' comp_info.operating_system_type]);
-disp(['O/S:                      ' comp_info.operating_system]);
-disp(['MATLAB VERSION:           ' comp_info.matlab_version]);
-disp(['TESTED K-WAVE VERSION:    ' kwave_ver]);
-disp(['TESTS COMPLETED IN:       ' scaleTime(seconds(datetime('now') - regression_start_time))]);
-disp('  ');
+% =========================================================================
+% SHOW RESULTS
+% =========================================================================
 
-% display individual test results
-disp('REGRESSION TEST RESULTS:');
-for filename_index = 1:length(filenames)
-    
-    % trim the filename and add number
-    fn = filenames{filename_index};
-    fn = [num2str(filename_index, '%02.f') ' ' fn(1:end - 4), ':'];
-    
-    % add some spaces to align results
-    fn = sprintf('%-50s', fn);
-    
-    % append the test result
-    if test_result(filename_index)
-        disp(['  ' fn 'passed']);
-    else
-        disp(['  ' fn 'failed']);
-    end
+if show_results
+    runUnitTests_show_results(test_struct);
 end
-
-% display test summary
-disp('  ');
-if all(test_result)
-    disp('ALL REGRESSION TESTS PASSED!');
-else
-    disp('REGRESSION TEST FAILED...');
-end
-
-disp('  ');
-disp('-------------------------------------------------------------------------------------');
-
-% remove temp data
-delete(temp_var_filename);
