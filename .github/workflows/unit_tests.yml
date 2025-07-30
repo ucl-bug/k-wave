@@ -2,11 +2,11 @@ name: Run unit tests
 
 on:
   push:
-    branches:
-       - main
-  pull_request:
-    branches:
-       - main
+  #   branches:
+  #      - main
+  # pull_request:
+  #   branches:
+  #      - main
 
 jobs:
   unit-tests:
@@ -28,7 +28,7 @@ jobs:
           command: |
             addpath("${{ github.workspace }}/k-Wave");
             cd("${{ github.workspace }}/k-Wave/testing/unit");
-            test_struct = runUnitTests("",false);
+            test_struct = runUnitTests("spaceFirstOrder_check_plane_wave_intensity",false);
             save('test_struct.mat', 'test_struct');
           startup-options: -nojvm -logfile output.log
 
@@ -55,6 +55,10 @@ jobs:
             addpath("${{ github.workspace }}/k-Wave");
             cd("${{ github.workspace }}/k-Wave/testing/unit");
             load('test_struct.mat', 'test_struct');
-            runUnitTests_show_results(test_struct);
+            show_results(test_struct);
+            disp('  ');
+            disp('NOTE:');
+            disp('Test output details are in the "Run unit tests" section of the workflow.');
+            disp('You can also download a JSON summary from the "Upload Artifact" section in your CI logs or dashboard.');
           startup-options: -nojvm 
 

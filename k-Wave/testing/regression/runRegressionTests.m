@@ -291,5 +291,5 @@ test_struct = struct( ...
 % =========================================================================
 
 if show_results
-    runUnitTests_show_results(test_struct);
+    show_test_results(test_struct);
 end
