@@ -49,6 +49,7 @@ if ~isempty(failed_idx)
         fn = fn(1:end - 2);
         disp(['❌  ' fn 'failed']);
     end
+    disp('  ');
 end
 
 % display individual test results
@@ -81,10 +82,8 @@ disp('You can also download a JSON summary from the "Upload Artifact" section in
 disp('  ');
 % Fail if any tests failed (for CI integration)
 if num_failed > 0
-    disp('Some of the tests have failed.');
-    disp('For details see the above.');
     disp('  ');
-    disp('Exiting so that CI detects failed tests.');
+    disp('Exiting so that CI detects test failure.');
     exit(1);
 end
 end
