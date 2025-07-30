@@ -1,4 +1,4 @@
-function runRegressionTests(data_folder, show_results)
+function test_struct = runRegressionTests(data_folder, show_results)
 %RUNREGRESSIONTESTS Run MATLAB regression tests.
 %
 % DESCRIPTION:
