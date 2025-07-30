@@ -1,4 +1,4 @@
-name: Run unit tests
+name: Run Tests
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   unit-tests:
-    name: Run unit tests
+    name: Unit tests
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -63,3 +63,66 @@ jobs:
             disp('You can also download a JSON summary from the "Upload Artifact" section in your CI logs or dashboard.');
           startup-options: -nojvm 
 
+  regression-tests:
+    name: Regression tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v2
+        with:
+          products: Signal_Processing_Toolbox
+          cache: true
+
+      - name: Generate data
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            addpath("${{ github.workspace }}/k-Wave");
+            cd("${{ github.workspace }}/k-Wave/testing/regression");
+            generateRegressionData
+          startup-options: -nojvm 
+
+      - name: Run regression tests 
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            addpath("${{ github.workspace }}/k-Wave");
+            cd("${{ github.workspace }}/k-Wave/testing/regression");
+            test_struct = runRegressionTests("${{ github.workspace }}/k-Wave/testing/regression",false);
+            save('test_struct.mat', 'test_struct');
+          startup-options: -nojvm 
+
+      - name: Create artifact
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            addpath("${{ github.workspace }}/k-Wave");
+            addpath("${{ github.workspace }}/k-Wave/testing");  
+            cd("${{ github.workspace }}/k-Wave/testing/regression");
+            load('test_struct.mat', 'test_struct');
+            save_artifact(test_struct);
+          startup-options: -nojvm 
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: regression_test_results
+          path: ${{ github.workspace }}/k-Wave/testing/regression/test_results.json
+
+      - name: Test results 
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            addpath("${{ github.workspace }}/k-Wave");
+            addpath("${{ github.workspace }}/k-Wave/testing");  
+            cd("${{ github.workspace }}/k-Wave/testing/regression");
+            load('test_struct.mat', 'test_struct');
+            show_test_results(test_struct);
+            disp('  ');
+            disp('NOTE:');
+            disp('Test output details are in the "Run regression tests" section of the workflow.');
+            disp('You can also download a JSON summary from the "Upload Artifact" section in your CI logs or dashboard.');
+          startup-options: -nojvm 
