@@ -40,15 +40,16 @@ jobs:
         with:
           command: |
             addpath("${{ github.workspace }}/k-Wave");
+            addpath("${{ github.workspace }}/k-Wave/testing");  
             cd("${{ github.workspace }}/k-Wave/testing/regression");
             load('test_struct.mat', 'test_struct');
-            runUnitTests_artifact(test_struct);
+            save_artifact(test_struct);
           startup-options: -nojvm 
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: unit_test_results
+          name: regression_test_results
           path: ${{ github.workspace }}/k-Wave/testing/regression/test_results.json
 
       - name: Test results 
