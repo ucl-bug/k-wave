@@ -36,9 +36,10 @@ jobs:
         uses: matlab-actions/run-command@v2
         with:
           command: |
+            addpath("${{ github.workspace }}/k-Wave/testing");
             cd("${{ github.workspace }}/k-Wave/testing/unit");
             load('test_struct.mat', 'test_struct');
-            runUnitTests_artifact(test_struct);
+            save_artifact(test_struct);
           startup-options: -nojvm 
 
       - name: Upload artifact
