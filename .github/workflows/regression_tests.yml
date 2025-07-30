@@ -32,7 +32,7 @@ jobs:
           command: |
             addpath("${{ github.workspace }}/k-Wave");
             cd("${{ github.workspace }}/k-Wave/testing/regression");
-            test_struct = runRegressionTests("spaceFirstOrder_check_plane_wave_intensity",false);
+            test_struct = runRegressionTests("${{ github.workspace }}/k-Wave/testing/regression",false);
             save('test_struct.mat', 'test_struct');
           startup-options: -nojvm 
 
