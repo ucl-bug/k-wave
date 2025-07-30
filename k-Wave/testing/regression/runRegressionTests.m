@@ -83,6 +83,9 @@ num_files = length(filenames);
 % keep a list of whether the test passed or failed
 test_result = false(num_files, 1);
 
+% preallocate cell array for test_info with empty strings by default
+test_info = repmat({''}, num_files, 1);
+
 % =========================================================================
 % RUN TESTS
 % =========================================================================
@@ -244,10 +247,14 @@ for filename_index = 1:num_files
                         test_pass = true;
                         fprintf('passed');
                     end
+                    % save the error string
+                    error_str = sprintf(' (L_inf = %e)\n', L_inf);
 
                     % display the error
-                    fprintf(' (L_inf = %e)\n', L_inf);
-                    
+                    fprintf('%s', error_str);
+
+                    % save L_inf as test_info
+                    test_info{filename_index} = error_str;
                 end
                 
                 % clear the variables just in case
@@ -262,7 +269,6 @@ for filename_index = 1:num_files
     
     % store test result
     test_result(filename_index) = test_pass_overall;
-    
 end
 
 % =========================================================================
