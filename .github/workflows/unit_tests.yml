@@ -55,7 +55,7 @@ jobs:
             addpath("${{ github.workspace }}/k-Wave");
             cd("${{ github.workspace }}/k-Wave/testing/unit");
             load('test_struct.mat', 'test_struct');
-            show_results(test_struct);
+            show_test_results(test_struct);
             disp('  ');
             disp('NOTE:');
             disp('Test output details are in the "Run unit tests" section of the workflow.');
