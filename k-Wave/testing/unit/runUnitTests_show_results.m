@@ -2,11 +2,8 @@ function runUnitTests_show_results(test_struct)
 %RUNUNITTESTS_SHOW_RESULTS Display MATLAB unit test results in a formatted summary.
 %
 % DESCRIPTION:
-%     runUnitTests_show_results displays the results from the provided test_struct
-%     in a formatted summary, including test details, individual test outcomes,
-%     and a summary of passed and failed tests.
+%     runUnitTests_show_results displays the results from the provided test_struct.
 %
-
 % =========================================================================
 % DISPLAY SUMMARY
 % =========================================================================
@@ -35,6 +32,26 @@ disp(['TESTED K-WAVE VERSION:    ' info.kwave_version]);
 disp(['TESTS COMPLETED IN:       ' info.completion_time]);
 disp('  ');
 
+% display test summary
+disp('  ');
+num_passed = sum([results.pass]);
+num_failed = numel(results) - num_passed;
+disp(['✅ Number of tests passed: ' num2str(num_passed)]);
+disp(['❌ Number of tests failed: ' num2str(num_failed)]);
+disp('  ');
+
+% Show failed tests using test_struct
+failed_idx = find(~[results.pass]);
+if ~isempty(failed_idx)
+    disp('FAILED TESTS:');
+    for i = failed_idx
+        fn = results(i).test;
+        fn = fn(1:end - 2);
+        disp(['❌  ' fn 'failed']);
+    end
+    disp('  ');
+end
+
 % display individual test results
 disp('UNIT TEST RESULTS:');
 
@@ -49,33 +66,24 @@ for i = 1:length(results)
     
     % append the test result
     if results(i).pass
-        disp(['  ' fn 'passed']);
+        disp(['✅  ' fn 'passed']);
     else
-        disp(['  ' fn 'failed']);
+        disp(['❌  ' fn 'failed']);
     end
     
 end
+disp('  ');
 
 % display test summary
-disp('  ');
-disp('UNIT TEST SUMMARY:');
-num_passed = sum([results.pass]);
-num_failed = numel(results) - num_passed;
-disp(['✅ Number of tests passed: ' num2str(num_passed)]);
-disp(['❌ Number of tests failed: ' num2str(num_failed)]);
-disp('  ');
+disp('NOTE:');
+disp('Test output details are in the "Run unit tests" section of the workflow.');
+disp('You can also download a JSON summary from the "Upload Artifact" section in your CI logs or dashboard.');
 
-% Show failed tests using test_struct
-failed_idx = find(~[results.pass]);
-if ~isempty(failed_idx)
-    disp('❌ FAILED TESTS:');
-    for i = failed_idx
-        fn = results(i).test;
-        fn = fn(1:end - 2);
-        disp(fn);
-        if ~isempty(results(i).test_info)
-            fprintf('%s\n', results(i).test_info);
-            disp('  ');
-        end
-    end
+disp('  ');
+% Fail if any tests failed (for CI integration)
+if num_failed > 0
+    disp('  ');
+    disp('Exiting so that CI detects test failure.');
+    exit(1);
+end
 end
