@@ -26,12 +26,41 @@ jobs:
             generateRegressionData
           startup-options: -nojvm 
 
+      - name: Run regression tests 
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            addpath("${{ github.workspace }}/k-Wave");
+            cd("${{ github.workspace }}/k-Wave/testing/regression");
+            runRegressionTests("${{ github.workspace }}/k-Wave/testing/regression", false)
+          startup-options: -nojvm 
+
+      - name: Create artifact
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            addpath("${{ github.workspace }}/k-Wave");
+            cd("${{ github.workspace }}/k-Wave/testing/regression");
+            load('test_struct.mat', 'test_struct');
+            runUnitTests_artifact(test_struct);
+          startup-options: -nojvm 
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit_test_results
+          path: ${{ github.workspace }}/k-Wave/testing/regression/test_results.json
+
       - name: Test results 
         uses: matlab-actions/run-command@v2
         with:
           command: |
             addpath("${{ github.workspace }}/k-Wave");
             cd("${{ github.workspace }}/k-Wave/testing/regression");
-            runRegressionTests("${{ github.workspace }}/k-Wave/testing/regression")
+            load('test_struct.mat', 'test_struct');
+            show_test_results(test_struct);
+            disp('  ');
+            disp('NOTE:');
+            disp('Test output details are in the "Run regression tests" section of the workflow.');
+            disp('You can also download a JSON summary from the "Upload Artifact" section in your CI logs or dashboard.');
           startup-options: -nojvm 
-
