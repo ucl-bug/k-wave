@@ -1,0 +1,37 @@
+name: Run regression tests
+
+on:
+  push:
+
+jobs:
+  regression-tests:
+    name: Run regression tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v2
+        with:
+          products: Signal_Processing_Toolbox
+          cache: true
+
+      - name: Generate data
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            addpath("${{ github.workspace }}/k-Wave");
+            cd("${{ github.workspace }}/k-Wave/testing/regression");
+            generateRegressionData
+          startup-options: -nojvm 
+
+      - name: Test results 
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            addpath("${{ github.workspace }}/k-Wave");
+            cd("${{ github.workspace }}/k-Wave/testing/regression");
+            runRegressionTests("${{ github.workspace }}/k-Wave/testing/regression")
+          startup-options: -nojvm 
+
