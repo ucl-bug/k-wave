@@ -56,6 +56,7 @@ jobs:
         with:
           command: |
             addpath("${{ github.workspace }}/k-Wave");
+            addpath("${{ github.workspace }}/k-Wave/testing");  
             cd("${{ github.workspace }}/k-Wave/testing/regression");
             load('test_struct.mat', 'test_struct');
             show_test_results(test_struct);
