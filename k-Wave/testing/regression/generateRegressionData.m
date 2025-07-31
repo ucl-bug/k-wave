@@ -410,6 +410,7 @@ for filename_index = 1:length(test_examples)
     load([tempdir 'generate_regression_data_TEMP_VARS']);
     
     % move to the testing directory
+    if ~exist(testing_dir, 'dir'), mkdir(testing_dir); end
     cd(testing_dir);
     
     % generate computer info and add precision

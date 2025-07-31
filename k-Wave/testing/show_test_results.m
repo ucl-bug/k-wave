@@ -1,8 +1,8 @@
-function runUnitTests_show_results(test_struct)
-%RUNUNITTESTS_SHOW_RESULTS Display MATLAB unit test results in a formatted summary.
+function show_results(test_struct)
+%SHOW_RESULTS Display MATLAB test results in a formatted summary.
 %
 % DESCRIPTION:
-%     runUnitTests_show_results displays the results from the provided test_struct.
+%     show_results displays the results from the provided test_struct.
 %
 % =========================================================================
 % DISPLAY SUMMARY
@@ -32,6 +32,28 @@ disp(['TESTED K-WAVE VERSION:    ' info.kwave_version]);
 disp(['TESTS COMPLETED IN:       ' info.completion_time]);
 disp('  ');
 
+
+% display individual test results
+disp('TEST RESULTS:');
+
+for i = 1:length(results)
+    
+    % trim the filename
+    fn = results(i).test;
+    fn = [fn(1:end - 2), ':'];
+    
+    % add some spaces to align results
+    fn = sprintf('%-70s', fn);
+    
+    % append the test result
+    if results(i).pass
+        disp(['✅  ' fn 'passed']);
+    else
+        disp(['❌  ' fn 'failed']);
+    end
+    
+end
+
 % display test summary
 disp('  ');
 num_passed = sum([results.pass]);
@@ -51,33 +73,6 @@ if ~isempty(failed_idx)
     end
     disp('  ');
 end
-
-% display individual test results
-disp('UNIT TEST RESULTS:');
-
-for i = 1:length(results)
-    
-    % trim the filename
-    fn = results(i).test;
-    fn = [fn(1:end - 2), ':'];
-    
-    % add some spaces to align results
-    fn = sprintf('%-70s', fn);
-    
-    % append the test result
-    if results(i).pass
-        disp(['✅  ' fn 'passed']);
-    else
-        disp(['❌  ' fn 'failed']);
-    end
-    
-end
-disp('  ');
-
-% display test summary
-disp('NOTE:');
-disp('Test output details are in the "Run unit tests" section of the workflow.');
-disp('You can also download a JSON summary from the "Upload Artifact" section in your CI logs or dashboard.');
 
 disp('  ');
 % Fail if any tests failed (for CI integration)

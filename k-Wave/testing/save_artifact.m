@@ -1,8 +1,8 @@
-function runUnitTests_artifact(test_struct)
-%RUNUNITTESTS_ARTIFACT 
+function save_artifact(test_struct)
+%SAVE_ARTIFACT 
 %
 % DESCRIPTION:
-%     runUnitTests_actions processes the provided test_struct, saves the results
+%     save_artifact processes the provided test_struct, saves the results
 %     as a test_results.json artifact.
 %
 
