@@ -11,9 +11,9 @@
 % For a more detailed discussion of this example and the underlying
 % techniques, see Arridge et al. Inverse Problems 32, 115012 (2016).   
 %
-% author: Ben Cox and Bradley Treeby
+% author: Ben Cox, Bradley Treeby and Felix Lucka
 % date: 29th May 2017
-% last update: 29th July 2019
+% last update: 22nd October 2021
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
 % Copyright (C) 2017-2019 Ben Cox and Bradley Treeby
@@ -38,7 +38,7 @@ clearvars;
 % =========================================================================
 
 % define literals
-NUMBER_OF_ITERATIONS = 5;   % number of iterations
+NUMBER_OF_ITERATIONS = 5;  % number of iterations
 PML_SIZE = 20;              % size of the perfectly matched layer in grid points
 
 % create the computational grid
@@ -89,6 +89,13 @@ p0_estimate = zeros(Nx, Ny);
 % set the initial model times series to be zero
 modelled_time_series = zeros(size(sensor_data));
 
+% calculate the difference between the measured and modelled data
+data_difference = modelled_time_series - sensor_data;
+
+% track goodness of fit and relative error during the iteration
+gof     = ones(NUMBER_OF_ITERATIONS+1, 1);
+rel_err = ones(NUMBER_OF_ITERATIONS+1, 1); 
+
 % reconstruct p0 image iteratively using the adjoint to estimate the
 % functional gradient
 for loop = 1:NUMBER_OF_ITERATIONS
@@ -106,33 +113,35 @@ for loop = 1:NUMBER_OF_ITERATIONS
     % set the source type to act as an adjoint source
     source.p_mode = 'additive';
     
-    % calculate the difference between the measured and modelled data
-    difference = modelled_time_series - sensor_data;
-    
     % assign the difference time series as an adjoint source
-    % (see Appendix B in Arridge et al. Inverse Problems 32, 115012 (2016))
-    time_reversed_data = fliplr(difference);
-    source.p = [time_reversed_data(:, 1), time_reversed_data(:, 1), time_reversed_data(:, 1:end-1)] + ...
-        [zeros(size(time_reversed_data(:, 1))), time_reversed_data(:, 1:end-1), 2 * time_reversed_data(:, end)];
+    % (see Appendix B, Eqn B.2 in Arridge et al. Inverse Problems 32, 115012 (2016))
+    p_adj           = [data_difference(:, end:-1:1), zeros(size(data_difference, 1), 1)] ...
+                    + [zeros(size(data_difference, 1), 1), data_difference(:, end:-1:1)];
+    p_adj(:, end-1) = p_adj(:, end-1) + p_adj(:, end);
+    p_adj           = p_adj(:, 1:end-1);
+    source.p = p_adj;
     
     % send difference through adjoint model
     image_update = kspaceFirstOrder2D(kgrid, medium, source, sensor, input_args{:});
     
+    % add smoothing (see Appendix B in Arridge et al. Inverse Problems 32, 115012 (2016))
+    image_update = smooth(image_update.p_final, false);
+    
     % set the step length (this could be chosen by doing a line search)
-    nu = 0.25;
+    nu = 0.5;
     
     % update the image    
-    p0_estimate = p0_estimate - nu * image_update.p_final;
+    p0_estimate = p0_estimate - nu * image_update;
     
     % apply a positivity condition
     p0_estimate = p0_estimate .* (p0_estimate >= 0);
     
     % store the latest image estimate
-    eval(['p0_' num2str(loop) ' = p0_estimate;']);
+    p0_iterates{loop} = p0_estimate;
 
     % set the latest image to be the initial pressure in the forward model
     source = rmfield(source, 'p');
-    source.p0 = p0_estimate;
+    source.p0 = smooth(p0_estimate, true);
     
     % set the sensor to record time series (by default)
     sensor = rmfield(sensor, 'record');
@@ -140,6 +149,13 @@ for loop = 1:NUMBER_OF_ITERATIONS
     % calculate the time series at the sensors using the latest estimate of p0
     modelled_time_series = kspaceFirstOrder2D(kgrid, medium, source, sensor, input_args{:});
     
+    % calculate the difference between the measured and modelled data
+    data_difference = modelled_time_series - sensor_data;
+       
+    % measure goodness of fit and relative error
+    gof(loop+1)     = norm(data_difference(:))^2/norm(sensor_data(:))^2;
+    rel_err(loop+1) = norm(p0_estimate(:) - p0(:))^2/norm(p0(:))^2;    
+        
 end
 
 % =========================================================================
@@ -165,7 +181,7 @@ plot([1, 1], [1, Nx], 'k-');
 
 % plot the first iteration
 figure;
-imagesc(p0_1, c_axis);
+imagesc(p0_iterates{1}, c_axis);
 axis image;
 set(gca, 'XTick', [], 'YTick', []);
 title('Gradient Descent, 1 Iteration');
@@ -179,7 +195,7 @@ plot([1, 1], [1, Nx], 'k-');
 
 % plot the 2nd iteration
 figure;
-imagesc(p0_2, c_axis);
+imagesc(p0_iterates{2}, c_axis);
 axis image;
 set(gca, 'XTick', [], 'YTick', []);
 title('Gradient Descent, 2 Iterations');
@@ -191,12 +207,12 @@ hold on;
 plot([Ny, 1], [1, 1], 'k-');
 plot([1, 1], [1, Nx], 'k-');
 
-% plot the 5th iteration
+% plot the last iteration
 figure;
-imagesc(p0_5, c_axis);
+imagesc(p0_iterates{end}, c_axis);
 axis image;
 set(gca, 'XTick', [], 'YTick', []);
-title('Gradient Descent, 5 Iterations');
+title(['Gradient Descent, ' int2str(NUMBER_OF_ITERATIONS) ' Iterations']);
 colorbar;
 scaleFig(1, 0.65);
 
@@ -205,3 +221,9 @@ hold on;
 plot([Ny, 1], [1, 1], 'k-');
 plot([1, 1], [1, Nx], 'k-');
 plot([Ny, 1], [1, Nx], 'k--');
+
+% plot gof and relative error
+figure();
+plot(0:NUMBER_OF_ITERATIONS, gof, 'DisplayName', 'goodness of fit'); hold on
+plot(0:NUMBER_OF_ITERATIONS, rel_err, 'DisplayName', 'relative error'); hold on
+legend(gca,'show');

@@ -5,9 +5,9 @@
 % example builds on the 2D Time Reversal Reconstruction For A Line Sensor
 % Example.
 %
-% author: Ben Cox and Bradley Treeby
+% author: Ben Cox, Bradley Treeby and Felix Lucka
 % date: 22nd January 2012
-% last update: 29th July 2019
+% last update: 22nd October 2021
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
 % Copyright (C) 2012-2019 Ben Cox and Bradley Treeby
@@ -32,7 +32,7 @@ clearvars;
 % =========================================================================
 
 % define literals
-NUMBER_OF_ITERATIONS = 3;   % number of iterations
+NUMBER_OF_ITERATIONS = 5;   % number of iterations
 PML_SIZE = 20;              % size of the perfectly matched layer in grid points
 
 % create the computational grid
@@ -68,59 +68,33 @@ sensor.mask(:, 1) = 1;
 % set the input arguments: force the PML to be outside the computational
 % grid, switch off p0 smoothing within kspaceFirstOrder2D
 input_args = {'PMLInside', false, 'PMLSize', PML_SIZE, 'Smooth', false, ...
-    'PlotPML', false, 'PlotSim', true}; 
+    'PlotPML', false, 'PlotSim', false}; 
 
 % run the simulation
 sensor_data = kspaceFirstOrder2D(kgrid, medium, source, sensor, input_args{:});
 
 % =========================================================================
-% RECONSTRUCT AN IMAGE USING TIME REVERSAL
+% RECONSTRUCT AN IMAGE USING ITERATIVE TIME REVERSAL
 % =========================================================================
 
-% remove the initial pressure field used in the simulation
-source = rmfield(source, 'p0');
+% set the initial reconstructed image to be zeros
+p0_estimate = zeros(Nx, Ny);
 
-% use the sensor points as sources in time reversal
-source.p_mask = sensor.mask;
+% set the initial model times series to be zero
+modelled_time_series = zeros(size(sensor_data));
 
-% time reverse and assign the data
-source.p = fliplr(sensor_data);	
+% calculate the difference between the measured and modelled data
+data_difference = sensor_data - modelled_time_series;
 
-% enforce, rather than add, the time-reversed pressure values
-source.p_mode = 'dirichlet';    
-
-% set the simulation to record the final image (at t = 0)
-sensor.record = {'p_final'};
-
-% run the time reversal reconstruction
-p0_estimate = kspaceFirstOrder2D(kgrid, medium, source, sensor, input_args{:});
-
-% apply a positivity condition
-p0_estimate.p_final = p0_estimate.p_final .* (p0_estimate.p_final > 0);
-
-% store the latest image estimate
-p0_1 = p0_estimate.p_final;
+% track goodness of fit and relative error during the iteration
+gof     = ones(NUMBER_OF_ITERATIONS+1, 1);
+rel_err = ones(NUMBER_OF_ITERATIONS+1, 1); 
 
 % =========================================================================
 % ITERATE TO IMPROVE THE IMAGE
 % =========================================================================
 
-for loop = 2:NUMBER_OF_ITERATIONS
-    
-    % remove the source used in the previous time reversal
-    source = rmfield(source, 'p');
-
-    % set the initial pressure to be the latest estimate of p0
-    source.p0 = p0_estimate.p_final;
-    
-    % set the simulation to record the time series
-    sensor = rmfield(sensor, 'record');
-    
-    % calculate the time series using the latest estimate of p0
-    sensor_data2 = kspaceFirstOrder2D(kgrid, medium, source, sensor, input_args{:});
-    
-    % calculate the error in the estimated time series
-    data_difference = sensor_data - sensor_data2;
+for loop = 1:NUMBER_OF_ITERATIONS
     
     % assign the data_difference as a time-reversal source
     source.p_mask = sensor.mask;
@@ -133,16 +107,36 @@ for loop = 2:NUMBER_OF_ITERATIONS
     
     % run the time reversal reconstruction
     p0_update = kspaceFirstOrder2D(kgrid, medium, source, sensor, input_args{:});
-
-    % add the update to the latest image    
-    p0_estimate.p_final = p0_estimate.p_final + p0_update.p_final;
-
+    
+    % update the image    
+    p0_estimate = p0_estimate + p0_update.p_final;
+    
     % apply a positivity condition
-    p0_estimate.p_final = p0_estimate.p_final .* (p0_estimate.p_final > 0);
+    p0_estimate = p0_estimate .* (p0_estimate >= 0);
     
     % store the latest image estimate
-    eval(['p0_' num2str(loop) ' = p0_estimate.p_final;']);
+    p0_iterates{loop} = p0_estimate;
+    
+    
+    % remove the source used in the previous time reversal
+    source = rmfield(source, 'p');
 
+    % set the initial pressure to be the latest estimate of p0
+    source.p0 = p0_estimate;
+    
+    % set the simulation to record the time series
+    sensor = rmfield(sensor, 'record');
+    
+    % calculate the time series using the latest estimate of p0
+    modelled_time_series = kspaceFirstOrder2D(kgrid, medium, source, sensor, input_args{:});
+    
+    % calculate the error in the estimated time series
+    data_difference = sensor_data - modelled_time_series;
+
+    % measure goodness of fit and relative error
+    gof(loop+1)     = norm(data_difference(:))^2/norm(sensor_data(:))^2;
+    rel_err(loop+1) = norm(p0_estimate(:) - p0(:))^2/norm(p0(:))^2;
+    
 end
 
 % =========================================================================
@@ -168,7 +162,7 @@ plot([1, 1], [1, Nx], 'k-');
 
 % plot the first iteration
 figure;
-imagesc(p0_1, c_axis);
+imagesc(p0_iterates{1}, c_axis);
 axis image;
 set(gca, 'XTick', [], 'YTick', []);
 ylabel('x-position [mm]');
@@ -184,7 +178,7 @@ plot([1, 1], [1, Nx], 'k-');
 
 % plot the 2nd iteration
 figure;
-imagesc(p0_2, c_axis);
+imagesc(p0_iterates{2}, c_axis);
 axis image;
 set(gca, 'XTick', [], 'YTick', []);
 title('Time Reversal Reconstruction, 2 Iterations');
@@ -196,12 +190,12 @@ hold on;
 plot([Ny, 1], [1, 1], 'k-');
 plot([1, 1], [1, Nx], 'k-');
 
-% plot the 3rd iteration
+% plot the last iteration
 figure;
-imagesc(p0_3, c_axis);
+imagesc(p0_iterates{end}, c_axis);
 axis image;
 set(gca, 'XTick', [], 'YTick', []);
-title('Time Reversal Reconstruction, 3 Iterations');
+title('Time Reversal Reconstruction, ' int2str(NUMBER_OF_ITERATIONS) ' Iterations');
 colorbar;
 scaleFig(1, 0.65);
 
@@ -210,3 +204,9 @@ hold on;
 plot([Ny, 1], [1, 1], 'k-');
 plot([1, 1], [1, Nx], 'k-');
 plot([Ny, 1], [1, Nx], 'k--');
+
+% plot gof and relative error
+figure();
+plot(0:NUMBER_OF_ITERATIONS, gof, 'DisplayName', 'goodness of fit'); hold on
+plot(0:NUMBER_OF_ITERATIONS, rel_err, 'DisplayName', 'relative error'); hold on
+legend(gca,'show');
