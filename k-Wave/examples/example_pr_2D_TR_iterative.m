@@ -195,7 +195,7 @@ figure;
 imagesc(p0_iterates{end}, c_axis);
 axis image;
 set(gca, 'XTick', [], 'YTick', []);
-title('Time Reversal Reconstruction, ' int2str(NUMBER_OF_ITERATIONS) ' Iterations');
+title(['Time Reversal Reconstruction, ' int2str(NUMBER_OF_ITERATIONS) ' Iterations']);
 colorbar;
 scaleFig(1, 0.65);
 
