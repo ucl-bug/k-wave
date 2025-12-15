@@ -27,11 +27,7 @@ function test_pass = pstdElastic2D_save_movie(~, ~)
 test_pass = true;
 
 % folder to store temporary movies in
-if nargin == 0
-    folder = '';
-else
-    folder = tempdir;
-end
+folder = tempdir;
 
 % movie names
 movie_name_1 = 'test-movie-elastic-2D-avi';
