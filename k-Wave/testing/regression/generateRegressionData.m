@@ -243,7 +243,7 @@ test_examples{index}.precision = 'double';
 
 index = index + 1;
 test_examples{index}.name      = 'example_pr_2D_adjoint';
-test_examples{index}.outputs   = {'sensor_data', 'p0', 'p0_1', 'p0_2', 'p0_3', 'p0_4', 'p0_5'};
+test_examples{index}.outputs   = {'sensor_data', 'p0_estimate'};
 test_examples{index}.precision = 'double';
 
 % =========================================================================

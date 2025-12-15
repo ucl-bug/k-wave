@@ -108,7 +108,7 @@ for data_cast_ind = 2:2
             comparison_thresh = COMPARISON_THRESH_DOUBLE;
         case 2
             comparison_thresh = COMPARISON_THRESH_SINGLE;
-            input_args = [input_args, {'DataCast', 'gpuArray-single'}]; %#ok<AGROW> 
+            input_args = [input_args, {'DataCast', 'single'}]; %#ok<AGROW> 
     end
 
     % loop through tests

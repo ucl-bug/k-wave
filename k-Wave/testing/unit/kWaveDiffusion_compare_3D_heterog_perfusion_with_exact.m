@@ -105,7 +105,7 @@ for test_ind = 1:2
         case 1
             input_args = {'PlotSim', plot_simulations, 'PlotScale', [37, 38]};
         case 2
-            input_args = {'PlotSim', plot_simulations, 'PlotScale', [37, 38], 'DataCast', 'gpuArray-single'};
+            input_args = {'PlotSim', plot_simulations, 'PlotScale', [37, 38], 'DataCast', 'single'};
     end
     
     % create kWaveDiffusion object and take time steps
