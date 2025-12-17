@@ -20,7 +20,7 @@ function bitmask = bool2bitmask(boolean_array)
 %     last update   - 8th June 2017
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2012-2017 Bradley Treeby and Jiri Jaros
+% Copyright (C) 2012- Bradley Treeby and Jiri Jaros
 
 % This file is part of k-Wave. k-Wave is free software: you can
 % redistribute it and/or modify it under the terms of the GNU Lesser

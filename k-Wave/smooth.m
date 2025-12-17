@@ -30,7 +30,7 @@ function mat_sm = smooth(varargin)
 %     last update - 29th July 2019
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2009-2019 Bradley Treeby
+% Copyright (C) 2009- Bradley Treeby
 %
 % See also fft, ifft, fft2, ifft2, fftn, ifftn, kWaveGrid, getWin, numDim
 

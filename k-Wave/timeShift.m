@@ -11,7 +11,7 @@ function data = timeShift(data, ~, forward)
 %     last update - 7th June 2017
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2013-2017 Bradley Treeby
+% Copyright (C) 2013- Bradley Treeby
 %
 % See also gradientSpect, kspaceFirstOrder1D, kspaceFirstOrder2D,
 % kspaceFirstOrder3D, pstdElastic2D, pstdElastic3D

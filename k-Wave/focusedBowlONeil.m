@@ -84,7 +84,7 @@ function [p_axial, p_lateral, p_axial_complex] = focusedBowlONeil(radius, diamet
 %     last update      - 30th March 2021
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2016-2021 Bradley Treeby
+% Copyright (C) 2016- Bradley Treeby
 %
 % See also focusedAnnulusONeil, mendousse.
 

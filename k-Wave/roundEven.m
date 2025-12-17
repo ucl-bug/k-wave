@@ -19,7 +19,7 @@ function x = roundEven(x)
 %     last update     - 29th April 2018
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2017-2018 Bradley Treeby
+% Copyright (C) 2017- Bradley Treeby
 %
 % See also round, roundOdd
 

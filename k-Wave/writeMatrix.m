@@ -27,7 +27,7 @@ function writeMatrix(filename, matrix, matrix_name, compression_level)
 %     last update       - 21st October 2022
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2012-2022 Bradley Treeby and Jiri Jaros
+% Copyright (C) 2012- Bradley Treeby and Jiri Jaros
 %
 % See also h5write, writeAttributes, writeFlags, writeGrid
 

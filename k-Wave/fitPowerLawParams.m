@@ -45,7 +45,7 @@ function [a0_fit, y_fit] = fitPowerLawParams(a0, y, c0, f_min, f_max, plot_fit)
 %     last update - 13th January 2019
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2014-2019 Bradley Treeby
+% Copyright (C) 2014- Bradley Treeby
 
 % This file is part of k-Wave. k-Wave is free software: you can
 % redistribute it and/or modify it under the terms of the GNU Lesser

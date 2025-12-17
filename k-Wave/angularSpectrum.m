@@ -116,7 +116,7 @@ function varargout = angularSpectrum(input_plane, dx, dt, z_pos, medium, varargi
 %     Journal of the Acoustical Society of America, 123(1), 68-76.
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2018-2019 Bradley Treeby
+% Copyright (C) 2018- Bradley Treeby
 %
 % See also angularSpectrumCW
 

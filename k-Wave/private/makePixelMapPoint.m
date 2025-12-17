@@ -27,7 +27,7 @@ function pixel_map = makePixelMapPoint(grid_size, centre_pos)
 % See also makePixelMap, makePixelMapPlane
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2015-2017 Yan To Ling and Bradley Treeby
+% Copyright (C) 2015- Yan To Ling and Bradley Treeby
 
 % This file is part of k-Wave. k-Wave is free software: you can
 % redistribute it and/or modify it under the terms of the GNU Lesser

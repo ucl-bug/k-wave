@@ -9,7 +9,7 @@ function test_pass = acousticFieldPropagator_exp_vs_sine_propagator(plot_compari
 %     last update - 9th January 2019
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2019 Bradley Treeby
+% Copyright (C) 2019- Bradley Treeby
 
 % This file is part of k-Wave. k-Wave is free software: you can
 % redistribute it and/or modify it under the terms of the GNU Lesser

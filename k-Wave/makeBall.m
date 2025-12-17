@@ -34,7 +34,7 @@ function ball = makeBall(Nx, Ny, Nz, cx, cy, cz, radius, plot_ball, binary)
 %     last update     - 31st July 2019
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2009-2019 Bradley Treeby
+% Copyright (C) 2009- Bradley Treeby
 %
 % See also makeCircle, makeDisc, makeSphere 
 

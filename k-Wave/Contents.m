@@ -1,6 +1,6 @@
 % k-Wave Toolbox
-% Version 1.4 08-Nov-2022
-% Copyright (C) 2009-2022 Bradley Treeby, Ben Cox, and Jiri Jaros (see
+% Version 1.4.1 17-Dec-2025
+% Copyright (C) 2009- Bradley Treeby, Ben Cox, and Jiri Jaros (see
 % individual files for list of authors).
 %
 % See k-Wave Toolbox in help menu for description and examples.

@@ -50,7 +50,7 @@ function data = fourierShift(data, shift, dim)
 %       last update - 22nd August 2018
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2015-2017 Bradley Treeby
+% Copyright (C) 2015- Bradley Treeby
 %
 % See also gradientSpect.
 

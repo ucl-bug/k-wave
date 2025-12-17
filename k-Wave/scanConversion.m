@@ -31,7 +31,7 @@ function b_mode = scanConversion(scan_lines, steering_angles, image_size, c0, dt
 %     last update     - 7th June 2017
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2011-2017 Bradley Treeby
+% Copyright (C) 2011- Bradley Treeby
 %
 % See also interp2
 

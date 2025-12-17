@@ -4,10 +4,10 @@ function version = getkWaveVersion
 % ABOUT:
 %     author      - Bradley Treeby
 %     date        - 1st October 2012
-%     last update - 21st October 2022
+%     last update - 17th December 2025
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2012-2022 Bradley Treeby
+% Copyright (C) 2012- Bradley Treeby
 
 % This file is part of k-Wave. k-Wave is free software: you can
 % redistribute it and/or modify it under the terms of the GNU Lesser
@@ -22,4 +22,4 @@ function version = getkWaveVersion
 % You should have received a copy of the GNU Lesser General Public License
 % along with k-Wave. If not, see <http://www.gnu.org/licenses/>. 
 
-version = '1.4';
+version = '1.4.1';

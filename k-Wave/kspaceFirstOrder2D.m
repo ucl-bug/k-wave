@@ -493,7 +493,7 @@ function [sensor_data, mem_usage] = kspaceFirstOrder2D(kgrid, medium, source, se
 %       last update          - 25th July 2019
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2009-2019 Bradley Treeby and Ben Cox
+% Copyright (C) 2009- Bradley Treeby and Ben Cox
 %
 % See also kspaceFirstOrderAS, kspaceFirstOrder1D, kspaceFirstOrder3D,
 % kWaveGrid, kspaceSecondOrder

@@ -25,7 +25,7 @@ function comp_info = getComputerInfo()
 %     last update - 21 April 2021
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2014-2021 Bradley Treeby
+% Copyright (C) 2014- Bradley Treeby
 %
 % See also ver
 

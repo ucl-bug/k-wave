@@ -73,7 +73,7 @@ function mask = offGridPoints(kgrid, points, scale, varargin)
 %     last update       - 14th July 2021
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2016-2021 Elliott Wise and Bradley Treeby
+% Copyright (C) 2016- Elliott Wise and Bradley Treeby
 %
 % See also kWaveArray
 

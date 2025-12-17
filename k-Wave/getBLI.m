@@ -40,7 +40,7 @@ function varargout = getBLI(func, dx, upsampling_factor, plot_BLI)
 %     last update       - 13th January 2019
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2014-2019 Bradley Treeby
+% Copyright (C) 2014- Bradley Treeby
 %
 % See also getDeltaBLI, spectrum
 

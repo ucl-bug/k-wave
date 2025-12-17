@@ -24,7 +24,7 @@ function writeAttributes(filename, file_description)
 %     last update         - 21st October 2022
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2013-2022 Bradley Treeby and Jiri Jaros
+% Copyright (C) 2013- Bradley Treeby and Jiri Jaros
 %
 % See also h5writeatt, writeFlags, writeGrid, writeMatrix
 

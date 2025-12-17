@@ -50,7 +50,7 @@ function writeFlags(filename)
 %     last update         - 26th April 2018
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2013-2018 Bradley Treeby
+% Copyright (C) 2013- Bradley Treeby
 %
 % See also h5writeatt, writeAttributes, writeGrid, writeMatrix
 

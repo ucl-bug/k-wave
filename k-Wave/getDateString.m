@@ -14,7 +14,7 @@ function date_string = getDateString()
 %     last update - 4th June 2017
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2009-2017 Bradley Treeby
+% Copyright (C) 2009- Bradley Treeby
 %
 % See also: datetime
 % This file is part of k-Wave. k-Wave is free software: you can

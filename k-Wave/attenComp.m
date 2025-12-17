@@ -150,7 +150,7 @@ function [signal, tfd, cutoff_freq] = attenComp(signal, dt, c, alpha_0, y, varar
 %     last update     - 21st July 2021
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2012-2021 Bradley Treeby
+% Copyright (C) 2012- Bradley Treeby
 
 % This file is part of k-Wave. k-Wave is free software: you can
 % redistribute it and/or modify it under the terms of the GNU Lesser

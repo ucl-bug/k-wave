@@ -27,7 +27,7 @@ function c_kk = powerLawKramersKronig(w, w0, c0, a0, y)
 %     last update   - 7th June 2017
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2008-2017 Bradley Treeby
+% Copyright (C) 2008- Bradley Treeby
 %
 % See also db2neper
 

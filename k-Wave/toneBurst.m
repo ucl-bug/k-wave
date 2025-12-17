@@ -50,7 +50,7 @@ function signal = toneBurst(sample_freq, signal_freq, num_cycles, varargin)
 %     last update     - 13th January 2019
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2009-2019 Bradley Treeby
+% Copyright (C) 2009- Bradley Treeby
 %
 % See also gaussian
 

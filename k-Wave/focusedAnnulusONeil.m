@@ -43,7 +43,7 @@ function p_axial = focusedAnnulusONeil(radius, diameter, amplitude, phase, frequ
 %     last update      - 3rd August 2021
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2021 Bradley Treeby
+% Copyright (C) 2021- Bradley Treeby
 %
 % See also focusedBowlONeil.
 

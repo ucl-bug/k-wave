@@ -45,7 +45,7 @@ function arc = makeArc(grid_size, arc_pos, radius, diameter, focus_pos, varargin
 %     last update   - 9th April 2017
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2015-2017 Bradley Treeby and Yan To Ling
+% Copyright (C) 2015- Bradley Treeby and Yan To Ling
 %
 % See also makeBowl, makeCartArc, makeLine, makeMultiArc
 

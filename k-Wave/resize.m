@@ -28,7 +28,7 @@ function mat_rs = resize(varargin)
 %     last update - 7th June 2017
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2009-2017 Bradley Treeby
+% Copyright (C) 2009- Bradley Treeby
 %
 % See also interp1, interp2, interp3
 

@@ -8,7 +8,7 @@ function generateRegressionData
 %     last update - 21st October 2022
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2014-2022 Bradley Treeby
+% Copyright (C) 2014- Bradley Treeby
 
 % This file is part of k-Wave. k-Wave is free software: you can
 % redistribute it and/or modify it under the terms of the GNU Lesser

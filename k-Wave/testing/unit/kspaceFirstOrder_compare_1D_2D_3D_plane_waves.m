@@ -104,7 +104,7 @@ function test_pass = kspaceFirstOrder_compare_1D_2D_3D_plane_waves(plot_comparis
 %     last update - 25th July 2019
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2011-2019 Bradley Treeby
+% Copyright (C) 2011- Bradley Treeby
 
 % This file is part of k-Wave. k-Wave is free software: you can
 % redistribute it and/or modify it under the terms of the GNU Lesser

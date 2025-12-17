@@ -62,7 +62,7 @@ function cw_signal = createCWSignals(t_array, freq, amp, phase, ramp_length)
 %     last update - 26th March 2025
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2015-2025 Bradley Treeby and Yan To Ling
+% Copyright (C) 2015- Bradley Treeby and Yan To Ling
 %
 % See also extractAmpPhase, toneburst
 

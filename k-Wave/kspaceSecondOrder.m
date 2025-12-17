@@ -113,7 +113,7 @@ function sensor_data = kspaceSecondOrder(kgrid, medium, source, sensor, varargin
 %     last update         - 25th July 2019
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2008-2019 Bradley Treeby and Ben Cox
+% Copyright (C) 2008- Bradley Treeby and Ben Cox
 %
 % See also kspaceFirstOrder1D, kspaceFirstOrder2D, kspaceFirstOrder3D,
 % kWaveGrid, smooth 

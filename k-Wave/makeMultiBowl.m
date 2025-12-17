@@ -58,7 +58,7 @@ function [bowls, bowls_labelled] = makeMultiBowl(grid_size, bowl_pos, radius, di
 %     last update     - 8th June 2017
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2014-2017 Yan To Ling and Bradley Treeby
+% Copyright (C) 2014- Yan To Ling and Bradley Treeby
 %
 % See also makeBowl, makeMultiArc
 

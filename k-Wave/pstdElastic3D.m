@@ -400,7 +400,7 @@ function sensor_data = pstdElastic3D(kgrid, medium, source, sensor, varargin)
 %     last update            - 13th January 2019
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2013-2019 Bradley Treeby and Ben Cox
+% Copyright (C) 2013- Bradley Treeby and Ben Cox
 %
 % See also kspaceFirstOrder3D, kWaveGrid, pstdElastic2D
 

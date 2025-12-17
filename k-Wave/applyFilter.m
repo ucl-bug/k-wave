@@ -40,7 +40,7 @@ function filtered_signal = applyFilter(signal, Fs, cutoff_f, filter_type, vararg
 %     last update       - 21st February 2017
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2009-2017 Ben Cox and Bradley Treeby
+% Copyright (C) 2009- Ben Cox and Bradley Treeby
 %
 % See also filter, filterTimeSeries
 
