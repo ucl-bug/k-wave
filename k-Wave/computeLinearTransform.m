@@ -38,7 +38,7 @@ function [rotMat, offsetPos] = computeLinearTransform(pos1, pos2, offset)
 %     last update - 20th October 2022
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2016-2022 Elliott Wise and Bradley Treeby
+% Copyright (C) 2016- Elliott Wise and Bradley Treeby
 %
 % See also getAffineMatrix
 

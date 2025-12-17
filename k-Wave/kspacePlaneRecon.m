@@ -80,7 +80,7 @@ function p = kspacePlaneRecon(p, dy, dz, dt, c, varargin)
 %     last update - 8th June 2017
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2009-2017 Bradley Treeby and Ben Cox
+% Copyright (C) 2009- Bradley Treeby and Ben Cox
 %
 % See also interp3, kspaceLineRecon, kWaveGrid
 

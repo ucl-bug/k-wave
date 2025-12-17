@@ -119,7 +119,7 @@ function [source_estimate, output] = calculateMassSourceCW(measured_data, dx, fr
 %     1857-1864.
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2018-2020 Bradley Treeby, Ben Cox, Felix Lucka
+% Copyright (C) 2018- Bradley Treeby, Ben Cox, Felix Lucka
 %
 % See also acousticFieldPropagator, calculateMassSource
 

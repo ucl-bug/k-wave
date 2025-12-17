@@ -33,7 +33,7 @@ function f = getDeltaBLI(Nx, dx, x, x0, include_imag)
 %     last update - 5th December 2019
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2018-2019 Elliott Wise
+% Copyright (C) 2018- Elliott Wise
 %
 % See also getBLI
 

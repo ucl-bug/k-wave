@@ -36,7 +36,7 @@ function beamPlot(varargin)
 %     last update - 22nd February 2017
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2012-2017 Bradley Treeby
+% Copyright (C) 2012- Bradley Treeby
 %
 % See also slice
 

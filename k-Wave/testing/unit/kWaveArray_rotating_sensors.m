@@ -9,7 +9,7 @@ function test_pass = kWaveArray_rotating_sensors(plot_comparisons, plot_simulati
 %       last update - 8th June 2021
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2019-2021 Bradley Treeby and Elliott Wise
+% Copyright (C) 2019- Bradley Treeby and Elliott Wise
 
 % This file is part of k-Wave. k-Wave is free software: you can
 % redistribute it and/or modify it under the terms of the GNU Lesser

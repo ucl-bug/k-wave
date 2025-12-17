@@ -46,7 +46,7 @@ function varargout = acousticFieldPropagatorC(amp_in, phase_in, dx, f0, c0, vara
 %     last update     - 4th April 2019
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2017-2019 Bradley Treeby and Jakub Budisky
+% Copyright (C) 2017- Bradley Treeby and Jakub Budisky
 %
 % See also acousticFieldPropagator
 

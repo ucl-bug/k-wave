@@ -60,7 +60,7 @@ function mat_new = expandMatrix(mat, exp_coeff, edge_val)
 %     last update - 15 March 2022
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2009-2022 Bradley Treeby
+% Copyright (C) 2009- Bradley Treeby
 %
 % See also resize, trimZeros
 

@@ -25,7 +25,7 @@ function density = waterDensity(T)
 %     Inst. Stand. Technol., 97(3), 335-340.
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2018-2019 Bradley Treeby
+% Copyright (C) 2018- Bradley Treeby
 %
 % See also waterAttenuation, waterNonlinearity, waterSoundSpeed
 

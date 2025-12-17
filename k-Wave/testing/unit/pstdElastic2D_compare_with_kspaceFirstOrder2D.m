@@ -10,7 +10,7 @@ function test_pass = pstdElastic2D_compare_with_kspaceFirstOrder2D(plot_comparis
 %     last update - 18th June 2017
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2013-2017 Bradley Treeby
+% Copyright (C) 2013- Bradley Treeby
 
 % This file is part of k-Wave. k-Wave is free software: you can
 % redistribute it and/or modify it under the terms of the GNU Lesser

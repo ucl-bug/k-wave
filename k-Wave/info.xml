@@ -3,10 +3,10 @@
 	xsi:noNamespaceSchemaLocation="optional">
 	<?xml-stylesheet type="text/xsl" href="optional"?>
     <!-- info.xml file for the k-Wave Toolbox -->
-    <!-- Version 1.4 -->
-    <!-- Copyright (2009-2022) (Bradley Treeby, Ben Cox, and Jiri Jaros).-->
+    <!-- Version 1.4.1 -->
+    <!-- Copyright (2009-2025) (Bradley Treeby, Ben Cox, and Jiri Jaros).-->
 	
-	<matlabrelease>2011a</matlabrelease>
+	<matlabrelease>R2025b</matlabrelease>
 	<name>k-Wave</name>
 	<type>toolbox</type>
 	<icon>$toolbox/matlab/icons/matlabicon.gif</icon>

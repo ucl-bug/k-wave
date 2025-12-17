@@ -53,7 +53,7 @@ function filtered_signal = filterTimeSeries(kgrid, medium, signal, varargin)
 %     last update     - 25th November 2020
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2009-2020 Bradley Treeby and Ben Cox
+% Copyright (C) 2009- Bradley Treeby and Ben Cox
 %
 % See also smooth, spectrum
 

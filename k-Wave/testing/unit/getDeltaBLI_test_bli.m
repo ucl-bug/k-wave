@@ -18,7 +18,7 @@ function test_pass = getDeltaBLI_test_bli(plot_comparisons, ~)
 %     last update      - 4th July 2019
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2018-2019 Elliott Wise
+% Copyright (C) 2018- Elliott Wise
 
 % This file is part of k-Wave. k-Wave is free software: you can
 % redistribute it and/or modify it under the terms of the GNU Lesser

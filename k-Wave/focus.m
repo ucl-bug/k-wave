@@ -30,7 +30,7 @@ function signal_mat = focus(kgrid, input_signal, source_mask, focus_position, so
 %     last update      - 4th June 2017
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2012-2017 Bradley Treeby
+% Copyright (C) 2012- Bradley Treeby
 
 % This file is part of k-Wave. k-Wave is free software: you can
 % redistribute it and/or modify it under the terms of the GNU Lesser

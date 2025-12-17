@@ -38,7 +38,7 @@ function circle = makeCircle(Nx, Ny, cx, cy, radius, arc_angle, plot_circle)
 %     last update     - 4th February 2017
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2009-2017 Bradley Treeby
+% Copyright (C) 2009- Bradley Treeby
 %
 % See also makeCartCircle, makeDisc
 

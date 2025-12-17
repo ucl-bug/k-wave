@@ -9,7 +9,7 @@ function test_pass = kWaveDiffusion_compare_perfusion_coefficient_definition(~, 
 %       last update - 26th July 2019
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2015-2019 Bradley Treeby
+% Copyright (C) 2015- Bradley Treeby
 
 % This file is part of k-Wave. k-Wave is free software: you can
 % redistribute it and/or modify it under the terms of the GNU Lesser

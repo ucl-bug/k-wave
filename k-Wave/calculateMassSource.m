@@ -117,7 +117,7 @@ function [source_estimate, output] = calculateMassSource(measured_data, dx, dt, 
 %     1857-1864.
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2018-2020 Bradley Treeby
+% Copyright (C) 2018- Bradley Treeby
 %
 % See also calculateMassSourceCW, kspaceFirstOrder3D
 

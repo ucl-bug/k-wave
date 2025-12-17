@@ -8,7 +8,7 @@ function test_pass = pstdElastic3D_check_mpml_stability(plot_comparisons, plot_s
 %       last update - 12 August 2014
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2009-2014 Bradley Treeby and Ben Cox
+% Copyright (C) 2009- Bradley Treeby and Ben Cox
 
 % This file is part of k-Wave. k-Wave is free software: you can
 % redistribute it and/or modify it under the terms of the GNU Lesser

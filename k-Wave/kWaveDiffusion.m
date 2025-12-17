@@ -205,7 +205,7 @@
 %     last update      - 7th August 2023
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2014-2023 Bradley Treeby and Teedah Saratoon
+% Copyright (C) 2014- Bradley Treeby and Teedah Saratoon
 %
 % See also bioheatExact
 

@@ -9,7 +9,7 @@ function test_pass = kWaveDiffusion_compare_3D_heterog_with_exact(plot_compariso
 %       last update - 7th February 2020
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2015-2020 Bradley Treeby
+% Copyright (C) 2015- Bradley Treeby
 
 % This file is part of k-Wave. k-Wave is free software: you can
 % redistribute it and/or modify it under the terms of the GNU Lesser

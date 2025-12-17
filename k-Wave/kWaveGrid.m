@@ -142,7 +142,7 @@
 %     last update - 8th July 2019
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2010-2019 Bradley Treeby
+% Copyright (C) 2010- Bradley Treeby
 %
 % See also kspaceFirstOrder1D, kspaceFirstOrder2D, kspaceFirstOrder3D,
 % kspaceFirstOrderAS, kspaceSecondOrder, pstdElastic2D, pstdElastic2D

@@ -29,7 +29,7 @@ function line = makeLine(Nx, Ny, startpoint, varargin)
 %     last update     - 13th January 2019
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2012-2019 Ben Cox
+% Copyright (C) 2012- Ben Cox
 %
 % See also makeArc, makeCircle, makeDisc
 

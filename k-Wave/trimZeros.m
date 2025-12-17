@@ -37,7 +37,7 @@ function [data, ind] = trimZeros(data)
 %     last update - 9th December 2019
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2009-2022 Bradley Treeby
+% Copyright (C) 2009- Bradley Treeby
 %
 % See also expandMatrix, resize
 

@@ -34,7 +34,7 @@ function dt_stability_limit = checkStability(kgrid, medium)
 %     last update        - 27th February 2017
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2014-2017 Ben Cox
+% Copyright (C) 2014- Ben Cox
 %
 % See also kspaceFirstOrder1D, kspaceFirstOrder2D, kspaceFirstOrder3D,
 % kWaveGrid

@@ -88,7 +88,7 @@ function pressure = angularSpectrumCW(input_plane, dx, z_pos, f0, medium, vararg
 %     Journal of the Acoustical Society of America, 123(1), 68-76.
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2018-2019 Bradley Treeby
+% Copyright (C) 2018- Bradley Treeby
 %
 % See also angularSpectrum
 

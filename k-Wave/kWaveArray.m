@@ -397,7 +397,7 @@
 %     last update - 24th March 2025
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2018-2025 Bradley Treeby and Elliott Wise
+% Copyright (C) 2018- Bradley Treeby and Elliott Wise
 %
 % See also offGridPoints, getDeltaBLI
 

@@ -32,7 +32,7 @@ function [reordered_sensor_data, indices_new] = reorderSensorData(kgrid, sensor,
 %     last update   - 21st March 2019
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2012-2019 Ben Cox
+% Copyright (C) 2012- Ben Cox
 %
 % See also kspaceFirstOrder2D, reorderBinarySensorData, unmaskSensorData
 

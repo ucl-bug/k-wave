@@ -9,7 +9,7 @@ function test_pass = pstdElastic2D_compare_time_reversal_with_kspaceFirstOrder2D
 %       last update - 25th July 2019
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2009-2019 Bradley Treeby and Ben Cox
+% Copyright (C) 2009- Bradley Treeby and Ben Cox
 
 % This file is part of k-Wave. k-Wave is free software: you can
 % redistribute it and/or modify it under the terms of the GNU Lesser

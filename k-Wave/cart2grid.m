@@ -36,7 +36,7 @@ function [grid_data, order_index, reorder_index] = cart2grid(kgrid, cart_data, a
 %     last update   - 16th April 2018
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2009-2018 Bradley Treeby
+% Copyright (C) 2009- Bradley Treeby
 %
 % See also interpCartData, kWaveGrid
 

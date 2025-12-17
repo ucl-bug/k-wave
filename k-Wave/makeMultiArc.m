@@ -52,7 +52,7 @@ function [arcs, arcs_labelled] = makeMultiArc(grid_size, arc_pos, radius, diamet
 %     last update     - 13th January 2019
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2015-2019 Yan To Ling and Bradley Treeby
+% Copyright (C) 2015- Yan To Ling and Bradley Treeby
 %
 % See also makeArc, makeMultiBowl
 

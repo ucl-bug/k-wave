@@ -42,7 +42,7 @@ function disc = makeCartDisc(disc_pos, radius, focus_pos, num_points, plot_disc,
 %     last update - 2nd July 2019
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2017-2019 Elliott Wise and Bradley Treeby
+% Copyright (C) 2017- Elliott Wise and Bradley Treeby
 %
 % See also makeDisc, makeCartBowl
 

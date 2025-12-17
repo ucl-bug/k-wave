@@ -43,7 +43,7 @@ function writeGrid(filename, grid_size, grid_spacing, pml_size, pml_alpha, Nt, d
 %     last update         - 26th July 2019
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2013-2019 Bradley Treeby
+% Copyright (C) 2013- Bradley Treeby
 %
 % See also h5writeatt, writeAttributes, writeFlags, writeMatrix
 

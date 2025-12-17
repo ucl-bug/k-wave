@@ -25,7 +25,7 @@ function c = waterSoundSpeed(T)
 %     of sound in liquids," J. Acoust. Soc. Am., 102, 2776-2779.
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2008-2019 Bradley Treeby
+% Copyright (C) 2008- Bradley Treeby
 %
 % See also waterAbsorption, waterDensity, waterNonlinearity
 

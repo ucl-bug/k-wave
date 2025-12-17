@@ -40,7 +40,7 @@ function arc = makeCartArc(arc_pos, radius, diameter, focus_pos, num_points, plo
 %     last update - 26th June 2019
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2017-2019 Elliott Wise and Bradley Treeby
+% Copyright (C) 2017- Elliott Wise and Bradley Treeby
 %
 % See also makeArc, makeCartDisc
 

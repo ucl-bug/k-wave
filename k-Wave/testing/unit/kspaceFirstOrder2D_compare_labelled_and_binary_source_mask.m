@@ -9,7 +9,7 @@ function test_pass = kspaceFirstOrder2D_compare_labelled_and_binary_source_mask(
 %     last update - 19th February 2017
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2014-2017 Bradley Treeby
+% Copyright (C) 2014- Bradley Treeby
 
 % This file is part of k-Wave. k-Wave is free software: you can
 % redistribute it and/or modify it under the terms of the GNU Lesser

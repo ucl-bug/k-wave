@@ -34,7 +34,7 @@ function sensor_data = kspaceFirstOrder3DG(varargin)
 %     last update     - 6rd March 2019
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2013-2019 Bradley Treeby
+% Copyright (C) 2013- Bradley Treeby
 %
 % See also kspaceFirstOrder3D, kspaceFirstOrder3DC
 

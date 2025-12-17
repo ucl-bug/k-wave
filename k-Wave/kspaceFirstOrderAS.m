@@ -387,7 +387,7 @@ function sensor_data = kspaceFirstOrderAS(kgrid, medium, source, sensor, varargi
 %     last update            - 24th March 2019
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2017-2019 Bradley Treeby, Elliott Wise, and Ben Cox
+% Copyright (C) 2017- Bradley Treeby, Elliott Wise, and Ben Cox
 %
 % See also kspaceFirstOrder1D, kspaceFirstOrder2D, kspaceFirstOrder3D,
 % kWaveGrid

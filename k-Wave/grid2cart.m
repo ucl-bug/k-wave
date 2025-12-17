@@ -27,7 +27,7 @@ function [cart_data, order_index] = grid2cart(kgrid, grid_data)
 %     last update - 4th June 2017
 %       
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2009-2017 Ben Cox and Bradley Treeby
+% Copyright (C) 2009- Ben Cox and Bradley Treeby
 %
 % See also cart2grid, interpCartData, kWaveGrid
 

@@ -39,7 +39,7 @@ function bowl = makeCartBowl(bowl_pos, radius, diameter, focus_pos, num_points, 
 %     last update - 4th February 2018
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2016-2018 Elliott Wise and Bradley Treeby
+% Copyright (C) 2016- Elliott Wise and Bradley Treeby
 %
 % See also makeBowl, makeCartArc, makeCartSphere, makeCartSphericalSection
 

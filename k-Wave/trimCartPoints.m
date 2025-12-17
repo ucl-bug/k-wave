@@ -26,7 +26,7 @@ function [points, ind] = trimCartPoints(kgrid, points)
 %     last update - 25th March 2025
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2017-2025 Elliott Wise and Bradley Treeby
+% Copyright (C) 2017- Elliott Wise and Bradley Treeby
 %
 % See also cart2grid, grid2cart
 

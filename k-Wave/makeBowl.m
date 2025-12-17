@@ -55,7 +55,7 @@ function bowl = makeBowl(grid_size, bowl_pos, radius, diameter, focus_pos, varar
 %     last update     - 7th April 2017
 %
 % This function is part of the k-Wave Toolbox (http://www.k-wave.org)
-% Copyright (C) 2014-2017 Bradley Treeby and Yan To Ling
+% Copyright (C) 2014- Bradley Treeby and Yan To Ling
 %
 % See also makeArc, makeBall, makeCartBowl, makeMultiBowl, makeSphere,
 % makeSphericalSection
